@@ -3,7 +3,8 @@ import {
   sendSignInLinkToEmail,
   signInWithEmailLink,
 } from "firebase/auth";
-import { auth } from "~/services/firebase";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { auth, db } from "~/services/firebase";
 import { BASE_URL } from "~/util/constants";
 
 /**
@@ -55,10 +56,21 @@ export const getStoredEmail = (): string | null => {
  */
 export const signInWithJoinLink = async (email: string) => {
   if (!window) throw new Error("window is undefined");
-  try {
-    await signInWithEmailLink(auth, email, window.location.href);
-    window.localStorage.removeItem("emailForSignIn");
-  } catch (error) {
-    console.error(error);
-  }
+  await signInWithEmailLink(auth, email, window.location.href);
+  window.localStorage.removeItem("emailForSignIn");
+};
+
+/**
+ * Create a new user document in the database
+ * @param username - username to create the document with
+*/
+export const createUserDoc = async (username: string) => {
+  if (!auth.currentUser) throw new Error("User is not signed in");
+  const userRef = doc(db, "users", auth.currentUser.uid);
+  const userDoc = await getDoc(userRef);
+  if (userDoc.exists()) throw new Error("User already exists");
+  await setDoc(userRef, {
+    username: username,
+    email: auth.currentUser.email,
+  });
 };
