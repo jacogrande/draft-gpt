@@ -15,11 +15,14 @@ const Join = () => {
     username: "",
     email: "",
   });
+  const [loading, setLoading] = useState<boolean>(false);
+  const [success, setSuccess] = useState<boolean>(false);
+
   const isValidEmail = useMemo(
     () => validateEmail(formData.email),
     [formData.email]
   );
-  const disabled = !formData.username || !isValidEmail;
+  const disabled = !formData.username || !isValidEmail || loading;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -31,11 +34,18 @@ const Join = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      // await sendJoinLink(formData.email, formData.username);
-      throw new Error("Not implemented");
+      setLoading(true);
+      setSuccess(false);
+      await sendJoinLink(formData.email, formData.username);
+      setSuccess(true);
     } catch (error) {
       console.error(error);
-      toast("Something went wrong", "error");
+      toast(
+        "Unable to send email verification link. Please try again later.",
+        "error"
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -47,32 +57,45 @@ const Join = () => {
             Join the game
           </h1>
         </header>
-        <form
-          className="flex flex-col items-center gap-4"
-          onSubmit={handleSubmit}
-        >
-          <label className="input input-bordered input-primary flex items-center gap-2 min-w-72">
-            <UserIcon className="h-5 w-5" />
-            <input
-              placeholder="Username"
-              className="grow"
-              name="username"
-              onChange={handleChange}
-            />
-          </label>
-          <label className="input input-bordered input-primary flex items-center gap-2 min-w-72">
-            <AtSymbolIcon className="h-5 w-5" />
-            <input
-              placeholder="Email"
-              className="grow"
-              name="email"
-              onChange={handleChange}
-            />
-          </label>
-          <button className="btn btn-primary self-end" disabled={disabled}>
-            Sign up
-          </button>
-        </form>
+        {success ? (
+          <div className="flex flex-col items-center gap-4">
+            <p className="prose">
+              A verification email has been sent to your email address. Follow
+              the link in the email to finish joining.
+            </p>
+          </div>
+        ) : (
+          <form
+            className="flex flex-col items-center gap-4"
+            onSubmit={handleSubmit}
+          >
+            <label className="input input-bordered input-primary flex items-center gap-2 min-w-72">
+              <UserIcon className="h-5 w-5" />
+              <input
+                placeholder="Username"
+                className="grow"
+                name="username"
+                onChange={handleChange}
+              />
+            </label>
+            <label className="input input-bordered input-primary flex items-center gap-2 min-w-72">
+              <AtSymbolIcon className="h-5 w-5" />
+              <input
+                placeholder="Email"
+                className="grow"
+                name="email"
+                onChange={handleChange}
+              />
+            </label>
+            <button className="btn btn-primary self-end" disabled={disabled}>
+              {loading ? (
+                <span className="loading loading-dots loading-sm"></span>
+              ) : (
+                "Sign up"
+              )}
+            </button>
+          </form>
+        )}
       </div>
     </div>
   );
