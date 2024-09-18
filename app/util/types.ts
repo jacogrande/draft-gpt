@@ -1,3 +1,5 @@
+import { Timestamp } from "firebase/firestore";
+
 export type DaisyColor =
   | "primary"
   | "primary-content"
@@ -19,3 +21,25 @@ export type DaisyColor =
   | "warning-content"
   | "error"
   | "error-content";
+
+export type User = {
+  uid: string;
+  email: string;
+  username: string;
+}
+
+export type PublicUser = {
+  username: string;
+  uid: string;
+}
+
+export type Lobby = {
+  id: string;
+  name: string;
+  createdBy: string;
+  activeUsers: PublicUser[];
+  createdAt: Timestamp;
+  activityMap: Record<string, Timestamp>;
+  readyMap?: Record<string, boolean>;
+  lastActive: Timestamp;
+};
