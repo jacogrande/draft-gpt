@@ -7,7 +7,7 @@ import {
   getStoredEmail,
   signInWithJoinLink,
   validateJoinLink,
-} from "~/services/auth";
+} from "~/model/auth";
 import sleep from "~/util/sleep";
 import { validateEmail } from "~/util/validateEmail";
 

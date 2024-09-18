@@ -1,7 +1,11 @@
 import { AtSymbolIcon, UserIcon } from "@heroicons/react/16/solid";
+import { Navigate } from "@remix-run/react";
 import { useMemo, useState } from "react";
+import Heading from "~/components/Heading";
+import Page from "~/components/Page";
 import { useToast } from "~/hooks/useToast";
-import { sendJoinLink } from "~/services/auth";
+import { sendJoinLink } from "~/model/auth";
+import { auth } from "~/model/firebase";
 import { validateEmail } from "~/util/validateEmail";
 
 type FormData = {
@@ -49,13 +53,15 @@ const Join = () => {
     }
   };
 
+  // check if the user is already logged in
+  const isLoggedIn = auth.currentUser !== null;
+  if (isLoggedIn) return <Navigate to="/" replace />;
+
   return (
-    <div className="flex h-screen items-center justify-center">
+    <Page>
       <div className="flex flex-col items-center gap-8">
         <header className="flex flex-col items-center gap-9">
-          <h1 className="leading text-2xl font-bold text-gray-800 dark:text-gray-100">
-            Join the game
-          </h1>
+          <Heading>Join the game</Heading>
         </header>
         {success ? (
           <div className="flex flex-col items-center gap-4">
@@ -97,7 +103,7 @@ const Join = () => {
           </form>
         )}
       </div>
-    </div>
+    </Page>
   );
 };
 
