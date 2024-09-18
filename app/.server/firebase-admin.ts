@@ -4,12 +4,9 @@ import serviceAccount from "~/service-account.json";
 import { User } from "~/util/types";
 
 if (admin.apps.length === 0) {
-  admin.initializeApp(
-    {
-      credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
-    },
-    "admin"
-  );
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
+  });
 }
 
 export const adminAuth = getAuth();
