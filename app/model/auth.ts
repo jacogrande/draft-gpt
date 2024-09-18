@@ -2,6 +2,7 @@ import {
   isSignInWithEmailLink,
   sendSignInLinkToEmail,
   signInWithEmailLink,
+  User as FirebaseUser,
 } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { auth, db } from "~/model/firebase";
@@ -63,14 +64,30 @@ export const signInWithJoinLink = async (email: string) => {
 /**
  * Create a new user document in the database
  * @param username - username to create the document with
-*/
+ * @description this will create a new user document in the database or do nothing if the user already exists
+ */
 export const createUserDoc = async (username: string) => {
   if (!auth.currentUser) throw new Error("User is not signed in");
   const userRef = doc(db, "users", auth.currentUser.uid);
   const userDoc = await getDoc(userRef);
-  if (userDoc.exists()) throw new Error("User already exists");
+  if (userDoc.exists()) return;
   await setDoc(userRef, {
     username: username,
     email: auth.currentUser.email,
   });
+};
+
+export const createSessionCookie = async (user: FirebaseUser) => {
+  const idToken = await user.getIdToken();
+  console.log(idToken);
+  const response = await fetch("/api/session", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ idToken }),
+  });
+  console.log(response.status);
+  const json  = await response.json();
+  console.log(json);
 };

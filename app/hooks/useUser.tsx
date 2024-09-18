@@ -1,6 +1,7 @@
 import { onAuthStateChanged } from "firebase/auth";
 import { doc, onSnapshot } from "firebase/firestore";
 import { create } from "zustand";
+import { createSessionCookie } from "~/model/auth";
 import { auth, db } from "~/model/firebase";
 import { User } from "~/util/types";
 
@@ -38,9 +39,10 @@ export const useUserProvider = () => {
   const setLoading = useUserStore((state) => state.setLoading);
 
   const subscribeToUserChanges = () => {
-    const unsubscribeAuth = onAuthStateChanged(auth, (firebaseUser) => {
+    const unsubscribeAuth = onAuthStateChanged(auth, async (firebaseUser) => {
       setLoading(true);
       if (firebaseUser) {
+        await createSessionCookie(firebaseUser);
         const userDocRef = doc(db, "users", firebaseUser.uid);
         const unsubscribeSnapshot = onSnapshot(userDocRef, (docSnapshot) => {
           if (docSnapshot.exists()) {
