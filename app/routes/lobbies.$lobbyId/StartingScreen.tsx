@@ -3,13 +3,12 @@ import { useLobbyStore } from "~/hooks/lobby/useLobby";
 import { useToast } from "~/hooks/useToast";
 import { useUser } from "~/hooks/useUser";
 import { readyUp } from "~/model/lobby";
+import WorldbuildingChat from "~/routes/lobbies.$lobbyId/WorldbuildingChat";
 
 const StartingScreen = () => {
   const { lobby } = useLobbyStore();
   const { user } = useUser();
   const { toast } = useToast();
-  const readyCount = lobby?.readyMap ? Object.keys(lobby.readyMap).length : 0;
-  const playerCount = lobby?.activeUsers.length;
 
   const handleReadyUp = async () => {
     if (!user || !lobby) {
@@ -19,15 +18,27 @@ const StartingScreen = () => {
     await readyUp(lobby.id, user.uid);
   };
 
-  if (!user) return null;
+  if (!user || !lobby) return null;
+  const readyCount = lobby.readyMap ? Object.keys(lobby.readyMap).length : 0;
+  const isReady = lobby.readyMap && lobby.readyMap[user.uid];
+  const playerCount = lobby.activeUsers.length;
+  const allReady = readyCount === playerCount;
   return (
-    <div className="flex flex-col gap-8 flex-1 p-4 items-center justify-center">
+    <div className="flex flex-col gap-8 flex-1 items-center justify-center relative">
       <Heading>
         {readyCount} / {playerCount} players are ready
       </Heading>
-      <button className="btn btn-primary" onClick={handleReadyUp}>
-        Ready Up
-      </button>
+      {!isReady && (
+        <button className="btn btn-primary" onClick={handleReadyUp}>
+          Ready Up
+        </button>
+      )}
+      {allReady && (
+        <button className="btn btn-primary" onClick={handleReadyUp}>
+          Start Game
+        </button>
+      )}
+      <WorldbuildingChat />
     </div>
   );
 };

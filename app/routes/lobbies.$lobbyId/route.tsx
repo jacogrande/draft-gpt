@@ -59,7 +59,7 @@ const Lobby = () => {
     <Page>
       <div className="flex flex-1 w-full h-full">
         <LobbyDetails lobby={lobby} />
-        <StartingScreen lobby={lobby} />
+        <StartingScreen />
       </div>
     </Page>
   );
