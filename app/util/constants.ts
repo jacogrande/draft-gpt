@@ -1,6 +1,9 @@
 export const BASE_URL = "https://draftgpt.hasslebad.com";
 
 export const ADJECTIVES = [
+  "Altered",
+  "Tattered",
+  "Rusty",
   "Deadly",
   "Tron",
   "Delving",
