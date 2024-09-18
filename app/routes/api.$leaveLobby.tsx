@@ -15,7 +15,6 @@ export async function action({ request }: ActionFunctionArgs) {
     const body = await request.json();
     if (!isValidBody(body)) return { status: 422 };
     const { token, lobbyId } = body;
-    console.log(lobbyId, token);
     const user = await getUserFromToken(token);
     if (!user) return { status: 401 };
     await leaveLobby(user, lobbyId);

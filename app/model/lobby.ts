@@ -115,7 +115,6 @@ export const createRandomLobbyName = (): string => {
 export const sendPulse = async (user: User, lobbyId: string): Promise<void> => {
   const lobbyRef = doc(db, LOBBIES_COLLECTION, lobbyId);
   const currentTimestamp = Timestamp.fromDate(new Date());
-  console.log("pulsing user with uid", user.uid, "and lobbyId", lobbyId);
   await setDoc(
     lobbyRef,
     {
