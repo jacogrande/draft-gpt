@@ -112,8 +112,7 @@ const FinishJoin = () => {
         {success && (
           <div className="flex flex-col items-center gap-4">
             <p className="prose">
-              You have successfully created an account.{" "}
-              <Link to="/">Go Back Home</Link>
+              You have successfully joined. <Link to="/">Go Back Home</Link>
             </p>
           </div>
         )}
