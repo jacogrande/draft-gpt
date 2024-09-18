@@ -6,11 +6,12 @@
 
 ## Auth
 
-- [x] Build sign in page
+- [x] Build sign up page
 - [x] Use Email Link Auth
 - [x] Build link confirmation page
 - [x] User auth store
-- [ ] Secure routes
+- [x] Secure routes
+- [ ] Build sign out page
 
 ## Lobbies
 
