@@ -8,6 +8,9 @@ import LobbyDetails from "~/routes/lobbies.$lobbyId/LobbyDetails";
 import { joinLobby } from "~/model/lobby";
 import useHeartbeat from "~/hooks/lobby/useHeartbeat";
 import StartingScreen from "~/routes/lobbies.$lobbyId/StartingScreen";
+import { verifySession } from "~/.server/session";
+
+export const loader = verifySession;
 
 const Lobby = () => {
   //========= PARAM VALIDATION =========//
@@ -34,6 +37,7 @@ const Lobby = () => {
    * Hence the heartbeat system
    */
   useEffect(() => {
+    if (!idToken || !lobbyId) return;
     const unloadListener = () => {
       console.log("leaving lobby");
       fetch("/api/leaveLobby", {

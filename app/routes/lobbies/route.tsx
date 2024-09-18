@@ -1,6 +1,9 @@
 import { Outlet, useParams } from "@remix-run/react";
+import { verifySession } from "~/.server/session";
 import Page from "~/components/Page";
 import LobbyList from "~/routes/lobbies/LobbyList";
+
+export const loader = verifySession;
 
 const Lobbies = () => {
   const params = useParams();
