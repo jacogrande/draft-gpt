@@ -33,6 +33,12 @@ export type PublicUser = {
   uid: string;
 }
 
+export type WorldbuildingMessage = {
+  message: string;
+  posterId: string;
+  timestamp: Timestamp;
+}
+
 export type Lobby = {
   id: string;
   name: string;
@@ -42,4 +48,5 @@ export type Lobby = {
   activityMap: Record<string, Timestamp>;
   readyMap?: Record<string, boolean>;
   lastActive: Timestamp;
+  worldbuildingMessages?: WorldbuildingMessage[];
 };

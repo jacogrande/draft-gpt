@@ -30,8 +30,7 @@ export const createLobby = async (
   lobbyName: string
 ): Promise<string> => {
   const lobbyRef = doc(collection(db, LOBBIES_COLLECTION));
-  const currentSeconds = Math.floor(new Date().getTime() / 1000);
-  const currentTimestamp = new Timestamp(currentSeconds, 0);
+  const currentTimestamp = Timestamp.fromDate(new Date());
   const lobby: Lobby = {
     id: lobbyRef.id,
     name: lobbyName,
@@ -82,8 +81,12 @@ export const subscribeToLobbies = (
   callback: (lobbies: Lobby[]) => void
 ): Unsubscribe => {
   const lobbiesRef = collection(db, LOBBIES_COLLECTION);
+  const MAX_IDLE_TIMESTAMP = Timestamp.fromDate(
+    new Date(Date.now() - MAX_IDLE_TIME)
+  );
   const activeLobbiesQuery = query(
     lobbiesRef,
+    where("lastActive", ">=", MAX_IDLE_TIMESTAMP), // This ensure only lobbies with recently active users are returned (heartbeats)
     where("activeUsers", "!=", []) // This ensures the activeUsers array is not empty
   );
 
@@ -111,9 +114,8 @@ export const createRandomLobbyName = (): string => {
  */
 export const sendPulse = async (user: User, lobbyId: string): Promise<void> => {
   const lobbyRef = doc(db, LOBBIES_COLLECTION, lobbyId);
-  const currentSeconds = Math.floor(new Date().getTime() / 1000);
-  const currentTimestamp = new Timestamp(currentSeconds, 0);
-  console.log('pulsing user with uid', user.uid, 'and lobbyId', lobbyId);
+  const currentTimestamp = Timestamp.fromDate(new Date());
+  console.log("pulsing user with uid", user.uid, "and lobbyId", lobbyId);
   await setDoc(
     lobbyRef,
     {
@@ -137,20 +139,48 @@ export const cleanupLobbyUsers = async (lobbyId: string): Promise<void> => {
   const lobbyDoc = await getDoc(lobbyRef);
   const lobby = lobbyDoc.data() as Lobby;
   const activeUserIds = Object.keys(lobby.activityMap).filter(
-    (userId) => lobby.activityMap[userId].seconds + MAX_IDLE_TIME / 1000 > currentSeconds
+    (userId) =>
+      lobby.activityMap[userId].seconds + MAX_IDLE_TIME / 1000 > currentSeconds
   );
-  const activeUsers = lobby.activeUsers.filter((user) => !activeUserIds.includes(user.uid));
-  if(activeUsers.length === lobby.activeUsers.length) return;
+  const activeUsers = lobby.activeUsers.filter((user) =>
+    activeUserIds.includes(user.uid)
+  );
+  if (activeUsers.length === lobby.activeUsers.length) return;
   await updateDoc(lobbyRef, {
     activeUsers: activeUsers,
   });
-}
+};
 
-export const readyUp = async (lobbyId: string, userId: string): Promise<void> => {
+/**
+ * Marks a user as ready in the lobby
+ * @param lobbyId - the id of the lobby to mark as ready
+ * @param userId - the id of the user to mark as ready
+ * @description this will add a new record to the lobby's `readyMap` with the user's id and the current timestamp
+ */
+export const readyUp = async (
+  lobbyId: string,
+  userId: string
+): Promise<void> => {
   const lobbyRef = doc(db, LOBBIES_COLLECTION, lobbyId);
-  await setDoc(lobbyRef, {
-    readyMap: {
-      [userId]: new Timestamp(Math.floor(new Date().getTime() / 1000), 0),
+  await setDoc(
+    lobbyRef,
+    {
+      readyMap: {
+        [userId]: new Timestamp(Math.floor(new Date().getTime() / 1000), 0),
+      },
     },
-  }, { merge: true });
-}
+    { merge: true }
+  );
+};
+
+export const postWorldbuildingMessage = async (message: string, userId: string, lobbyId: string): Promise<void> => {
+  const lobbyRef = doc(db, LOBBIES_COLLECTION, lobbyId);
+  const currentTimestamp = Timestamp.fromDate(new Date());
+  await setDoc(
+    lobbyRef,
+    {
+      worldbuildingMessages: arrayUnion({message, posterId: userId, timestamp: currentTimestamp}),
+    },
+    { merge: true }
+  );
+};
