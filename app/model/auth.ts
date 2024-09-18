@@ -4,7 +4,7 @@ import {
   signInWithEmailLink,
 } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
-import { auth, db } from "~/services/firebase";
+import { auth, db } from "~/model/firebase";
 import { BASE_URL } from "~/util/constants";
 
 /**
