@@ -1,9 +1,10 @@
 import { AtSymbolIcon, UserIcon } from "@heroicons/react/16/solid";
-import { Navigate } from "@remix-run/react";
-import { useMemo, useState } from "react";
+import { Navigate, useNavigate } from "@remix-run/react";
+import { useEffect, useMemo, useState } from "react";
 import Heading from "~/components/Heading";
 import Page from "~/components/Page";
 import { useToast } from "~/hooks/useToast";
+import { useUser } from "~/hooks/useUser";
 import { sendJoinLink } from "~/model/auth";
 import { auth } from "~/model/firebase";
 import { validateEmail } from "~/util/validateEmail";
@@ -15,6 +16,8 @@ type FormData = {
 
 const Join = () => {
   const { toast } = useToast();
+  const { user } = useUser();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState<FormData>({
     username: "",
     email: "",
@@ -27,6 +30,12 @@ const Join = () => {
     [formData.email]
   );
   const disabled = !formData.username || !isValidEmail || loading;
+
+  useEffect(() => {
+    if (user) {
+      navigate("/");
+    }
+  }, [user, navigate]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
