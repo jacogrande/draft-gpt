@@ -1,30 +1,57 @@
-import { onSnapshot, collection } from "firebase/firestore";
-import { useEffect } from "react";
+import { onSnapshot, collection, QuerySnapshot } from "firebase/firestore";
+import { useCallback, useEffect } from "react";
 import { create } from "zustand";
+import { useUser } from "~/hooks/useUser";
+import { getCardsInPack } from "~/model/draft";
 import { db } from "~/model/firebase";
 import { LOBBIES_COLLECTION } from "~/util/constants";
-import { Pack } from "~/util/types";
+import { Card, Pack } from "~/util/types";
 
 type PacksStore = {
   packs: Pack[];
   setPacks: (packs: Pack[]) => void;
+  currentPack: Pack | null;
+  setCurrentPack: (pack: Pack | null) => void;
+  cards: Card[];
+  setCards: (cards: Card[]) => void;
 };
 
 export const usePacksStore = create<PacksStore>((set) => ({
   packs: [],
   setPacks: (packs) => set({ packs }),
+  currentPack: null,
+  setCurrentPack: (pack) => set({ currentPack: pack }),
+  cards: [],
+  setCards: (cards) => set({ cards }),
 }));
 
 export function usePacks(lobbyId: string) {
-  const { packs, setPacks } = usePacksStore();
+  const { user } = useUser();
+  const { packs, setPacks, currentPack, setCurrentPack, setCards } = usePacksStore();
+
+  useEffect(() => { 
+    if(!currentPack) return;
+    (async () => {
+      const cards = await getCardsInPack(lobbyId, currentPack.id);
+      setCards(cards);
+    })();
+  }, [currentPack, lobbyId, setCards]);
+
+  const snapshotHandler = useCallback(async (snapshot: QuerySnapshot) => {
+    const packs = snapshot.docs.map((doc) => doc.data() as Pack);
+    setPacks(packs);
+    // get all the current user's packs
+    if (!user) return;
+    const userPacks = packs.filter((pack) => pack.currentHolder === user.uid);
+    const lowestPositionPack = userPacks.reduce((a, b) => a.position < b.position ? a : b);
+    if(lowestPositionPack.id === currentPack?.id) return;
+    setCurrentPack(lowestPositionPack);
+  }, [user, setPacks, setCurrentPack, currentPack]);
 
   useEffect(() => {
-    const unsubscribe = onSnapshot(collection(db, LOBBIES_COLLECTION, lobbyId, "packs"), (snapshot) => {
-      const packs = snapshot.docs.map((doc) => doc.data() as Pack);
-      setPacks(packs);
-    });
+    const unsubscribe = onSnapshot(collection(db, LOBBIES_COLLECTION, lobbyId, "packs"), snapshotHandler);
     return unsubscribe;
-  }, [lobbyId, setPacks]);
+  }, [lobbyId, setPacks, snapshotHandler]);
 
   return packs;
 }

@@ -1,10 +1,10 @@
-import { doc, getDoc, runTransaction } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, runTransaction } from "firebase/firestore";
 import { sleep } from "openai/core.mjs";
 import { db } from "~/model/firebase";
 import { getLobbyUserIdList } from "~/model/lobby";
 import { LOBBIES_COLLECTION } from "~/util/constants";
 import { createPackDraftOrders } from "~/util/createPackDraftOrders";
-import { WorldbuildingMessage } from "~/util/types";
+import { Card, WorldbuildingMessage } from "~/util/types";
 
 export const startDraft = async (lobbyId: string) => {
   const lobbyRef = doc(db, LOBBIES_COLLECTION, lobbyId);
@@ -93,4 +93,11 @@ const finishPacks = async (lobbyId: string) => {
   });
   const json = await response.json();
   console.log(json);
+};
+
+export const getCardsInPack = async (lobbyId: string, packId: string): Promise<Card[]> => {
+  const cardsRef = collection(db, LOBBIES_COLLECTION, lobbyId, "packs", packId, "cards");
+  const querySnapshot = await getDocs(cardsRef);
+  const cards = querySnapshot.docs.map((doc) => doc.data() as Card);
+  return cards;
 };
