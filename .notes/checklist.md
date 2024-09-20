@@ -22,17 +22,19 @@
 - [x] Ready up
 - [x] Worldbuilding chat
 - [x] Test multiple users in lobby
+- [ ] Fix lobby disconnect bug
 
 ## Drafting
 
 - [x] Draft initialization
-- [ ] Card re-use algorithm
-- [ ] Pack generation
+- [x] Card re-use algorithm
+- [x] Pack generation
 - [ ] Art generation
-- [ ] Pack order / queueing
+- [x] Pack order / queueing
 - [ ] Pack display
 - [ ] Card selection
 - [ ] Round transitions
+- [ ] Figure out weird setting sync issue
 
 ## Decks
 
