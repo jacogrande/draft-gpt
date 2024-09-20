@@ -8,7 +8,7 @@ const ChatMessage = ({
   const directionClass = sentByUser ? "chat-end" : "chat-start";
   return (
     <div className={`chat ${directionClass}`}>
-      <div className="chat-bubble">{message}</div>
+      <div className="chat-bubble dark:bg-base-200">{message}</div>
     </div>
   );
 };

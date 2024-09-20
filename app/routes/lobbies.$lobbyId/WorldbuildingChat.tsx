@@ -11,8 +11,10 @@ const WorldbuildingChat = () => {
   const { user } = useUser();
   const [message, setMessage] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
+  const [open, setOpen] = useState<boolean>(false);
   const { toast } = useToast();
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setMessage(e.target.value);
@@ -41,6 +43,10 @@ const WorldbuildingChat = () => {
     [message, lobby, toast, user]
   );
 
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
   useEffect(() => {
     if (!textAreaRef.current) return;
     textAreaRef.current.onkeydown = (e) => {
@@ -51,13 +57,36 @@ const WorldbuildingChat = () => {
     };
   }, [textAreaRef, handleSubmit]);
 
+  /**
+   * Close the dropdown when the user clicks outside of it
+   */
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(e.target as Node)
+      ) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("click", handleClickOutside);
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, [dropdownRef, setOpen]);
+
   return (
-    <div className="absolute bottom-0 right-0 dropdown dropdown-end dropdown-top">
-      <div tabIndex={0} role="button" className="btn m-1">
+    <div
+      className={`absolute bottom-0 right-0 dropdown dropdown-end dropdown-top ${
+        open && "dropdown-open"
+      }`}
+      ref={dropdownRef}
+    >
+      <button tabIndex={0} className="btn m-1" onClick={handleOpen}>
         <ChatBubbleOvalLeftEllipsisIcon className="h-5 w-5" />
         Worldbuilding
-      </div>
-      <div className="dropdown-content menu py-4 pl-8 bg-base-100 flex flex-col gap-2 rounded-box">
+      </button>
+      <div className="dropdown-content menu py-4 pl-8 bg-none flex flex-col gap-2 rounded-box">
         {lobby?.worldbuildingMessages?.map((message) => (
           <ChatMessage
             key={message.timestamp.toDate().toString()}
@@ -72,12 +101,14 @@ const WorldbuildingChat = () => {
             placeholder="Make a worldbuilding suggestion..."
             value={message}
             onChange={handleChange}
+            tabIndex={0}
             ref={textAreaRef}
           />
           <button
             type="submit"
             className="btn btn-primary"
             disabled={loading || !message}
+            tabIndex={0}
           >
             Send
           </button>
