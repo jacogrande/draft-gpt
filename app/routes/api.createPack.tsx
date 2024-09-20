@@ -1,5 +1,9 @@
 import { ActionFunction, json } from "@remix-run/node";
-import { addCardsToPack, createPackDoc } from "~/.server/draftActions";
+import {
+  addCardsToPack,
+  addCardsToSetting,
+  createPackDoc,
+} from "~/.server/draftActions";
 import { getLobbySetting } from "~/.server/lobbyActions";
 import { withAuthenticatedUser } from "~/.server/middleware/withAuthenticatedUser";
 import { generatePack } from "~/.server/models/openai";
@@ -20,6 +24,7 @@ export const action: ActionFunction = withAuthenticatedUser(
       // commit the pack to the database
       const packId = await createPackDoc(lobbyId, draftOrder, round);
       await addCardsToPack(packId, lobbyId, packData.cards);
+      await addCardsToSetting(setting.id, lobbyId, packData.cards);
 
       console.log("pack generation complete");
       if (!packData) throw new Error("Pack generation failed");

@@ -32,7 +32,9 @@ export const attachSettingToLobby = async (
   });
 };
 
-export const getLobbySetting = async (lobbyId: string): Promise<Setting> => {
+export const getLobbySetting = async (
+  lobbyId: string
+): Promise<Setting & { id: string }> => {
   const lobbyRef = adminDb.collection("lobbies").doc(lobbyId);
   const lobbyDoc = await lobbyRef.get();
   const lobbyData = lobbyDoc.data();
@@ -47,5 +49,5 @@ export const getLobbySetting = async (lobbyId: string): Promise<Setting> => {
   if (!settingData) throw new Error("Setting not found");
   if (!isSetting(settingData))
     throw new Error("Setting is not formatted correctly");
-  return settingData;
+  return { ...settingData, id: settingDocRef.id };
 };

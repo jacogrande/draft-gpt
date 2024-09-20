@@ -3,7 +3,7 @@ import { adminDb } from "~/.server/firebase-admin";
 import { GeneratedCard, Setting } from "~/.server/prompts/responseTypes";
 import { SET_ICONS } from "~/util/constants";
 import { randomUid } from "~/.server/util/randomUid";
-import { Pack } from "~/util/types";
+import { Card, Pack } from "~/util/types";
 
 type CreateSettingDocParams = {
   lobbyId: string;
@@ -89,6 +89,54 @@ export const addCardsToPack = async (
     };
     batch.create(packRef.collection("cards").doc(id), cardData);
   });
+  const existingPackData = await packRef.get();
+  const existingCardCount = existingPackData.data()?.cardCount || 0;
+  await packRef.set(
+    { cardCount: existingCardCount + cards.length },
+    { merge: true }
+  );
   await batch.commit();
   console.log("cards added to pack");
+};
+
+/**
+ * Adds card data to a setting
+ * @param settingId - the id of the setting to add the cards to
+ * @param lobbyId - the id of the lobby the setting belongs to
+ * @param cards - the cards to add to the setting
+ * @returns a promise that resolves when the cards have been added to the setting
+ * @description this will populate the setting's `cards` subcollection with a card doc for each card in the `cards` array
+ */
+export const addCardsToSetting = async (
+  settingId: string,
+  lobbyId: string,
+  cards: GeneratedCard[]
+): Promise<void> => {
+  const settingRef = adminDb.collection(`settings`).doc(settingId);
+  const batch = adminDb.batch();
+  cards.forEach(async (card) => {
+    const id = randomUid();
+    const cardData = {
+      ...card,
+      id,
+      lobbyId,
+      createdAt: Timestamp.now(),
+    };
+    batch.create(settingRef.collection("cards").doc(id), cardData);
+  });
+  await batch.commit();
+};
+
+export const getAllPacksInLobby = async (lobbyId: string): Promise<Pack[]> => {
+  const packsRef = adminDb.collection(`lobbies/${lobbyId}/packs`);
+  const packs = await packsRef.get();
+  return packs.docs.map((doc) => doc.data() as Pack);
+};
+
+export const getAllSettingCards = async (
+  settingId: string
+): Promise<Card[]> => {
+  const cardsRef = adminDb.collection(`settings/${settingId}/cards`);
+  const cards = await cardsRef.get();
+  return cards.docs.map((doc) => doc.data() as Card);
 };

@@ -61,6 +61,8 @@ const runPackDistributionManager= async (lobbyId: string, round: number) => {
     await sleep(500); // avoid rate limiting
   }
   await Promise.all(packPromises); // TODO: Use Promise.allSettled
+  // ensure each pack has at least 15 cards
+  await finishPacks(lobbyId);
 };
 
 const createPack = async (lobbyId: string, draftOrder: string[], round: number): Promise<void> => {
@@ -73,6 +75,20 @@ const createPack = async (lobbyId: string, draftOrder: string[], round: number):
       lobbyId,
       draftOrder,
       round
+    }),
+  });
+  const json = await response.json();
+  console.log(json);
+};
+
+const finishPacks = async (lobbyId: string) => {
+  const response = await fetch("/api/finishPacks", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      lobbyId,
     }),
   });
   const json = await response.json();

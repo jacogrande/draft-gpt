@@ -68,7 +68,7 @@ const Lobby = () => {
 
   const getCurrentScreen = () => {
     if (!lobby) return null;
-    const { draftStarted, currentPack } = lobby;
+    const { draftStarted } = lobby;
     if (!draftStarted) return <StartingScreen />;
     if (packs.length === 0) return <DraftStartingScreen />;
     // return <DraftStartingScreen />;
@@ -91,7 +91,7 @@ const Lobby = () => {
           <SettingInfo />
         </div>
         <div className="flex flex-1 justify-between ">
-          <LobbyDetails lobby={lobby} />
+          <LobbyDetails />
           {getCurrentScreen()}
         </div>
       </div>

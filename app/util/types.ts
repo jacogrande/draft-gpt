@@ -1,5 +1,5 @@
 import { Timestamp } from "firebase/firestore";
-import { Setting } from "~/.server/prompts/responseTypes";
+import { GeneratedCard, Setting } from "~/.server/prompts/responseTypes";
 
 export type DaisyColor =
   | "primary"
@@ -60,12 +60,20 @@ export type Pack = {
   order: string[];
   position: number;
   lobbyId: string;
+  cardCount: number;
   round: number;
 }
 
 export type SettingWithMetadata = Setting & {
   lobbyId: string;
+  id: string;
   icon: string;
   createdAt: string;
   createdBy: string;
+}
+
+export type Card = GeneratedCard & {
+  id: string;
+  createdAt: Timestamp;
+  pickedBy: string;
 }
