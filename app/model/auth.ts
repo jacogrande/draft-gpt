@@ -79,15 +79,17 @@ export const createUserDoc = async (username: string) => {
 
 export const createSessionCookie = async (user: FirebaseUser) => {
   const idToken = await user.getIdToken();
-  console.log(idToken);
-  const response = await fetch("/api/session", {
+ await fetch("/api/session", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ idToken }),
   });
-  console.log(response.status);
-  const json  = await response.json();
-  console.log(json);
+};
+
+export const deleteSessionCookie = async () => {
+  const response = await fetch("/api/session", {
+    method: "DELETE",
+  });
 };
