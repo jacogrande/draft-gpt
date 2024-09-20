@@ -21,10 +21,12 @@
 - [x] Heartbeats
 - [x] Ready up
 - [x] Worldbuilding chat
+- [x] Test multiple users in lobby
 
 ## Drafting
 
-- [ ] Draft initialization
+- [x] Draft initialization
+- [ ] Card re-use algorithm
 - [ ] Pack generation
 - [ ] Art generation
 - [ ] Pack order / queueing
