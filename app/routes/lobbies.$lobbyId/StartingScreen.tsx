@@ -2,6 +2,7 @@ import Heading from "~/components/Heading";
 import { useLobbyStore } from "~/hooks/lobby/useLobby";
 import { useToast } from "~/hooks/useToast";
 import { useUser } from "~/hooks/useUser";
+import { startDraft } from "~/model/draft";
 import { readyUp } from "~/model/lobby";
 import WorldbuildingChat from "~/routes/lobbies.$lobbyId/WorldbuildingChat";
 
@@ -16,6 +17,14 @@ const StartingScreen = () => {
       return;
     }
     await readyUp(lobby.id, user.uid);
+  };
+
+  const handleStartDraft = async () => {
+    if (!user || !lobby) {
+      toast("Unable to get user or lobby data", "error");
+      return;
+    }
+    await startDraft(lobby.id);
   };
 
   if (!user || !lobby) return null;
@@ -34,7 +43,7 @@ const StartingScreen = () => {
         </button>
       )}
       {allReady && (
-        <button className="btn btn-primary" onClick={handleReadyUp}>
+        <button className="btn btn-primary" onClick={handleStartDraft}>
           Start Game
         </button>
       )}
