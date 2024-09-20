@@ -13,10 +13,9 @@ import {
 } from "firebase/firestore";
 import { MAX_IDLE_TIME } from "~/hooks/lobby/useHeartbeat";
 import { db } from "~/model/firebase";
-import { ADJECTIVES, NOUNS } from "~/util/constants";
+import { ADJECTIVES, LOBBIES_COLLECTION, NOUNS } from "~/util/constants";
 import { Lobby, User } from "~/util/types";
 
-const LOBBIES_COLLECTION = "lobbies";
 
 /**
  * Create a new lobby in the database
@@ -44,6 +43,7 @@ export const createLobby = async (
     ],
     activityMap: {},
     lastActive: currentTimestamp,
+    currentRound: 0,
   };
   await setDoc(lobbyRef, lobby);
   return lobbyRef.id;
@@ -182,4 +182,12 @@ export const postWorldbuildingMessage = async (message: string, userId: string, 
     },
     { merge: true }
   );
+};
+
+export const getLobbyUserIdList = async (lobbyId: string): Promise<string[]> => {
+  const lobbyRef = doc(db, LOBBIES_COLLECTION, lobbyId);
+  const lobbyDoc = await getDoc(lobbyRef);
+  const lobbyData = lobbyDoc.data();
+  if (!lobbyData) throw new Error("Lobby not found");
+  return lobbyData.activeUsers.map((user: User) => user.uid);
 };

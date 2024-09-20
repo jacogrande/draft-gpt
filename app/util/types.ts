@@ -1,4 +1,5 @@
 import { Timestamp } from "firebase/firestore";
+import { Setting } from "~/.server/prompts/responseTypes";
 
 export type DaisyColor =
   | "primary"
@@ -46,7 +47,25 @@ export type Lobby = {
   activeUsers: PublicUser[];
   createdAt: Timestamp;
   activityMap: Record<string, Timestamp>;
+  draftStarted?: boolean;
   readyMap?: Record<string, boolean>;
   lastActive: Timestamp;
   worldbuildingMessages?: WorldbuildingMessage[];
+  currentRound: 0;
 };
+
+export type Pack = {
+  id: string;
+  currentHolder: string;
+  order: string[];
+  position: number;
+  lobbyId: string;
+  round: number;
+}
+
+export type SettingWithMetadata = Setting & {
+  lobbyId: string;
+  icon: string;
+  createdAt: string;
+  createdBy: string;
+}
