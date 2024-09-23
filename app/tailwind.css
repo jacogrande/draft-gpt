@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: "Goudy Medieval";
+  src: local("Goudy Medieval"),
+    url("/fonts/GoudyMediaeval-Regular.ttf") format("truetype");
+}
+
 html,
 body {
   @apply bg-white dark:bg-slate-800;

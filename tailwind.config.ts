@@ -15,6 +15,10 @@ export default {
           '"Segoe UI Symbol"',
           '"Noto Color Emoji"',
         ],
+        serif: ['"Goudy Medieval"'],
+      },
+      fontSize: {
+        "2xs": "0.7rem",
       },
     },
   },
