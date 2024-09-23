@@ -12,6 +12,7 @@ import { useUser } from "~/hooks/useUser";
 import { joinLobby } from "~/model/lobby";
 import DraftStartingScreen from "~/routes/lobbies.$lobbyId/DraftStartingScreen";
 import LobbyDetails from "~/routes/lobbies.$lobbyId/LobbyDetails";
+import PackDisplayScreen from "~/routes/lobbies.$lobbyId/PackDisplayScreen";
 import SettingInfo from "~/routes/lobbies.$lobbyId/SettingInfo";
 import StartingScreen from "~/routes/lobbies.$lobbyId/StartingScreen";
 
@@ -71,7 +72,7 @@ const Lobby = () => {
     const { draftStarted } = lobby;
     if (!draftStarted) return <StartingScreen />;
     if (packs.length === 0) return <DraftStartingScreen />;
-    // return <DraftStartingScreen />;
+    return <PackDisplayScreen />;
   };
 
   if (loading)

@@ -14,6 +14,8 @@ type PacksStore = {
   setCurrentPack: (pack: Pack | null) => void;
   cards: Card[];
   setCards: (cards: Card[]) => void;
+  selectedCard: Card | null;
+  setSelectedCard: (card: Card | null) => void;
 };
 
 export const usePacksStore = create<PacksStore>((set) => ({
@@ -23,6 +25,8 @@ export const usePacksStore = create<PacksStore>((set) => ({
   setCurrentPack: (pack) => set({ currentPack: pack }),
   cards: [],
   setCards: (cards) => set({ cards }),
+  selectedCard: null,
+  setSelectedCard: (card) => set({ selectedCard: card }),
 }));
 
 export function usePacks(lobbyId: string) {

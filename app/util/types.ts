@@ -49,6 +49,7 @@ export type Lobby = {
   activityMap: Record<string, Timestamp>;
   draftStarted?: boolean;
   readyMap?: Record<string, boolean>;
+  setting?: string; // setting id
   lastActive: Timestamp;
   worldbuildingMessages?: WorldbuildingMessage[];
   currentRound: 0;
@@ -77,3 +78,5 @@ export type Card = GeneratedCard & {
   createdAt: Timestamp;
   pickedBy: string;
 }
+
+export type CardColor = "red" | "white" | "blue" | "black" | "green" | "multi" | "colorless";

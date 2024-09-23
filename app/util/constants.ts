@@ -1,5 +1,17 @@
+import { CardColor } from "~/util/types";
+
 export const BASE_URL = "https://draftgpt.hasslebad.com";
 export const LOBBIES_COLLECTION = "lobbies";
+
+export const CARD_COLORS: Record<CardColor, string> = {
+  red: "bg-red-500/50",
+  white: "bg-stone-200/50",
+  blue: "bg-sky-500/50",
+  black: "bg-zinc-800/50",
+  green: "bg-green-500/50",
+  multi: "bg-amber-500",
+  colorless: "bg-slate-400/70",
+};
 
 export const ADJECTIVES = [
   "Altered",
