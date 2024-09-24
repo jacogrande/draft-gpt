@@ -45,7 +45,9 @@ const Card = ({ card }: CardProps) => {
         <p>{card.mana_cost}</p>
       </div>
       {/* IMAGE */}
-      <div className="w-[97%] h-36 bg-gray-300"></div>
+      <div className="w-[97%] h-36 bg-gray-300 object-cover">
+        {card.image_url && <img src={card.image_url} alt={card.name} />}
+      </div>
       {/* TYPE */}
       <div
         className="flex items-center gap-2 bg-base-100 w-full rounded-md py-1 px-2 border border-base-300 justify-between"

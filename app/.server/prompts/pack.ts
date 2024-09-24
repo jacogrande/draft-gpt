@@ -20,6 +20,9 @@ Make sure the new cards have very unique names. Use "Show, don't tell" to help w
 ### Power Level
 This set should have a similar power level to a Vintage Cube, Modern Masters set, or Competitive Magic decks. It should encourage high power, competitive play with strong cards. The mana curve should be relatively low and the value of each card should be relatively high.
 
+### Art Direction
+Make sure each card has unique art direction. This direction will be provided to the card's artist. The direction should have a clear and concise description of an image, along with a few style ideas. The art themes and styles should be consistent across the set. Make sure the art direction incorporates the set details / description in a way that helps define the world.
+
 ### Color Identities
 Make sure that the cards' colors are evenly dispersed between Red, Green, White, Blue, Black, Colorless, and Multicolored.
 
@@ -51,6 +54,7 @@ export const PACK_FUNCTION_SCHEMA = {
             "legendary",
             "subtype",
             "toughness",
+            "art_direction",
             "flavor_text",
             "linked_card",
           ],
@@ -94,6 +98,10 @@ export const PACK_FUNCTION_SCHEMA = {
               type: "string",
               description:
                 "(optional) The subtype of the card (e.g., Spirit, Elf, Wizard)",
+            },
+            art_direction: {
+              type: "string",
+              description: "The direction to provide to the card's artist.",
             },
             mana_cost: {
               type: "string",

@@ -65,7 +65,7 @@ const createSetting = async (lobbyId: string) => {
   const worldbuildingMessages = (await getWorldbuildingMessages(lobbyId)).map(
     (message) => message.message
   );
-  await fetch("/api/createSetting", {
+  const response = await fetch("/api/createSetting", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -75,6 +75,7 @@ const createSetting = async (lobbyId: string) => {
       worldbuildingMessages,
     }),
   });
+  if(!response.ok) throw new Error("Setting generation failed");
 };
 
 const getWorldbuildingMessages = async (

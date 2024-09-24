@@ -26,6 +26,8 @@ type Mechanic = {
 export type GeneratedCard = {
   name: string;
   mana_cost: string;
+  art_direction: string;
+  image_url?: string | null;
   type: string;
   subtype: string;
   rarity: string;
@@ -64,6 +66,7 @@ export const isCard = (card: unknown): card is GeneratedCard => {
     "mana_cost" in card &&
     "type" in card &&
     "subtype" in card &&
+    "art_direction" in card &&
     "rarity" in card &&
     "rules_text" in card &&
     "flavor_text" in card &&

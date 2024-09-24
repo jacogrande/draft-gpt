@@ -16,7 +16,10 @@ export const action: ActionFunction = withAuthenticatedUser(
       // generate and save the setting
       console.log("Generating setting...");
       const setting = await generateSetData(worldbuildingMessages);
-      if (!setting) throw new Error("Setting not generated");
+      if (!setting) {
+        console.error("Setting not generated");
+        return json({ error: "Setting not generated" }, { status: 500 });
+      }
       const settingId = await createSettingDoc({ lobbyId, userId, setting });
       console.log("Setting generated and saved");
       await attachSettingToLobby(lobbyId, settingId);
