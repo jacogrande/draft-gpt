@@ -85,6 +85,7 @@ export type CardColor = "red" | "white" | "blue" | "black" | "green" | "multi" |
 
 export type Deck = {
   id: string;
+  lobbyId: string;
   cards: Card[];
   createdAt: Timestamp;
   createdBy: string;

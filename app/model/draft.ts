@@ -8,6 +8,7 @@ import {
   getDocs,
   runTransaction,
   setDoc,
+  Timestamp,
   updateDoc,
 } from "firebase/firestore";
 import { sleep } from "openai/core.mjs";
@@ -276,6 +277,10 @@ const getDeckRef = async (
   if (!deckDoc.exists()) {
     await setDoc(deckRef, {
       cards: [],
+      id: deckRef.id,
+      lobbyId,
+      createdAt: Timestamp.now(),
+      createdBy: userId,
     });
   }
   return deckRef;
