@@ -78,7 +78,7 @@ export const createUserDoc = async (username: string) => {
 };
 
 export const createSessionCookie = async (user: FirebaseUser) => {
-  const idToken = await user.getIdToken();
+  const idToken = await user.getIdToken(true);
  await fetch("/api/session", {
     method: "POST",
     headers: {
@@ -89,7 +89,7 @@ export const createSessionCookie = async (user: FirebaseUser) => {
 };
 
 export const deleteSessionCookie = async () => {
-  const response = await fetch("/api/session", {
+  await fetch("/api/session", {
     method: "DELETE",
   });
 };
