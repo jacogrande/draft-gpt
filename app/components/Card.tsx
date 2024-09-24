@@ -5,6 +5,7 @@ import { Card as CardType } from "~/util/types";
 
 type CardProps = {
   card?: CardType;
+  disabled?: boolean;
 };
 
 const CARD_WIDTH = 250;
@@ -12,7 +13,7 @@ const CARD_HEIGHT = 350;
 const DEFAULT_SCALE = 1;
 export const CARD_WIDTH_SCALED = CARD_WIDTH * DEFAULT_SCALE;
 
-const Card = ({ card }: CardProps) => {
+const Card = ({ card, disabled }: CardProps) => {
   const selectedCard = usePacksStore((state) => state.selectedCard);
   const setSelectedCard = usePacksStore((state) => state.setSelectedCard);
   if (!card) return null;
@@ -37,6 +38,7 @@ const Card = ({ card }: CardProps) => {
         width: `${CARD_WIDTH}px`,
         height: `${CARD_HEIGHT}px`,
       }}
+      disabled={disabled}
       onClick={handleClick}
     >
       {/* NAME AND COST */}

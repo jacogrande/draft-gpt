@@ -82,3 +82,10 @@ export type Card = GeneratedCard & {
 }
 
 export type CardColor = "red" | "white" | "blue" | "black" | "green" | "multi" | "colorless";
+
+export type Deck = {
+  id: string;
+  cards: Card[];
+  createdAt: Timestamp;
+  createdBy: string;
+}
