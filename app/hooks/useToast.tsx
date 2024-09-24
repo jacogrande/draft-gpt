@@ -46,7 +46,7 @@ export const ToastProvider = () => {
 
   if (!currentToast.message) return null;
   return (
-    <div className="toast toast-end">
+    <div className="toast toast-end z-30">
       <div className={`alert alert-${currentToast.type || "info"}`}>
         <span>{currentToast.message}</span>
       </div>

@@ -4,6 +4,7 @@ import {
   getAllPacksInLobby,
   getAllSettingCards,
 } from "~/.server/draftActions";
+import { adminDb } from "~/.server/firebase-admin";
 import { withAuthenticatedUser } from "~/.server/middleware/withAuthenticatedUser";
 import { getLobby } from "~/model/lobby";
 import { getRandomElement } from "~/util/getRandomElement";
@@ -57,4 +58,8 @@ const addRemainingCardsToPacks = async (lobbyId: string) => {
       .map(() => getRandomElement(allCards));
     await addCardsToPack(pack.id, lobbyId, newCards);
   }
+  // update the lobby's `creatingPacks` field to false
+  await adminDb.collection("lobbies").doc(lobbyId).update({
+    creatingPacks: false,
+  });
 };

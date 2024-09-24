@@ -3,6 +3,8 @@ import { CardColor } from "~/util/types";
 export const BASE_URL = "https://draftgpt.hasslebad.com";
 export const LOBBIES_COLLECTION = "lobbies";
 
+export const ROUND_COUNT = 3;
+
 export const CARD_COLORS: Record<CardColor, string> = {
   red: "bg-red-500/50",
   white: "bg-stone-200/50",

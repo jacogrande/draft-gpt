@@ -12,6 +12,7 @@ import { generatePack } from "~/.server/models/openai";
 export const action: ActionFunction = withAuthenticatedUser(
   async ({ request, userId }) => {
     try {
+      console.debug("Generating pack...");
       const body = await request.json();
       if (!isValidBody(body))
         return json({ error: "Invalid body" }, { status: 422 });
@@ -26,7 +27,6 @@ export const action: ActionFunction = withAuthenticatedUser(
       await addCardsToPack(packId, lobbyId, packData.cards);
       await addCardsToSetting(setting.id, lobbyId, packData.cards);
 
-      console.log("pack generation complete");
       if (!packData) throw new Error("Pack generation failed");
       return json({ userId }, { status: 200 });
     } catch (error) {

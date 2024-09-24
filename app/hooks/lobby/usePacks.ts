@@ -31,15 +31,19 @@ export const usePacksStore = create<PacksStore>((set) => ({
 
 export function usePacks(lobbyId: string) {
   const { user } = useUser();
-  const { packs, setPacks, currentPack, setCurrentPack, setCards } = usePacksStore();
+  const { packs, setPacks, currentPack, setCurrentPack, setCards, setSelectedCard } = usePacksStore();
 
   useEffect(() => { 
-    if(!currentPack) return;
+    if(!currentPack) {
+      setCards([]);
+      setSelectedCard(null);
+      return;
+    } 
     (async () => {
       const cards = await getCardsInPack(lobbyId, currentPack.id);
       setCards(cards);
     })();
-  }, [currentPack, lobbyId, setCards]);
+  }, [currentPack, lobbyId, setCards, setSelectedCard]);
 
   const snapshotHandler = useCallback(async (snapshot: QuerySnapshot) => {
     const packs = snapshot.docs.map((doc) => doc.data() as Pack);
@@ -47,15 +51,19 @@ export function usePacks(lobbyId: string) {
     // get all the current user's packs
     if (!user) return;
     const userPacks = packs.filter((pack) => pack.currentHolder === user.uid);
+    if(userPacks.length === 0) {
+      setCurrentPack(null);
+      return;
+    }
     const lowestPositionPack = userPacks.reduce((a, b) => a.position < b.position ? a : b);
-    if(lowestPositionPack.id === currentPack?.id) return;
     setCurrentPack(lowestPositionPack);
-  }, [user, setPacks, setCurrentPack, currentPack]);
+  }, [user, setPacks, setCurrentPack]);
 
   useEffect(() => {
+    if(!user) return;
     const unsubscribe = onSnapshot(collection(db, LOBBIES_COLLECTION, lobbyId, "packs"), snapshotHandler);
     return unsubscribe;
-  }, [lobbyId, setPacks, snapshotHandler]);
+  }, [lobbyId, setPacks, snapshotHandler, user]);
 
   return packs;
 }

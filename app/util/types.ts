@@ -43,6 +43,7 @@ export type WorldbuildingMessage = {
 export type Lobby = {
   id: string;
   name: string;
+  creatingPacks: boolean;
   createdBy: string;
   activeUsers: PublicUser[];
   createdAt: Timestamp;
@@ -52,7 +53,7 @@ export type Lobby = {
   setting?: string; // setting id
   lastActive: Timestamp;
   worldbuildingMessages?: WorldbuildingMessage[];
-  currentRound: 0;
+  currentRound: number;
 };
 
 export type Pack = {
@@ -75,6 +76,7 @@ export type SettingWithMetadata = Setting & {
 
 export type Card = GeneratedCard & {
   id: string;
+  packId: string;
   createdAt: Timestamp;
   pickedBy: string;
 }

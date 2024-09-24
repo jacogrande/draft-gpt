@@ -1,8 +1,8 @@
 import { Timestamp } from "firebase-admin/firestore";
 import { adminDb } from "~/.server/firebase-admin";
 import { GeneratedCard, Setting } from "~/.server/prompts/responseTypes";
-import { SET_ICONS } from "~/util/constants";
 import { randomUid } from "~/.server/util/randomUid";
+import { SET_ICONS } from "~/util/constants";
 import { Card, Pack } from "~/util/types";
 
 type CreateSettingDocParams = {
@@ -56,6 +56,7 @@ export const createPackDoc = async (
     currentHolder: draftOrder[0],
     order: draftOrder,
     position: 0,
+    cardCount: 0,
     lobbyId,
     round,
     id: packRef.id,
@@ -84,6 +85,7 @@ export const addCardsToPack = async (
     const cardData = {
       ...card,
       id,
+      packId,
       createdAt: Timestamp.now(),
       pickedBy: null,
     };

@@ -21,7 +21,7 @@ const LobbyDetails = () => {
 
   if (!lobby) return null;
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2 min-w-48">
       <p className="font-bold text-xs uppercase">Players</p>
       <ul className="flex flex-col gap-2">
         {lobby.activeUsers.map((user) => (
