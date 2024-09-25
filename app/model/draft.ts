@@ -13,7 +13,7 @@ import {
 } from "firebase/firestore";
 import { sleep } from "openai/core.mjs";
 import { db } from "~/model/firebase";
-import { getLobbyUserIdList } from "~/model/lobby";
+import { getLobby, getLobbyUserIdList } from "~/model/lobby";
 import { LOBBIES_COLLECTION } from "~/util/constants";
 import { createPackDraftOrders } from "~/util/createPackDraftOrders";
 import { Card, WorldbuildingMessage } from "~/util/types";
@@ -178,8 +178,8 @@ export const pickCard = async (
   userId: string,
   cardId: string
 ): Promise<void> => {
-  await movePackToNextUser(lobbyId, packId);
   const card = await markCardAsPicked(lobbyId, packId, userId, cardId);
+  await movePackToNextUser(lobbyId, packId);
   await addCardToDeck(lobbyId, userId, card);
 };
 
@@ -272,6 +272,10 @@ const getDeckRef = async (
   userId: string,
   lobbyId: string
 ): Promise<DocumentReference<DocumentData>> => {
+  // get lobby name
+  const lobby = await getLobby(lobbyId);
+  if(!lobby) throw new Error("Lobby not found");
+
   const deckRef = doc(db, "users", userId, "decks", lobbyId);
   const deckDoc = await getDoc(deckRef);
   if (!deckDoc.exists()) {
@@ -279,6 +283,7 @@ const getDeckRef = async (
       cards: [],
       id: deckRef.id,
       lobbyId,
+      name: lobby.name,
       createdAt: Timestamp.now(),
       createdBy: userId,
     });
