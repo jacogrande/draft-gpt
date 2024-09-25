@@ -1,11 +1,9 @@
 import { useMemo } from "react";
 import Card from "~/components/Card";
-import { Card as CardType } from "~/util/types";
 import { useLobbyStore } from "~/hooks/lobby/useLobby";
 import useDeck from "~/hooks/useDeck";
 import { getCMC } from "~/util/getCMC";
-import { getCardColor } from "~/util/getCardColor";
-import { CARD_COLORS } from "~/util/constants";
+import { Card as CardType } from "~/util/types";
 
 const DeckList = () => {
   const { lobby } = useLobbyStore();
@@ -16,7 +14,10 @@ const DeckList = () => {
   }, [deck]);
 
   return (
-    <ul className="flex flex-col gap-2 text-2xs">
+    <ul
+      className="flex flex-col gap-2 text-2xs"
+      style={{ maxHeight: "calc(100vh - 200px)" }}
+    >
       {sortedDeck?.map((card) => (
         <CardItem key={card.id} card={card} />
       ))}

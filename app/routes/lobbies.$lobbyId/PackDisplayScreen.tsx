@@ -1,3 +1,5 @@
+import { Link } from "@remix-run/react";
+import { useCallback, useEffect, useState } from "react";
 import Card, { CARD_WIDTH_SCALED } from "~/components/Card";
 import Heading from "~/components/Heading";
 import ResponsiveGrid from "~/components/ResponsiveGrid";
@@ -14,17 +16,23 @@ const PackDisplayScreen = () => {
   const { user } = useUser();
   const cards = usePacksStore((state) => state.cards);
   const selectedCard = usePacksStore((state) => state.selectedCard);
+  const setSelectedCard = usePacksStore((state) => state.setSelectedCard);
   const packs = usePacksStore((state) => state.packs);
+  const [loading, setLoading] = useState<boolean>(false);
 
-  const handleConfirmSelection = async () => {
+  const handleConfirmSelection = useCallback(async () => {
     if (!selectedCard || !lobby || !user) return;
+    setLoading(true);
     try {
       await pickCard(lobby.id, selectedCard.packId, user.uid, selectedCard.id);
+      setSelectedCard(null);
     } catch (error) {
       console.error(error);
       toast("Unable to pick card", "error");
+    } finally {
+      setLoading(false);
     }
-  };
+  }, [selectedCard, lobby, user, toast, setSelectedCard]);
 
   const isNewRound = () => {
     if (!lobby) return false;
@@ -51,13 +59,29 @@ const PackDisplayScreen = () => {
     }
   };
 
+  /**
+   * Pick the selected card when Enter is pressed
+   */
+  useEffect(() => {
+    if (!selectedCard) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Enter") {
+        handleConfirmSelection();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [selectedCard, handleConfirmSelection]);
+
   if (lobby?.creatingPacks)
     return (
       <div className="flex flex-col gap-8 flex-1 items-center justify-center">
         <Heading>
           <div className="flex flex items-center gap-4">
             <span className="loading loading-dots loading-lg"></span>
-            Draft Starting
+            Creating Packs
           </div>
         </Heading>
       </div>
@@ -74,6 +98,7 @@ const PackDisplayScreen = () => {
           <button
             className="btn btn-primary px-8"
             onClick={handleConfirmSelection}
+            disabled={loading}
           >
             Pick Card
           </button>
@@ -88,7 +113,11 @@ const PackDisplayScreen = () => {
         <div className="flex flex-col items-center gap-4">
           <Heading>Draft Finished</Heading>
           <p className="prose">
-            Head over to the deck editor to finish building your deck.
+            Head over to the{" "}
+            <Link to={`/decks/${lobby?.id}`} className="link link-primary">
+              deck editor
+            </Link>{" "}
+            to finish building your deck.
           </p>
         </div>
       )}
