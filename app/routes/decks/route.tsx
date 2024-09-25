@@ -6,6 +6,7 @@ import {
   useLoaderData,
   useParams,
 } from "@remix-run/react";
+import { Timestamp } from "firebase/firestore";
 import { verifySession } from "~/.server/session";
 import Heading from "~/components/Heading";
 import Page from "~/components/Page";
@@ -52,6 +53,7 @@ const Decks = () => {
               <th>Name</th>
               <th>Mainboard</th>
               <th>Sideboard</th>
+              <th>Creation</th>
               <th></th>
             </tr>
           </thead>
@@ -72,10 +74,13 @@ const DeckRow = ({ deck }: { deck: Deck }) => {
       <th>{deck.name}</th>
       <td>{deck.cards.length}</td>
       <td>{deck.sideboard?.length || 0}</td>
+      <td>{new Date(deck.createdAt.seconds * 1000).toLocaleString()}</td>
       <td>
+        <div className="tooltip" data-tip="Edit">
         <Link to={`/decks/${deck.id}`} className="link link-primary">
           <PencilSquareIcon className="h-5 w-5" />
         </Link>
+        </div>
       </td>
     </tr>
   );
