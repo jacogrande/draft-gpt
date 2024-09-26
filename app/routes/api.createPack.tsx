@@ -9,7 +9,7 @@ import { createImage } from "~/.server/imageActions";
 import { getLobbySetting } from "~/.server/lobbyActions";
 import { withAuthenticatedUser } from "~/.server/middleware/withAuthenticatedUser";
 import { generatePack } from "~/.server/models/openai";
-import { randomUid } from "~/.server/util/randomUid";
+import { randomUid } from "~/util/randomUid";
 
 //========= HANDLER =========//
 export const action: ActionFunction = withAuthenticatedUser(

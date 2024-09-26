@@ -1,8 +1,8 @@
 import { Timestamp } from "firebase-admin/firestore";
 import { adminDb } from "~/.server/firebase-admin";
 import { GeneratedCard, Setting } from "~/.server/prompts/responseTypes";
-import { randomUid } from "~/.server/util/randomUid";
 import { SET_ICONS } from "~/util/constants";
+import { randomUid } from "~/util/randomUid";
 import { Card, Pack } from "~/util/types";
 
 type CreateSettingDocParams = {
