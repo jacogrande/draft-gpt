@@ -11,6 +11,7 @@
 - [x] Build link confirmation page
 - [x] User auth store
 - [x] Secure routes
+- [ ] Lockdown Firestore security rules
 - [ ] Build sign out page
 
 ## Lobbies
