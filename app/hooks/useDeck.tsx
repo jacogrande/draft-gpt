@@ -1,11 +1,22 @@
 import { doc, onSnapshot, QuerySnapshot } from "firebase/firestore";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect } from "react";
+import { create } from "zustand";
 import { useUser } from "~/hooks/useUser";
 import { db } from "~/model/firebase";
 import { Deck } from "~/util/types";
 
+type DeckStore = {
+  deck: Deck | null;
+  setDeck: (deck: Deck | null) => void;
+};
+
+export const useDeckStore = create<DeckStore>((set) => ({
+  deck: null,
+  setDeck: (deck) => set({ deck }),
+}));
+
 const useDeck = (deckId: string) => {
-  const [deck, setDeck] = useState<Deck | null>(null);
+  const { deck, setDeck } = useDeckStore();
   const { user } = useUser();
 
   const snapshotHandler = useCallback(async (snapshot: QuerySnapshot) => {
@@ -16,7 +27,7 @@ const useDeck = (deckId: string) => {
     } else {
       setDeck(null);
     }
-  }, []);
+  }, [setDeck]);
 
   useEffect(() => {
     if (!user) return;
@@ -36,7 +47,7 @@ const useDeck = (deckId: string) => {
       }
     );
     return unsubscribe;
-  }, [user, deckId, snapshotHandler]);
+  }, [user, deckId, snapshotHandler, setDeck]);
 
   return { deck, setDeck };
 };
