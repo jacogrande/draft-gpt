@@ -29,17 +29,19 @@
 - [x] Draft initialization
 - [x] Card re-use algorithm
 - [x] Pack generation
-- [ ] Art generation
+- [x] Art generation
 - [x] Pack order / queueing
-- [ ] Pack display
-- [ ] Card selection
-- [ ] Round transitions
+- [x] Pack display
+- [x] Card selection
+- [x] Round transitions
+- [x] Decklist while drafting
+- [x] Setting tooltip
 - [ ] Figure out weird setting sync issue
 
 ## Decks
 
-- [ ] Decklist page
-- [ ] Deck manager (sideboard, maindeck)
+- [x] Decklist page
+- [x] Deck manager page (sideboard, maindeck)
 - [ ] Delete deck
 - [ ] Land management
 
@@ -55,3 +57,7 @@
 - [ ] Game Resetting
 - [ ] Life Total
 - [ ] Extra counters
+
+## Quality of Life
+
+- [ ] Nav between pages
