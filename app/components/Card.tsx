@@ -1,23 +1,54 @@
+import { useEffect, useRef } from "react";
+import ManaCost from "~/components/ManaCost";
 import { usePacksStore } from "~/hooks/lobby/usePacks";
-import { CARD_COLORS } from "~/util/constants";
+import { useGlobalStore } from "~/hooks/useGlobalStore";
+import { CARD_COLORS, CARD_TEXTURES } from "~/util/constants";
 import { getCardColor } from "~/util/getCardColor";
 import { Card as CardType } from "~/util/types";
 
 type CardProps = {
   card?: CardType;
   disabled?: boolean;
+  scale?: number;
 };
 
-const CARD_WIDTH = 250;
-const CARD_HEIGHT = 350;
-const DEFAULT_SCALE = 1;
-export const CARD_WIDTH_SCALED = CARD_WIDTH * DEFAULT_SCALE;
+const DEFAULTS = {
+  WIDTH: 250,
+  HEIGHT: 350,
+  IMAGE_WIDTH: (250 - 16 /* padding */ - 8) /* border */ * 0.98,
+  IMAGE_HEIGHT: 144,
+  FONT_SIZE: 11,
+  SCALE: 1,
+};
 
-const Card = ({ card, disabled }: CardProps) => {
+export const CARD_WIDTH_SCALED = DEFAULTS.WIDTH * DEFAULTS.SCALE;
+
+const Card = ({ card, disabled, scale = DEFAULTS.SCALE }: CardProps) => {
+  const styles = {
+    width: `${DEFAULTS.WIDTH * scale}px`,
+    height: `${DEFAULTS.HEIGHT * scale}px`,
+    imageWidth: `${DEFAULTS.IMAGE_WIDTH * scale}px`,
+    imageHeight: `${DEFAULTS.IMAGE_HEIGHT * scale}px`,
+    fontSize: `${DEFAULTS.FONT_SIZE * scale}px`,
+  };
   const selectedCard = usePacksStore((state) => state.selectedCard);
   const setSelectedCard = usePacksStore((state) => state.setSelectedCard);
-  if (!card) return null;
+  const setPeekedCard = useGlobalStore((state) => state.setPeekedCard);
+  const cardRef = useRef<HTMLButtonElement>(null);
 
+  useEffect(() => {
+    if (!cardRef.current || !card) return;
+    // add hover listener
+    const handleMouseEnter = () => {
+      setPeekedCard(card);
+    };
+    cardRef.current.addEventListener("mouseenter", handleMouseEnter);
+    return () => {
+      cardRef.current?.removeEventListener("mouseenter", handleMouseEnter);
+    };
+  }, [cardRef, card, setPeekedCard]);
+
+  if (!card) return null;
   const getTypeLetterSpacing = () => {
     if (card.legendary && card.subtype) return "-0.05em";
     if (card.legendary || card.subtype) return "-0.025em";
@@ -29,30 +60,43 @@ const Card = ({ card, disabled }: CardProps) => {
   };
 
   const cardColor = getCardColor(card.mana_cost);
+  const texture = CARD_TEXTURES[cardColor];
+
   return (
     <button
-      className={`card border border-4 p-2 pb-3 scale-100 hover:scale-105 transition hover:z-10 flex flex-col items-center relative text-2xs ${
-        card.id === selectedCard?.id ? "border-primary" : "border-base-300"
-      } ${CARD_COLORS[cardColor]}`}
+      className={`handle card border border-2 p-2 pb-3 hover:scale-105 scale-100 transition flex flex-col items-center relative ${
+        card.id === selectedCard?.id ? "border-primary" : "border-black"
+      } ${CARD_COLORS[cardColor]} ${!disabled && "hover:z-10"}`}
       style={{
-        width: `${CARD_WIDTH}px`,
-        height: `${CARD_HEIGHT}px`,
+        width: styles.width,
+        height: styles.height,
+        fontSize: styles.fontSize,
+        backgroundImage: `url(${texture})`,
       }}
+      ref={cardRef}
       disabled={disabled}
       onClick={handleClick}
     >
       {/* NAME AND COST */}
-      <div className="flex justify-between items-center bg-base-100 w-full rounded-md py-1 px-2 border border-base-300">
+      <div className="flex justify-between items-center bg-base-100 w-full rounded-md py-1 px-2 border border-black">
         <p>{card.name}</p>
-        <p>{card.mana_cost}</p>
+        {/* <p>{card.mana_cost}</p> */}
+        <ManaCost manaCost={card.mana_cost} scale={scale} />
       </div>
       {/* IMAGE */}
-      <div className="w-[97%] h-36 bg-gray-300 object-cover">
-        {card.image_url && <img src={card.image_url} alt={card.name} />}
-      </div>
+      {card.image_url && (
+        <img
+          src={card.image_url}
+          alt={card.name}
+          loading="lazy"
+          width={styles.imageWidth}
+          height={styles.imageHeight}
+          className="border-x-2 border-black"
+        />
+      )}
       {/* TYPE */}
       <div
-        className="flex items-center gap-2 bg-base-100 w-full rounded-md py-1 px-2 border border-base-300 justify-between"
+        className="flex items-center gap-2 bg-base-100 w-full rounded-md py-1 px-2 border border-black justify-between"
         style={{ letterSpacing: getTypeLetterSpacing() }}
       >
         <p>
@@ -62,13 +106,13 @@ const Card = ({ card, disabled }: CardProps) => {
         <p>{card.rarity.slice(0, 1)}</p>
       </div>
       {/* CARD BODY */}
-      <div className="flex flex-col gap-4 p-2 w-[97%] flex-1 bg-base-100 rounded-b-md justify-center">
+      <div className="flex flex-col gap-4 p-2 w-[97%] flex-1 bg-base-100 rounded-b-md justify-center border border-black border-t-0">
         <p>{card.rules_text}</p>
       </div>
       {/* POWER AND TOUGHNESS */}
       {card.type.toLowerCase() === "creature" && (
-        <div className="absolute bottom-2 right-2 px-3 py-1 bg-base-100 rounded-xl border border-base-300">
-          <p className="text-xs">
+        <div className="absolute bottom-2 right-2 px-3 py-1 bg-base-100 rounded-xl border border-black">
+          <p>
             {card.power} / {card.toughness}
           </p>
         </div>
