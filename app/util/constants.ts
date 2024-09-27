@@ -1,10 +1,18 @@
-import { CardColor } from "~/util/types";
+import { BasicLand, CardColor } from "~/util/types";
 
 export const BASE_URL = "https://draftgpt.hasslebad.com";
 export const LOBBIES_COLLECTION = "lobbies";
 export const DEFAULT_IMAGE_EXTENSION = "jpeg";
 
 export const ROUND_COUNT = 3;
+
+export const BASICS: BasicLand[] = [
+  "plains",
+  "forest",
+  "mountain",
+  "swamp",
+  "island",
+];
 
 export const CARD_COLORS: Record<CardColor, string> = {
   red: "bg-red-500/50",
@@ -14,6 +22,24 @@ export const CARD_COLORS: Record<CardColor, string> = {
   green: "bg-green-500/50",
   multi: "bg-amber-500",
   colorless: "bg-slate-400/70",
+};
+
+export const SYMBOL_MAP: Record<string, string> = {
+  r: "mountain",
+  u: "island",
+  g: "forest",
+  w: "plains",
+  b: "swamp",
+};
+
+export const CARD_TEXTURES: Record<CardColor, string> = {
+  red: "/textures/red.jpg",
+  white: "/textures/white.jpg",
+  blue: "/textures/blue.jpg",
+  black: "/textures/black.jpg",
+  green: "/textures/green.jpg",
+  multi: "/textures/gold.png",
+  colorless: "/textures/artifact.jpg",
 };
 
 export const ADJECTIVES = [
