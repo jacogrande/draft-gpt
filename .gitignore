@@ -5,4 +5,6 @@ node_modules
 .env
 .git
 
+*.DS_Store
+
 app/service-account.json
