@@ -2,11 +2,11 @@ import { PencilSquareIcon } from "@heroicons/react/16/solid";
 import {
   json,
   Link,
+  Outlet,
   redirect,
   useLoaderData,
   useParams,
 } from "@remix-run/react";
-import { Timestamp } from "firebase/firestore";
 import { verifySession } from "~/.server/session";
 import Heading from "~/components/Heading";
 import Page from "~/components/Page";
@@ -26,6 +26,7 @@ const Decks = () => {
   const data = useLoaderData<typeof loader>();
   const decks = (data.decks as Deck[]) || [];
 
+  if (deckId) return <Outlet />;
   if (!decks.length)
     return (
       <Page>
@@ -77,9 +78,9 @@ const DeckRow = ({ deck }: { deck: Deck }) => {
       <td>{new Date(deck.createdAt.seconds * 1000).toLocaleString()}</td>
       <td>
         <div className="tooltip" data-tip="Edit">
-        <Link to={`/decks/${deck.id}`} className="link link-primary">
-          <PencilSquareIcon className="h-5 w-5" />
-        </Link>
+          <Link to={`/decks/${deck.id}`} className="link link-primary">
+            <PencilSquareIcon className="h-5 w-5" />
+          </Link>
         </div>
       </td>
     </tr>
