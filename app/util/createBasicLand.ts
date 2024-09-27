@@ -3,16 +3,17 @@ import { randomUid } from "~/util/randomUid";
 import { BasicLand, Card } from "~/util/types";
 
 const IMAGES: Record<BasicLand, string> = {
-  plains: "/basics/plains.png",
-  forest: "/basics/forest.png",
-  mountain: "/basics/mountain.png",
-  swamp: "/basics/swamp.png",
-  island: "/basics/island.png",
+  plains: "/basics/plains.jpg",
+  forest: "/basics/forest.jpg",
+  mountain: "/basics/mountain.jpg",
+  swamp: "/basics/swamp.jpg",
+  island: "/basics/island.jpg",
 };
 
 export const createBasicLand = (type: BasicLand): Card => {
+  const name = type.charAt(0).toUpperCase() + type.slice(1);
   return {
-    name: type,
+    name,
     mana_cost: "",
     art_direction: "",
     type: "Basic Land",

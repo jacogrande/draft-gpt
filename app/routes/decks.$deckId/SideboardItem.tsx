@@ -20,7 +20,7 @@ const SideboardItem = ({ card }: { card: Card }) => {
   };
 
   return (
-    <button className="flex flex-1" onClick={returnToMainboard}>
+    <button className="flex" onClick={returnToMainboard}>
       <li
         onMouseOver={handleMouseOver}
         onFocus={handleMouseOver}

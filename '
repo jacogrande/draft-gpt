@@ -26,12 +26,8 @@ export const moveCardToSideboard = async (deckId: string, userId: string, cardId
   if (cardIndex === -1) throw new Error("Card not found");
   const card = cards[cardIndex];
   cards.splice(cardIndex, 1);
-
-  // If the card isn't a basic land, add it to the sideboard
   const newSideboard = sideboard || [];
-  if(card.type !== "Basic Land") {
-    newSideboard.push(card);
-  }
+  newSideboard.push(card);
   await updateDoc(deckRef, {
     cards,
     sideboard: newSideboard,
@@ -66,10 +62,15 @@ export const addBasicLandToMainboard = async (deckId: string, userId: string, ca
   });
 }
 
-
-export const addManyCardsToDeck = async (deckId: string, userId: string, cards: Card[]) => {
-  const deckRef = doc(db, "users", userId, "decks", deckId);
+export const removeBasicLand = async (deckRef: DocumentReference, cardId: string) => {
+  const deckDoc = await getDoc(deckRef);
+  const deckData = deckDoc.data();
+  if (!deckData) throw new Error("Deck not found");
+  const cards = deckData.cards || [];
+  const cardIndex = cards.findIndex((card: Card) => card.id === cardId);
+  if (cardIndex === -1) throw new Error("Card not found");
+  cards.splice(cardIndex, 1);
   await updateDoc(deckRef, {
-    cards: arrayUnion(...cards),
+    cards,
   });
-};
+}

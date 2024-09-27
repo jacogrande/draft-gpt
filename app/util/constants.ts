@@ -24,7 +24,7 @@ export const CARD_COLORS: Record<CardColor, string> = {
   colorless: "bg-slate-400/70",
 };
 
-export const SYMBOL_MAP: Record<string, string> = {
+export const SYMBOL_MAP: Record<string, BasicLand> = {
   r: "mountain",
   u: "island",
   g: "forest",
