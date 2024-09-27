@@ -92,3 +92,5 @@ export type Deck = {
   createdAt: Timestamp;
   createdBy: string;
 }
+
+export type BasicLand = "plains" | "forest" | "mountain" | "swamp" | "island";
