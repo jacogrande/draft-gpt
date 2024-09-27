@@ -44,11 +44,12 @@
 - [x] Decklist page
 - [x] Deck manager page (sideboard, maindeck)
 - [ ] Delete deck
-- [ ] Land management
+- [x] Land management
 
-## Goldfish
+## Game Page
 
-- [ ] Goldfish page
+- [ ] Game route
+- [ ] Game lobby management
 - [ ] Deck fetching / shuffling
 - [ ] Hand management
 - [ ] Card drawing
@@ -58,6 +59,9 @@
 - [ ] Game Resetting
 - [ ] Life Total
 - [ ] Extra counters
+- [ ] Opponent deck
+- [ ] Opponent board
+- [ ] Opponent state following
 
 ## Quality of Life
 
