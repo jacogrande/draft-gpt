@@ -15,6 +15,10 @@ const Nav = () => {
   const { creatingLobby, handleLobbyCreation } = useLobbyCreator();
   const modalRef = useRef<HTMLDialogElement>(null);
 
+  const handleOpenModal = () => {
+    modalRef.current?.showModal();
+  };
+
   if (loading)
     return <span className="loading loading-dots loading-lg h-[48px]"></span>;
   if (!user)
