@@ -94,3 +94,12 @@ export type Deck = {
 }
 
 export type BasicLand = "plains" | "forest" | "mountain" | "swamp" | "island";
+
+export type Game = {
+  id: string;
+  name: string;
+  createdAt: Timestamp;
+  createdBy: string;
+  activeUsers: PublicUser[];
+  decks: Record<string, Deck>;
+}

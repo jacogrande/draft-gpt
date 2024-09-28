@@ -7,12 +7,14 @@ import { Link } from "@remix-run/react";
 import { useRef } from "react";
 import FindGameModal from "~/components/FindGameModal";
 import Subheading from "~/components/Subheading";
+import useGameCreator from "~/hooks/game/useGameCreator";
 import useLobbyCreator from "~/hooks/lobby/useLobbyCreator";
 import { useUser } from "~/hooks/useUser";
 
 const Nav = () => {
   const { user, loading } = useUser();
   const { creatingLobby, handleLobbyCreation } = useLobbyCreator();
+  const { creatingGame, handleGameCreation } = useGameCreator();
   const modalRef = useRef<HTMLDialogElement>(null);
 
   const handleOpenModal = () => {
@@ -62,9 +64,18 @@ const Nav = () => {
       </div>
       <div className="flex flex-col min-w-48 pl-8 items-center gap-2">
         <Subheading>Play</Subheading>
-        <button className="btn btn-primary w-full flex mt-4">
+        <button
+          className="btn btn-primary w-full flex mt-4"
+          onClick={handleGameCreation}
+        >
           <PlusCircleIcon className="h-5 w-5" />
-          <span className="flex-1">Create a Game</span>
+          <span className="flex-1">
+            {creatingGame ? (
+              <span className="loading loading-dots loading-sm"></span>
+            ) : (
+              "Create a Game"
+            )}
+          </span>
         </button>
         <button
           className="btn btn-primary w-full flex"

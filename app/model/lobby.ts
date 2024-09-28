@@ -33,6 +33,7 @@ export const createLobby = async (
   const lobby: Lobby = {
     id: lobbyRef.id,
     name: lobbyName,
+    creatingPacks: false,
     createdBy: user.uid,
     createdAt: currentTimestamp,
     activeUsers: [

@@ -1,5 +1,7 @@
 import { MagnifyingGlassCircleIcon } from "@heroicons/react/16/solid";
+import { useNavigate } from "@remix-run/react";
 import { useState } from "react";
+import { getGameByName } from "~/model/game";
 
 type FindGameModalProps = {
   modalRef: React.RefObject<HTMLDialogElement>;
@@ -7,10 +9,19 @@ type FindGameModalProps = {
 
 const FindGameModal = ({ modalRef }: FindGameModalProps) => {
   const [gameCode, setGameCode] = useState<string>("");
+  const [error, setError] = useState<string>("");
+  const navigate = useNavigate();
 
-  const findGame = (e: React.FormEvent<HTMLFormElement>) => {
+  const findGame = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("find game");
+    try {
+      const game = await getGameByName(gameCode);
+      if (!game) throw new Error("Game not found");
+      navigate(`/games/${game.id}`);
+    } catch (error) {
+      console.error(error);
+      setError("Game not found");
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -44,7 +55,8 @@ const FindGameModal = ({ modalRef }: FindGameModalProps) => {
                 onChange={handleChange}
               />
             </label>
-            <div className="flex flex gap-2 justify-end">
+            <div className="flex flex gap-2 justify-end items-center">
+              <p className="text-error flex-1">{error}</p>
               <button
                 className="btn btn-primary"
                 type="submit"

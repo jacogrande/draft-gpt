@@ -48,8 +48,8 @@
 
 ## Game Page
 
-- [ ] Game route
-- [ ] Game lobby management
+- [x] Game route
+- [x] Game lobby management
 - [ ] Deck fetching / shuffling
 - [ ] Hand management
 - [ ] Card drawing
