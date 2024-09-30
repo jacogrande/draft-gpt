@@ -1,10 +1,15 @@
+import { CheckIcon } from "@heroicons/react/16/solid";
 import { IoCopy } from "react-icons/io5";
+import Subheading from "~/components/Subheading";
 import { useGameStore } from "~/hooks/game/useGame";
 import { useToast } from "~/hooks/useToast";
+import { REQUIRED_PLAYERS_FOR_GAME } from "~/util/constants";
 
 const GameDetails = () => {
   const { game } = useGameStore();
   const { toast } = useToast();
+  const allReady =
+    game && Object.keys(game.readyMap).length === REQUIRED_PLAYERS_FOR_GAME;
 
   const onCopy = () => {
     try {
@@ -26,6 +31,14 @@ const GameDetails = () => {
           </button>
         </div>
       </h1>
+      {!allReady && (
+        <ul className="flex flex-col gap-2">
+          <Subheading>Players</Subheading>
+          {game?.activeUsers.map((user) => (
+            <li key={user.uid} className="flex items-center gap-2">{user.username} {game.readyMap[user.uid] &&<CheckIcon className="h-4 w-4 text-success" />}</li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 };

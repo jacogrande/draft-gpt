@@ -3,6 +3,7 @@ import { BasicLand, CardColor } from "~/util/types";
 export const BASE_URL = "https://draftgpt.hasslebad.com";
 export const LOBBIES_COLLECTION = "lobbies";
 export const DEFAULT_IMAGE_EXTENSION = "jpeg";
+export const REQUIRED_PLAYERS_FOR_GAME = 2;
 
 export const ROUND_COUNT = 3;
 

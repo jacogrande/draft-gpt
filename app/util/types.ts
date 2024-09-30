@@ -102,4 +102,5 @@ export type Game = {
   createdBy: string;
   activeUsers: PublicUser[];
   decks: Record<string, Deck>;
+  readyMap: Record<string, boolean>;
 }

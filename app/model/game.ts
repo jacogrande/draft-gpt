@@ -1,6 +1,6 @@
-import { collection, doc, getDocs, query, setDoc, Timestamp, where } from "firebase/firestore";
+import { arrayUnion, collection, doc, getDoc, getDocs, query, setDoc, Timestamp, updateDoc, where } from "firebase/firestore";
 import { db } from "~/model/firebase";
-import { Game, User } from "~/util/types";
+import { Deck, Game, User } from "~/util/types";
 
 export const createGame = async (name: string, user: User) => {
   const gamesRef = collection(db, "games");
@@ -11,10 +11,18 @@ export const createGame = async (name: string, user: User) => {
     createdAt: Timestamp.now(),
     activeUsers: [{ username: user.username, uid: user.uid }],
     createdBy: user.uid,
+    readyMap: {},
     decks: {},
   };
   await setDoc(gameDoc, newGame);
   return gameDoc.id;
+};
+
+export const joinGame = async (user: User, gameId: string): Promise<void> => {
+  const gameRef = doc(db, "games", gameId);
+  await updateDoc(gameRef, {
+    activeUsers: arrayUnion({ username: user.username, uid: user.uid }),
+  });
 };
 
 export const getGameByName = async (name: string) => {
@@ -24,4 +32,29 @@ export const getGameByName = async (name: string) => {
   const game = docs.docs[0];
   if (!game) return null;
   return game.data() as Game;
+};
+
+/**
+ * Readies a player up by writing their deck to the game document
+ * @param gameId - the id of the game to ready up
+ * @param userId - the id of the user to ready up
+ * @param deck - the deck to ready up with
+ * @returns a promise that resolves when the ready up is complete
+ */
+export const submitDeck = async (
+  gameId: string,
+  userId: string,
+  deck: Deck
+): Promise<void> => {
+  const gameRef = doc(db, "games", gameId);
+  const gameDoc = await getDoc(gameRef);
+  if (!gameDoc.exists()) throw new Error("Game not found");
+  await setDoc(gameRef, {
+    readyMap: {
+      [userId]: true,
+    },
+    decks: {
+      [userId]: deck,
+    },
+  }, { merge: true });
 };

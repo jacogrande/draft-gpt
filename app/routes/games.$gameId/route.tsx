@@ -1,18 +1,37 @@
 import { useParams } from "@remix-run/react";
+import { useEffect } from "react";
 import { verifySession } from "~/.server/session";
 import Heading from "~/components/Heading";
 import Page from "~/components/Page";
 import { useGame } from "~/hooks/game/useGame";
+import { useUser } from "~/hooks/useUser";
+import { joinGame } from "~/model/game";
+import DeckPicker from "~/routes/games.$gameId/DeckPicker";
 import GameDetails from "~/routes/games.$gameId/GameDetails";
 import GameScreen from "~/routes/games.$gameId/GameScreen";
 import Hand from "~/routes/games.$gameId/Hand";
+import { REQUIRED_PLAYERS_FOR_GAME } from "~/util/constants";
 
 export const loader = verifySession;
 
 const GameRoute = () => {
   const params = useParams();
   const gameId = params.gameId as string;
-  const { loading, error } = useGame(gameId);
+  const { user } = useUser();
+  const { game, loading, error } = useGame(gameId);
+  const allReady =
+    game && Object.keys(game.readyMap).length === REQUIRED_PLAYERS_FOR_GAME;
+  const deckLoaded = game && user && game.decks[user.uid];
+
+  /**
+   * Join the game once user is loaded
+   */
+  useEffect(() => {
+    (async () => {
+      if (!user) return;
+      await joinGame(user, gameId);
+    })();
+  }, [gameId, user]);
 
   if (loading)
     return (
@@ -20,7 +39,7 @@ const GameRoute = () => {
         <span className="loading loading-dots loading-lg"></span>
       </Page>
     );
-  if (error)
+  if (error || !game)
     return (
       <Page>
         <Heading>Error</Heading>
@@ -32,8 +51,16 @@ const GameRoute = () => {
       <div className="flex gap-8 flex-1 w-full">
         <GameDetails />
         <div className="flex flex-1 flex-col gap-8">
-          <GameScreen />
-          <Hand />
+          {allReady ? (
+            <>
+              <GameScreen />
+              <Hand />
+            </>
+          ) : (
+            <div className="flex flex-col gap-8 flex-1 items-center justify-center">
+              {!deckLoaded && <DeckPicker />}
+            </div>
+          )}
         </div>
       </div>
     </Page>
