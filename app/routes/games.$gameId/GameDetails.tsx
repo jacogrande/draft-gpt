@@ -44,7 +44,7 @@ const GameDetails = () => {
       <div className="flex flex-col gap-8 flex-1">
         <ul className="flex flex-col gap-8">
           {game.activeUsers.map((activeUser) => (
-            <li key={activeUser.uid} className="flex flex-col">
+            <li key={activeUser.uid} className="flex flex-col gap-2">
               <Subheading>{activeUser.username}</Subheading>
               <LifeTotalEditor userId={activeUser.uid} />
             </li>

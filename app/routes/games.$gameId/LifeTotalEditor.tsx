@@ -1,3 +1,4 @@
+import { HeartIcon } from "@heroicons/react/16/solid";
 import { useEffect, useState } from "react";
 import { useGameStore } from "~/hooks/game/useGame";
 import { useUser } from "~/hooks/useUser";
@@ -25,19 +26,23 @@ const LifeTotalEditor = ({ userId }: { userId: string }) => {
   if (!game || !user) return null;
   if (user.uid !== userId)
     return (
-      <div className="w-24 h-24 rounded border flex items-center justify-center">
-        {game.lifeTotals[userId]}
+      <div className="w-full py-4 rounded border flex items-center relative">
+        <HeartIcon className="h-5 w-5 absolute left-2" />
+        <p className="text-center flex-1">{game.lifeTotals[userId]}</p>
       </div>
     );
 
   //========= LIFE INPUT =========//
   return (
-    <input
-      type="number"
-      className="w-24 h-24 text-center pl-3 rounded border flex items-center justify-center"
-      value={lifeTotal}
-      onChange={handleChange}
-    />
+    <div className="w-full flex items-center relative">
+      <HeartIcon className="h-5 w-5 absolute left-2" />
+      <input
+        type="number"
+        className="w-full py-4 text-center pl-3 rounded border flex items-center justify-center"
+        value={lifeTotal}
+        onChange={handleChange}
+      />
+    </div>
   );
 };
 
