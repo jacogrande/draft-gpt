@@ -1,5 +1,6 @@
 import { arrayUnion, collection, doc, getDoc, getDocs, query, setDoc, Timestamp, updateDoc, where } from "firebase/firestore";
 import { db } from "~/model/firebase";
+import { REQUIRED_PLAYERS_FOR_GAME } from "~/util/constants";
 import { Deck, Game, User } from "~/util/types";
 
 export const createGame = async (name: string, user: User) => {
@@ -18,11 +19,17 @@ export const createGame = async (name: string, user: User) => {
   return gameDoc.id;
 };
 
-export const joinGame = async (user: User, gameId: string): Promise<void> => {
+export const joinGame = async (user: User, gameId: string): Promise<boolean> => {
   const gameRef = doc(db, "games", gameId);
+  const gameData = await getDoc(gameRef);
+  if (!gameData.exists()) throw new Error("Game not found");
+  const game = gameData.data() as Game;
+  const userCount = game.activeUsers.filter((user) => user.uid !== user.uid).length; // filter out the current user
+  if(userCount >= REQUIRED_PLAYERS_FOR_GAME) return false;
   await updateDoc(gameRef, {
     activeUsers: arrayUnion({ username: user.username, uid: user.uid }),
   });
+  return true;
 };
 
 export const getGameByName = async (name: string) => {

@@ -1,5 +1,5 @@
-import { useParams } from "@remix-run/react";
-import { useEffect } from "react";
+import { Link, useParams } from "@remix-run/react";
+import { useEffect, useState } from "react";
 import { verifySession } from "~/.server/session";
 import Heading from "~/components/Heading";
 import Page from "~/components/Page";
@@ -19,6 +19,8 @@ const GameRoute = () => {
   const gameId = params.gameId as string;
   const { user } = useUser();
   const { game, loading, error } = useGame(gameId);
+  const [gameIsFull, setGameIsFull] = useState<boolean>(false);
+
   const allReady =
     game && Object.keys(game.readyMap).length === REQUIRED_PLAYERS_FOR_GAME;
   const deckLoaded = game && user && game.decks[user.uid];
@@ -29,7 +31,8 @@ const GameRoute = () => {
   useEffect(() => {
     (async () => {
       if (!user) return;
-      await joinGame(user, gameId);
+      const success = await joinGame(user, gameId);
+      if (!success) setGameIsFull(true);
     })();
   }, [gameId, user]);
 
@@ -44,6 +47,13 @@ const GameRoute = () => {
       <Page>
         <Heading>Error</Heading>
         <p>Unable to load game</p>
+      </Page>
+    );
+  if (gameIsFull)
+    return (
+      <Page>
+        <Heading>Game is full</Heading>
+        <Link to="/">Go Back Home</Link>
       </Page>
     );
   return (
