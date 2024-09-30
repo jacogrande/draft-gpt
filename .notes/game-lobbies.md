@@ -52,3 +52,7 @@ I think we'll need to display an entire sidebar with life totals and the interac
 We'll have a game screen with your field and the opponent's deck/field/hand.
 Lastly, we'll have a view for your own hand.
 I think all of these but the game need to be hideable.
+
+### Shuffling
+
+Does it make more sense to duplicate the user's deck into a new state variable and then shuffle it, or do we just shuffle the lobby state? I think we just shuffle the lobby state. Obviously, this is not secure at all since I can just look at the app state and see what my opponent's deck is, but for now that's totally fine.

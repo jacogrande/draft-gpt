@@ -54,10 +54,12 @@
 - [ ] Hand management
 - [ ] Card drawing
 - [ ] Board Zone management
+- [ ] Interaction log
 - [ ] Graveyard
 - [ ] Tapping
 - [ ] Game Resetting
-- [ ] Life Total
+- [x] Life Total
+- [ ] Chat
 - [ ] Extra counters
 - [ ] Opponent deck
 - [ ] Opponent board
