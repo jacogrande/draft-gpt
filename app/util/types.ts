@@ -95,12 +95,20 @@ export type Deck = {
 
 export type BasicLand = "plains" | "forest" | "mountain" | "swamp" | "island";
 
+export type InteractionLog = {
+  username: string;
+  message: string;
+  timestamp: Timestamp;
+}
+
 export type Game = {
   id: string;
   name: string;
   createdAt: Timestamp;
   createdBy: string;
   activeUsers: PublicUser[];
+  lifeTotals: Record<string, number>; // user id -> life total
   decks: Record<string, Deck>;
   readyMap: Record<string, boolean>;
+  log?: InteractionLog[];
 }

@@ -1,6 +1,6 @@
-import { arrayUnion, collection, doc, getDoc, getDocs, query, setDoc, Timestamp, updateDoc, where } from "firebase/firestore";
+import { arrayUnion, collection, doc, getDoc, getDocs, query, setDoc, Timestamp, where } from "firebase/firestore";
 import { db } from "~/model/firebase";
-import { REQUIRED_PLAYERS_FOR_GAME } from "~/util/constants";
+import { REQUIRED_PLAYERS_FOR_GAME, STARTING_LIFE } from "~/util/constants";
 import { Deck, Game, User } from "~/util/types";
 
 export const createGame = async (name: string, user: User) => {
@@ -14,6 +14,7 @@ export const createGame = async (name: string, user: User) => {
     createdBy: user.uid,
     readyMap: {},
     decks: {},
+    lifeTotals: {},
   };
   await setDoc(gameDoc, newGame);
   return gameDoc.id;
@@ -25,10 +26,12 @@ export const joinGame = async (user: User, gameId: string): Promise<boolean> => 
   if (!gameData.exists()) throw new Error("Game not found");
   const game = gameData.data() as Game;
   const userCount = game.activeUsers.filter((user) => user.uid !== user.uid).length; // filter out the current user
+  const newLifeTotal = game.lifeTotals[user.uid] || STARTING_LIFE;
   if(userCount >= REQUIRED_PLAYERS_FOR_GAME) return false;
-  await updateDoc(gameRef, {
+  await setDoc(gameRef, {
     activeUsers: arrayUnion({ username: user.username, uid: user.uid }),
-  });
+    lifeTotals: { [user.uid]: newLifeTotal },
+  }, { merge: true });
   return true;
 };
 
@@ -62,6 +65,21 @@ export const submitDeck = async (
     },
     decks: {
       [userId]: deck,
+    },
+  }, { merge: true });
+};
+
+export const updateLifeTotal = async (
+  gameId: string,
+  userId: string,
+  lifeTotal: number
+): Promise<void> => {
+  const gameRef = doc(db, "games", gameId);
+  const gameDoc = await getDoc(gameRef);
+  if (!gameDoc.exists()) throw new Error("Game not found");
+  await setDoc(gameRef, {
+    lifeTotals: {
+      [userId]: lifeTotal,
     },
   }, { merge: true });
 };
