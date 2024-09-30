@@ -18,7 +18,15 @@ const DEFAULTS = {
   IMAGE_WIDTH: (250 - 16 /* padding */ - 8) /* border */ * 0.98,
   IMAGE_HEIGHT: 144,
   FONT_SIZE: 11,
+  PADDING: 8,
+  BORDER_RADIUS: 16,
   SCALE: 1,
+  PT_CONTAINER: {
+    BOTTOM: 8,
+    RIGHT: 8,
+    PX: 12,
+    PY: 4,
+  },
 };
 
 export const CARD_WIDTH_SCALED = DEFAULTS.WIDTH * DEFAULTS.SCALE;
@@ -30,6 +38,15 @@ const Card = ({ card, disabled, scale = DEFAULTS.SCALE }: CardProps) => {
     imageWidth: `${DEFAULTS.IMAGE_WIDTH * scale}px`,
     imageHeight: `${DEFAULTS.IMAGE_HEIGHT * scale}px`,
     fontSize: `${DEFAULTS.FONT_SIZE * scale}px`,
+    padding: `${DEFAULTS.PADDING * scale}px`,
+    borderRadius: `${DEFAULTS.BORDER_RADIUS * scale}px`,
+    PT_CONTAINER: {
+      bottom: `${DEFAULTS.PT_CONTAINER.BOTTOM * scale}px`,
+      right: `${DEFAULTS.PT_CONTAINER.RIGHT * scale}px`,
+      padding: `${DEFAULTS.PT_CONTAINER.PY * scale}px ${
+        DEFAULTS.PT_CONTAINER.PX * scale
+      }px`,
+    },
   };
   const selectedCard = usePacksStore((state) => state.selectedCard);
   const setSelectedCard = usePacksStore((state) => state.setSelectedCard);
@@ -64,7 +81,7 @@ const Card = ({ card, disabled, scale = DEFAULTS.SCALE }: CardProps) => {
 
   return (
     <button
-      className={`handle card border border-2 p-2 pb-3 hover:scale-105 scale-100 transition flex flex-col items-center relative ${
+      className={`handle card border border-2 pb-3 hover:scale-105 scale-100 transition flex flex-col items-center relative ${
         card.id === selectedCard?.id ? "border-primary" : "border-black"
       } ${CARD_COLORS[cardColor]} ${!disabled && "hover:z-10"}`}
       style={{
@@ -72,6 +89,8 @@ const Card = ({ card, disabled, scale = DEFAULTS.SCALE }: CardProps) => {
         height: styles.height,
         fontSize: styles.fontSize,
         backgroundImage: `url(${texture})`,
+        padding: styles.padding,
+        borderRadius: styles.borderRadius,
       }}
       ref={cardRef}
       disabled={disabled}
@@ -92,6 +111,7 @@ const Card = ({ card, disabled, scale = DEFAULTS.SCALE }: CardProps) => {
           width={styles.imageWidth}
           height={styles.imageHeight}
           className="border-x-2 border-black"
+          draggable="false"
         />
       )}
       {/* TYPE */}
@@ -111,7 +131,10 @@ const Card = ({ card, disabled, scale = DEFAULTS.SCALE }: CardProps) => {
       </div>
       {/* POWER AND TOUGHNESS */}
       {card.type.toLowerCase() === "creature" && (
-        <div className="absolute bottom-2 right-2 px-3 py-1 bg-base-100 rounded-xl border border-black">
+        <div
+          className="absolute px-3 py-1 bg-base-100 rounded-xl border border-black"
+          style={styles.PT_CONTAINER}
+        >
           <p>
             {card.power} / {card.toughness}
           </p>

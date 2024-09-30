@@ -3,20 +3,24 @@ import { useCallback, useEffect } from "react";
 import { create } from "zustand";
 import { useUser } from "~/hooks/useUser";
 import { db } from "~/model/firebase";
-import { Deck } from "~/util/types";
+import { Card, Deck } from "~/util/types";
 
 type DeckStore = {
   deck: Deck | null;
   setDeck: (deck: Deck | null) => void;
+  hand: Card[];
+  setHand: (hand: Card[]) => void;
 };
 
 export const useDeckStore = create<DeckStore>((set) => ({
   deck: null,
   setDeck: (deck) => set({ deck }),
+  hand: [],
+  setHand: (hand) => set({ hand }),
 }));
 
 const useDeck = (deckId: string) => {
-  const { deck, setDeck } = useDeckStore();
+  const { deck, setDeck, setHand } = useDeckStore();
   const { user } = useUser();
 
   const snapshotHandler = useCallback(async (snapshot: QuerySnapshot) => {
@@ -24,10 +28,13 @@ const useDeck = (deckId: string) => {
     if (deckDoc.exists()) {
       const deckData = { ...(deckDoc.data() as Deck), id: deckDoc.id };
       setDeck(deckData);
+      const newHand = deckData.cards.filter((card) => card.zone === "hand");
+      setHand(newHand);
     } else {
       setDeck(null);
+      setHand([]);
     }
-  }, [setDeck]);
+  }, [setDeck, setHand]);
 
   useEffect(() => {
     if (!user) return;

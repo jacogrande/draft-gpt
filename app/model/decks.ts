@@ -1,4 +1,11 @@
-import { arrayUnion, collection, doc, DocumentReference, getDoc, getDocs, updateDoc } from "firebase/firestore";
+import {
+  arrayUnion,
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  updateDoc
+} from "firebase/firestore";
 import { db } from "~/model/firebase";
 import { Card, Deck } from "~/util/types";
 
@@ -16,7 +23,11 @@ export const getAllDecks = async (userId: string) => {
  * @param cardId - the id of the card to move
  * @description removes the card from the deck's `cards` field and adds it to the `sideboard` field
  */
-export const moveCardToSideboard = async (deckId: string, userId: string, cardId: string) => {
+export const moveCardToSideboard = async (
+  deckId: string,
+  userId: string,
+  cardId: string
+) => {
   const deckRef = doc(db, "users", userId, "decks", deckId);
   const deckDoc = await getDoc(deckRef);
   const deckData = deckDoc.data();
@@ -29,7 +40,7 @@ export const moveCardToSideboard = async (deckId: string, userId: string, cardId
 
   // If the card isn't a basic land, add it to the sideboard
   const newSideboard = sideboard || [];
-  if(card.type !== "Basic Land") {
+  if (card.type !== "Basic Land") {
     newSideboard.push(card);
   }
   await updateDoc(deckRef, {
@@ -38,7 +49,11 @@ export const moveCardToSideboard = async (deckId: string, userId: string, cardId
   });
 };
 
-export const moveCardToMainboard = async (deckId: string, userId: string, cardId: string) => {
+export const moveCardToMainboard = async (
+  deckId: string,
+  userId: string,
+  cardId: string
+) => {
   const deckRef = doc(db, "users", userId, "decks", deckId);
   const deckDoc = await getDoc(deckRef);
   const deckData = deckDoc.data();
@@ -58,18 +73,26 @@ export const moveCardToMainboard = async (deckId: string, userId: string, cardId
   });
 };
 
-export const addBasicLandToMainboard = async (deckId: string, userId: string, card: Card) => {
+export const addBasicLandToMainboard = async (
+  deckId: string,
+  userId: string,
+  card: Card
+) => {
   const deckRef = doc(db, "users", userId, "decks", deckId);
   console.log(card);
   await updateDoc(deckRef, {
     cards: arrayUnion(card),
   });
-}
+};
 
-
-export const addManyCardsToDeck = async (deckId: string, userId: string, cards: Card[]) => {
+export const addManyCardsToDeck = async (
+  deckId: string,
+  userId: string,
+  cards: Card[]
+) => {
   const deckRef = doc(db, "users", userId, "decks", deckId);
   await updateDoc(deckRef, {
     cards: arrayUnion(...cards),
   });
 };
+

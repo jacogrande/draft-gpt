@@ -89,6 +89,9 @@ export type Deck = {
   name: string;
   cards: Card[];
   sideboard?: Card[];
+  hand?: Card[];
+  graveyard?: Card[];
+  battlefield?: Card[];
   createdAt: Timestamp;
   createdBy: string;
 }
@@ -96,7 +99,7 @@ export type Deck = {
 export type BasicLand = "plains" | "forest" | "mountain" | "swamp" | "island";
 
 export type InteractionLog = {
-  username: string;
+  uid: string;
   message: string;
   timestamp: Timestamp;
 }

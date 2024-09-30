@@ -64,6 +64,7 @@
 - [ ] Opponent deck
 - [ ] Opponent board
 - [ ] Opponent state following
+- [ ] Hand order management - let players drag to rearrange cards in hand
 
 ## Quality of Life
 

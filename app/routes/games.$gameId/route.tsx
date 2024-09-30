@@ -57,10 +57,10 @@ const GameRoute = () => {
       </Page>
     );
   return (
-    <Page>
-      <div className="flex gap-8 flex-1 w-full">
+    <div className="flex flex-col min-h-screen items-center justify-center p-4">
+      <div className="flex gap-4 flex-1 w-full">
         <GameDetails />
-        <div className="flex flex-1 flex-col gap-8">
+        <div className="flex flex-1 flex-col gap-8 overflow-x-auto">
           {allReady ? (
             <>
               <GameScreen />
@@ -73,7 +73,7 @@ const GameRoute = () => {
           )}
         </div>
       </div>
-    </Page>
+    </div>
   );
 };
 

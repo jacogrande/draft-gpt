@@ -3,6 +3,7 @@ import { IoCopy } from "react-icons/io5";
 import Subheading from "~/components/Subheading";
 import { useGameStore } from "~/hooks/game/useGame";
 import { useToast } from "~/hooks/useToast";
+import CardPreview from "~/routes/games.$gameId/Components/CardPreview";
 import InteractionLog from "~/routes/games.$gameId/InteractionLog";
 import LifeTotalEditor from "~/routes/games.$gameId/LifeTotalEditor";
 import { REQUIRED_PLAYERS_FOR_GAME } from "~/util/constants";
@@ -42,6 +43,7 @@ const GameDetails = () => {
     if (!game) return null;
     return (
       <div className="flex flex-col gap-8 flex-1">
+        <CardPreview />
         <ul className="flex flex-col gap-8">
           {game.activeUsers.map((activeUser) => (
             <li key={activeUser.uid} className="flex flex-col gap-2">
