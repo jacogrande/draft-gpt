@@ -51,6 +51,7 @@ const Card = ({ card, disabled, scale = DEFAULTS.SCALE }: CardProps) => {
   const selectedCard = usePacksStore((state) => state.selectedCard);
   const setSelectedCard = usePacksStore((state) => state.setSelectedCard);
   const setPeekedCard = useGlobalStore((state) => state.setPeekedCard);
+  const shiftKeyPressed = useGlobalStore((state) => state.shiftKeyPressed);
   const cardRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
@@ -73,6 +74,10 @@ const Card = ({ card, disabled, scale = DEFAULTS.SCALE }: CardProps) => {
   };
 
   const handleClick = () => {
+    // check if shift key is currently pressed
+    if (shiftKeyPressed) {
+      console.log("shift key pressed");
+    }
     setSelectedCard(card);
   };
 
@@ -81,9 +86,11 @@ const Card = ({ card, disabled, scale = DEFAULTS.SCALE }: CardProps) => {
 
   return (
     <button
-      className={`handle card border border-2 pb-3 hover:scale-105 scale-100 transition flex flex-col items-center relative ${
+      className={`handle card border border-2 pb-3 hover:scale-105 scale-100 transition flex flex-col items-center relative  ${
         card.id === selectedCard?.id ? "border-primary" : "border-black"
-      } ${CARD_COLORS[cardColor]} ${!disabled && "hover:z-10"}`}
+      } ${CARD_COLORS[cardColor]} ${!disabled && "hover:z-10"} ${
+        card.tapped && !disabled && "rotate-90"
+      }`}
       style={{
         width: styles.width,
         height: styles.height,

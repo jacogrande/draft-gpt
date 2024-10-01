@@ -1,4 +1,4 @@
-import { BasicLand, CardColor } from "~/util/types";
+import { BasicLand, CardColor, CardZone } from "~/util/types";
 
 export const BASE_URL = "https://draftgpt.hasslebad.com";
 export const LOBBIES_COLLECTION = "lobbies";
@@ -6,8 +6,14 @@ export const DEFAULT_IMAGE_EXTENSION = "jpeg";
 export const REQUIRED_PLAYERS_FOR_GAME = 2;
 export const STARTING_LIFE = 20;
 export const GAME_SCALE = 0.45;
-
 export const ROUND_COUNT = 3;
+
+export const ZONE_MAP: Record<CardZone, string> = {
+  hand: "hand",
+  battlefield: "battlefield",
+  graveyard: "graveyard",
+  deck: "cards",
+};
 
 export const BASICS: BasicLand[] = [
   "plains",

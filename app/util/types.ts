@@ -79,9 +79,12 @@ export type Card = GeneratedCard & {
   packId: string;
   createdAt: Timestamp;
   pickedBy: string;
+  tapped?: boolean;
 }
 
 export type CardColor = "red" | "white" | "blue" | "black" | "green" | "multi" | "colorless";
+
+export type CardZone = "deck" | "hand" | "battlefield" | "graveyard";
 
 export type Deck = {
   id: string;
@@ -102,6 +105,7 @@ export type InteractionLog = {
   uid: string;
   message: string;
   timestamp: Timestamp;
+  targetCard?: string;
 }
 
 export type Game = {

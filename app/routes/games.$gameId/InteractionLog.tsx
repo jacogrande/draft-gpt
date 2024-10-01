@@ -1,5 +1,6 @@
 import Subheading from "~/components/Subheading";
 import { useGameStore } from "~/hooks/game/useGame";
+import { getCardNameFromGame } from "~/util/getCardNameFromGame";
 
 const InteractionLog = () => {
   const { game } = useGameStore();
@@ -13,12 +14,16 @@ const InteractionLog = () => {
   };
 
   return (
-    <div className="flex-1">
+    <div className="h-64">
       <Subheading>Interaction Log</Subheading>
-      <div className="flex flex-col w-full h-full border rounded-md gap-2 mt-2 overflow-y-auto">
+      <div className="flex h-full overflow-y-auto flex-col w-full border rounded-md gap-2 mt-2 p-2">
         {game?.log?.map((log) => (
-          <p key={log.timestamp.toDate().toString()} className="text-xs">
-            {getUsername(log.uid)}: {log.message}
+          <p
+            key={log.timestamp.nanoseconds + log.uid + log.message}
+            className="text-xs flex items-center gap-2"
+          >
+            {getUsername(log.uid)}: {log.message}{" "}
+            {log.targetCard && getCardNameFromGame(log.targetCard, game)}
           </p>
         ))}
       </div>

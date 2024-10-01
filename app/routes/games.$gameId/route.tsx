@@ -4,6 +4,7 @@ import { verifySession } from "~/.server/session";
 import Heading from "~/components/Heading";
 import Page from "~/components/Page";
 import { useGame } from "~/hooks/game/useGame";
+import { useGlobalStore } from "~/hooks/useGlobalStore";
 import { useUser } from "~/hooks/useUser";
 import { joinGame } from "~/model/game";
 import DeckPicker from "~/routes/games.$gameId/DeckPicker";
@@ -18,6 +19,9 @@ const GameRoute = () => {
   const params = useParams();
   const gameId = params.gameId as string;
   const { user } = useUser();
+  const setShiftKeyPressed = useGlobalStore(
+    (state) => state.setShiftKeyPressed
+  );
   const { game, loading, error } = useGame(gameId);
   const [gameIsFull, setGameIsFull] = useState<boolean>(false);
 
@@ -35,6 +39,22 @@ const GameRoute = () => {
       if (!success) setGameIsFull(true);
     })();
   }, [gameId, user]);
+
+  /**
+   * Add a listener for the shift key
+   */
+  useEffect(() => {
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "Shift") {
+        setShiftKeyPressed(true);
+      }
+    });
+    window.addEventListener("keyup", (e) => {
+      if (e.key === "Shift") {
+        setShiftKeyPressed(false);
+      }
+    });
+  }, [setShiftKeyPressed]);
 
   if (loading)
     return (
@@ -57,10 +77,10 @@ const GameRoute = () => {
       </Page>
     );
   return (
-    <div className="flex flex-col min-h-screen items-center justify-center p-4">
-      <div className="flex gap-4 flex-1 w-full">
+    <div className="flex flex-col h-screen items-center justify-center p-4">
+      <div className="flex gap-4 flex-1 w-full h-full">
         <GameDetails />
-        <div className="flex flex-1 flex-col gap-8 overflow-x-auto">
+        <div className="flex flex-1 flex-col gap-2">
           {allReady ? (
             <>
               <GameScreen />

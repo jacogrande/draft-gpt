@@ -32,7 +32,9 @@ const GameDetails = () => {
         {game.activeUsers.map((user) => (
           <li key={user.uid} className="flex items-center gap-2">
             {user.username}
-            {game.readyMap[user.uid] && <CheckIcon className="h-4 w-4 text-success" />}
+            {game.readyMap[user.uid] && (
+              <CheckIcon className="h-4 w-4 text-success" />
+            )}
           </li>
         ))}
       </ul>
@@ -52,13 +54,13 @@ const GameDetails = () => {
             </li>
           ))}
         </ul>
-        <InteractionLog />
+          <InteractionLog />
       </div>
     );
   };
 
   return (
-    <div className="flex flex-col gap-4 min-w-48 rounded-lg p-4">
+    <div className="flex flex-col gap-4 h-full min-w-48 rounded-lg p-4">
       <h1 className="text-2xl font-bold text-primary mb-8 flex items-center gap-2">
         {game?.name}
         <div className="tooltip" data-tip="Copy Game ID">

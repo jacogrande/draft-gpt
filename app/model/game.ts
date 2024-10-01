@@ -7,13 +7,26 @@ import {
   query,
   setDoc,
   Timestamp,
-  where
+  where,
 } from "firebase/firestore";
 import { db } from "~/model/firebase";
-import { logShuffle } from "~/model/loggers";
-import { REQUIRED_PLAYERS_FOR_GAME, STARTING_LIFE } from "~/util/constants";
+import { logShuffle, logTap, logUntap } from "~/model/loggers";
+import {
+  REQUIRED_PLAYERS_FOR_GAME,
+  STARTING_LIFE,
+  ZONE_MAP,
+} from "~/util/constants";
 import shuffleArray from "~/util/shuffleArray";
-import { Card, Deck, Game, User } from "~/util/types";
+import { Card, CardZone, Deck, Game, User } from "~/util/types";
+
+const getGameAndDeck = async (gameId: string, userId: string) => {
+  const gameRef = doc(db, "games", gameId);
+  const gameDoc = await getDoc(gameRef);
+  if (!gameDoc.exists()) throw new Error("Game not found");
+  const deck = gameDoc.data().decks[userId];
+  if (!deck) throw new Error("Deck not found");
+  return { gameRef, game: gameDoc.data(), deck };
+};
 
 export const createGame = async (name: string, user: User) => {
   const gamesRef = collection(db, "games");
@@ -78,8 +91,6 @@ export const submitDeck = async (
   deck: Deck
 ): Promise<void> => {
   const gameRef = doc(db, "games", gameId);
-  const gameDoc = await getDoc(gameRef);
-  if (!gameDoc.exists()) throw new Error("Game not found");
   await setDoc(
     gameRef,
     {
@@ -99,9 +110,7 @@ export const updateLifeTotal = async (
   userId: string,
   lifeTotal: number
 ): Promise<void> => {
-  const gameRef = doc(db, "games", gameId);
-  const gameDoc = await getDoc(gameRef);
-  if (!gameDoc.exists()) throw new Error("Game not found");
+  const { gameRef } = await getGameAndDeck(gameId, userId);
   await setDoc(
     gameRef,
     {
@@ -111,14 +120,11 @@ export const updateLifeTotal = async (
     },
     { merge: true }
   );
+  await shuffleDeck(gameId, userId);
 };
 
 export const shuffleDeck = async (gameId: string, userId: string) => {
-  const gameRef = doc(db, "games", gameId);
-  const gameDoc = await getDoc(gameRef);
-  if (!gameDoc.exists()) throw new Error("Game not found");
-  const deck = gameDoc.data().decks[userId];
-  if (!deck) throw new Error("Deck not found");
+  const { gameRef, deck } = await getGameAndDeck(gameId, userId);
   const shuffledCards = shuffleArray<Card>(deck.cards);
   await setDoc(
     gameRef,
@@ -149,22 +155,97 @@ export const drawCards = async (
   userId: string,
   amount: number
 ): Promise<boolean> => {
-  const gameRef = doc(db, "games", gameId);
-  const gameDoc = await getDoc(gameRef);
-  if (!gameDoc.exists()) throw new Error("Game not found");
-  const hand = gameDoc.data().decks[userId].hand || [];
+  const { gameRef, game } = await getGameAndDeck(gameId, userId);
+  const hand = game.decks[userId].hand || [];
   for (let i = 0; i < amount; i++) {
     if (i >= deck.cards.length) return false;
     const card = deck.cards.shift();
     hand.push(card);
   }
-  await setDoc(gameRef, {
-    decks: {
-      [userId]: {
-        ...deck,
-        hand
+  await setDoc(
+    gameRef,
+    {
+      decks: {
+        [userId]: {
+          ...deck,
+          hand,
+        },
       },
     },
-  }, {merge: true});
+    { merge: true }
+  );
+  return true;
+};
+
+/**
+ * Moves a card from one zone to another
+ * @param gameId - the id of the game to move the card from
+ * @param userId - the id of the user to move the card from
+ * @param card - the card to move
+ * @param originZone - the zone the card is currently in
+ * @param targetZone - the zone to move the card to
+ */
+export const moveCardToZone = async (
+  gameId: string,
+  userId: string,
+  card: Card,
+  originZone: CardZone,
+  targetZone: CardZone
+) => {
+  const { gameRef, deck } = await getGameAndDeck(gameId, userId);
+  const originZoneField = ZONE_MAP[originZone];
+  const targetZoneField = ZONE_MAP[targetZone];
+  console.log(originZoneField, targetZoneField);
+  const cardIndex = deck[originZoneField].findIndex(
+    (foundCard: Card) => foundCard.id === card.id
+  );
+  const shiftedCard = deck[originZoneField].splice(cardIndex, 1)[0];
+  deck[targetZoneField] = deck[targetZoneField] || [];
+  // always put the card at the top of the deck
+  if (targetZoneField === "deck") {
+    deck[targetZoneField].unshift(shiftedCard);
+  } else {
+    deck[targetZoneField].push(shiftedCard);
+  }
+  await setDoc(
+    gameRef,
+    {
+      decks: {
+        [userId]: {
+          ...deck,
+        },
+      },
+    },
+    { merge: true }
+  );
+  return true;
+};
+
+export const tapCard = async (
+  gameId: string,
+  userId: string,
+  cardId: string
+): Promise<boolean> => {
+  const { gameRef, deck } = await getGameAndDeck(gameId, userId);
+  const card = deck.battlefield?.find((card: Card) => card.id === cardId);
+  if (!card) return false;
+  card.tapped = !card.tapped;
+  if(card.tapped) {
+    logTap(gameId, userId, cardId);
+  }
+  else {
+    logUntap(gameId, userId, cardId);
+  }
+  await setDoc(
+    gameRef,
+    {
+      decks: {
+        [userId]: {
+          ...deck,
+        },
+      },
+    },
+    { merge: true }
+  );
   return true;
 };
