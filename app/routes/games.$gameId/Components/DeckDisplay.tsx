@@ -34,16 +34,6 @@ const DeckDisplay = ({ deck, scale = 1 }: DeckDisplayProps) => {
     }),
     [scale]
   );
-  const imageStyles = useMemo(
-    () => ({
-      boxShadow: `-${7 * scale}px ${7 * scale}px 0px rgba(0, 0, 0, 1), ${
-        -14 * scale
-      }px ${14 * scale}px 0px rgba(0, 0, 0, 1), -${21 * scale}px ${
-        21 * scale
-      }px 0px rgba(0, 0, 0, 1)`,
-    }),
-    [scale]
-  );
 
   const handleShuffle = async () => {
     if (!user || !game) return;
