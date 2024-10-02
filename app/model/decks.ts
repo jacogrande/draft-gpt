@@ -79,7 +79,6 @@ export const addBasicLandToMainboard = async (
   card: Card
 ) => {
   const deckRef = doc(db, "users", userId, "decks", deckId);
-  console.log(card);
   await updateDoc(deckRef, {
     cards: arrayUnion(card),
   });

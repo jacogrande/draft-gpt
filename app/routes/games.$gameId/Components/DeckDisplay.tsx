@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { useGameStore } from "~/hooks/game/useGame";
 import { useUser } from "~/hooks/useUser";
-import { drawCards, shuffleDeck } from "~/model/game";
+import { shuffleDeck, drawCards } from "~/model/game/deck";
 import { Deck } from "~/util/types";
 
 type DeckDisplayProps = {

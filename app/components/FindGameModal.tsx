@@ -1,7 +1,7 @@
 import { MagnifyingGlassCircleIcon } from "@heroicons/react/16/solid";
 import { useNavigate } from "@remix-run/react";
 import { useState } from "react";
-import { getGameByName } from "~/model/game";
+import { getGameByName } from "~/model/game/game";
 
 type FindGameModalProps = {
   modalRef: React.RefObject<HTMLDialogElement>;

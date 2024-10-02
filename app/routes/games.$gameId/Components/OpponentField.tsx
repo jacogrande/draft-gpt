@@ -3,7 +3,6 @@ import Card from "~/components/Card";
 import { useGameStore } from "~/hooks/game/useGame";
 import { useUser } from "~/hooks/useUser";
 import DeckDisplay from "~/routes/games.$gameId/Components/DeckDisplay";
-import DraggableGameCard from "~/routes/games.$gameId/Components/DraggableGameCard";
 import { GAME_SCALE } from "~/util/constants";
 
 const OpponentField = () => {

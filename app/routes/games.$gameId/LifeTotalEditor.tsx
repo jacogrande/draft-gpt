@@ -2,7 +2,7 @@ import { HeartIcon } from "@heroicons/react/16/solid";
 import { useEffect, useState } from "react";
 import { useGameStore } from "~/hooks/game/useGame";
 import { useUser } from "~/hooks/useUser";
-import { updateLifeTotal } from "~/model/game";
+import { updateLifeTotal } from "~/model/game/player";
 import { STARTING_LIFE } from "~/util/constants";
 
 const LifeTotalEditor = ({ userId }: { userId: string }) => {

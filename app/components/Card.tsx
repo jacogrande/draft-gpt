@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import ManaCost from "~/components/ManaCost";
 import { usePacksStore } from "~/hooks/lobby/usePacks";
 import { useGlobalStore } from "~/hooks/useGlobalStore";
-import { CARD_COLORS, CARD_TEXTURES } from "~/util/constants";
+import { CARD_TEXTURES } from "~/util/constants";
 import { getCardColor } from "~/util/getCardColor";
 import { Card as CardType } from "~/util/types";
 
@@ -10,6 +10,7 @@ type CardProps = {
   card?: CardType;
   disabled?: boolean;
   scale?: number;
+  showPickHighlight?: boolean;
 };
 
 const DEFAULTS = {
@@ -31,7 +32,12 @@ const DEFAULTS = {
 
 export const CARD_WIDTH_SCALED = DEFAULTS.WIDTH * DEFAULTS.SCALE;
 
-const Card = ({ card, disabled, scale = DEFAULTS.SCALE }: CardProps) => {
+const Card = ({
+  card,
+  disabled,
+  scale = DEFAULTS.SCALE,
+  showPickHighlight,
+}: CardProps) => {
   const styles = {
     width: `${DEFAULTS.WIDTH * scale}px`,
     height: `${DEFAULTS.HEIGHT * scale}px`,
@@ -50,8 +56,8 @@ const Card = ({ card, disabled, scale = DEFAULTS.SCALE }: CardProps) => {
   };
   const selectedCard = usePacksStore((state) => state.selectedCard);
   const setSelectedCard = usePacksStore((state) => state.setSelectedCard);
-  const setPeekedCard = useGlobalStore((state) => state.setPeekedCard);
-  const shiftKeyPressed = useGlobalStore((state) => state.shiftKeyPressed);
+  const { selectedCards, setSelectedCards, setPeekedCard, shiftKeyPressed } =
+    useGlobalStore();
   const cardRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
@@ -75,22 +81,47 @@ const Card = ({ card, disabled, scale = DEFAULTS.SCALE }: CardProps) => {
 
   const handleClick = () => {
     // check if shift key is currently pressed
-    if (shiftKeyPressed) {
-      console.log("shift key pressed");
+    if (!shiftKeyPressed) {
+      setSelectedCard(card);
+      return;
     }
-    setSelectedCard(card);
+    if (selectedCards.find((selectedCard) => selectedCard.id === card.id)) {
+      setSelectedCards(
+        selectedCards.filter((selectedCard) => selectedCard.id !== card.id)
+      );
+      return;
+    }
+    setSelectedCards([...selectedCards, card]);
   };
 
   const cardColor = getCardColor(card.mana_cost);
   const texture = CARD_TEXTURES[cardColor];
 
+  const getButtonClass = () => {
+    const classes = [
+      "handle card border border-2 pb-3 hover:scale-105 scale-100 transition flex flex-col items-center relative border-black",
+    ];
+    // highlight selected cards
+    const cardIsSelected = Boolean(
+      selectedCards.find((selectedCard) => selectedCard.id === card.id)
+    );
+    const cardIsSelectedInDraft =
+      showPickHighlight && card.id === selectedCard?.id;
+    if (cardIsSelected || cardIsSelectedInDraft) {
+      classes.push("ring-2 ring-primary ring-offset-2");
+    }
+
+    // mute other cards when some are selected
+    if (selectedCards.length > 0 && !cardIsSelected) {
+      classes.push("opacity-50");
+    }
+
+    return classes.join(" ");
+  };
+
   return (
     <button
-      className={`handle card border border-2 pb-3 hover:scale-105 scale-100 transition flex flex-col items-center relative  ${
-        card.id === selectedCard?.id ? "border-primary" : "border-black"
-      } ${CARD_COLORS[cardColor]} ${!disabled && "hover:z-10"} ${
-        card.tapped && !disabled && "rotate-90"
-      }`}
+      className={getButtonClass()}
       style={{
         width: styles.width,
         height: styles.height,

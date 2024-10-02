@@ -4,9 +4,9 @@ import { verifySession } from "~/.server/session";
 import Heading from "~/components/Heading";
 import Page from "~/components/Page";
 import { useGame } from "~/hooks/game/useGame";
-import { useGlobalStore } from "~/hooks/useGlobalStore";
+import useShiftSelector from "~/hooks/useShiftSelector";
 import { useUser } from "~/hooks/useUser";
-import { joinGame } from "~/model/game";
+import { joinGame } from "~/model/game/lobby";
 import DeckPicker from "~/routes/games.$gameId/DeckPicker";
 import GameDetails from "~/routes/games.$gameId/GameDetails";
 import GameScreen from "~/routes/games.$gameId/GameScreen";
@@ -19,9 +19,7 @@ const GameRoute = () => {
   const params = useParams();
   const gameId = params.gameId as string;
   const { user } = useUser();
-  const setShiftKeyPressed = useGlobalStore(
-    (state) => state.setShiftKeyPressed
-  );
+  useShiftSelector();
   const { game, loading, error } = useGame(gameId);
   const [gameIsFull, setGameIsFull] = useState<boolean>(false);
 
@@ -39,22 +37,6 @@ const GameRoute = () => {
       if (!success) setGameIsFull(true);
     })();
   }, [gameId, user]);
-
-  /**
-   * Add a listener for the shift key
-   */
-  useEffect(() => {
-    window.addEventListener("keydown", (e) => {
-      if (e.key === "Shift") {
-        setShiftKeyPressed(true);
-      }
-    });
-    window.addEventListener("keyup", (e) => {
-      if (e.key === "Shift") {
-        setShiftKeyPressed(false);
-      }
-    });
-  }, [setShiftKeyPressed]);
 
   if (loading)
     return (

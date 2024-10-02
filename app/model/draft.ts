@@ -118,8 +118,7 @@ const createPack = async (
       round,
     }),
   });
-  const json = await response.json();
-  console.log(json);
+  await response.json();
 };
 
 const finishPacks = async (lobbyId: string) => {
@@ -132,8 +131,7 @@ const finishPacks = async (lobbyId: string) => {
       lobbyId,
     }),
   });
-  const json = await response.json();
-  console.log(json);
+  await response.json();
 };
 
 /**

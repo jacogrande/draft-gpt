@@ -2,7 +2,7 @@ import { useNavigate } from "@remix-run/react";
 import { useState } from "react";
 import { useToast } from "~/hooks/useToast";
 import { useUser } from "~/hooks/useUser";
-import { createGame } from "~/model/game";
+import { createGame } from "~/model/game/lobby";
 import { randomGameName } from "~/util/randomGameName";
 
 const useGameCreator = () => {

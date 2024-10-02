@@ -3,10 +3,11 @@ import Draggable, { DraggableEventHandler } from "react-draggable";
 import Card from "~/components/Card";
 import { useGameStore } from "~/hooks/game/useGame";
 import { useZoneRefs } from "~/hooks/game/useZoneRefs";
+import { useGlobalStore } from "~/hooks/useGlobalStore";
 import { useUser } from "~/hooks/useUser";
-import { moveCardToZone, tapCard } from "~/model/game";
+import { tapCard } from "~/model/game/card";
+import { moveCardToZone } from "~/model/game/zone";
 import { GAME_SCALE } from "~/util/constants";
-import sleep from "~/util/sleep";
 import { Card as CardType, CardZone } from "~/util/types";
 
 type DraggableGameCardProps = {
@@ -19,6 +20,7 @@ const DraggableGameCard = ({ card, zone }: DraggableGameCardProps) => {
   const { game } = useGameStore();
   const { user } = useUser();
   const { battlefieldRef, deckRef, handRef } = useZoneRefs();
+  const { selectedCards } = useGlobalStore();
 
   const highlightZone = (ref: React.RefObject<HTMLDivElement>) => {
     if (!ref.current) return;
@@ -76,6 +78,36 @@ const DraggableGameCard = ({ card, zone }: DraggableGameCardProps) => {
     }
   };
 
+  const handleMoveCard = async (targetZone: CardZone) => {
+    if (!user || !game) return;
+    // move all selected cards to the target zone
+    if (selectedCards.length > 0) {
+      const movingPromises = [];
+      for (const selectedCard of selectedCards) {
+        console.log(selectedCard);
+        movingPromises.push(
+          moveCardToZone(
+            game.id,
+            user.uid,
+            selectedCard,
+            selectedCard.zone || "deck",
+            targetZone
+          )
+        );
+      }
+      await Promise.all(movingPromises);
+      return;
+    }
+    // move the card being dragged to the target zone
+    await moveCardToZone(
+      game.id,
+      user.uid,
+      card,
+      card.zone || "deck",
+      targetZone
+    );
+  };
+
   const handleStop: DraggableEventHandler = (_e, data) => {
     setIsDragging(false);
     if (!battlefieldRef || !deckRef || !handRef || !game || !user) return;
@@ -90,11 +122,11 @@ const DraggableGameCard = ({ card, zone }: DraggableGameCardProps) => {
     removeHighlight(handRef);
     // move card to the appropriate zone
     if (inHand && zone !== "hand") {
-      moveCardToZone(game.id, user.uid, card, zone, "hand");
+      handleMoveCard("hand");
     } else if (inDeck && zone !== "deck") {
-      moveCardToZone(game.id, user.uid, card, zone, "deck");
+      handleMoveCard("deck");
     } else if (inBattlefield && zone !== "battlefield") {
-      moveCardToZone(game.id, user.uid, card, zone, "battlefield");
+      handleMoveCard("battlefield");
     }
   };
 

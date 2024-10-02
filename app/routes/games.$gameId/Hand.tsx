@@ -16,7 +16,10 @@ const Hand = () => {
 
   if (!game || !user) return null;
   return (
-    <div className="flex gap-2 w-full border border-base-100" ref={handRef}>
+    <div
+      className="flex gap-2 w-full border border-base-100 min-h-36"
+      ref={handRef}
+    >
       {game.decks[user.uid]?.hand?.map((card) => (
         <DraggableGameCard key={card.id} card={card} zone="hand" />
       ))}

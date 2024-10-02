@@ -27,3 +27,11 @@ Here are my solutions ordered by simplicity at a glance:
 
 Here's the problem. To me, the sollutions ordered by best UX seem to be a direct inverse of the previous list.
 I guess that means that the middle option is the best compromise.
+
+### NEW ISSUE
+
+So I got shift click multi select working. I even made a nice little ux feedback where non-selected cards become a little more opaque. It looks good.
+
+Here's the problem: Do we let users select cards from multiple zones at once? That suddenly adds a whole lot of complexity. Prior to running into this, I'd just take the zone the card being dragged is from and use that to represent all of the cards, but that's not neessarily true if they can be selected from multiple zones.
+
+I think for now it's fine if they can only select cards from one zone at a time. Though... actually, that might be just as hard to enforce as it would be to handle the edge case. Alright I think I'm just gonna attach a `zone` field to each card.

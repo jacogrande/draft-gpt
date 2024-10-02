@@ -77,6 +77,7 @@ export type SettingWithMetadata = Setting & {
 export type Card = GeneratedCard & {
   id: string;
   packId: string;
+  zone?: CardZone;
   createdAt: Timestamp;
   pickedBy: string;
   tapped?: boolean;

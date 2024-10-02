@@ -4,7 +4,7 @@ import { useGameStore } from "~/hooks/game/useGame";
 import { useToast } from "~/hooks/useToast";
 import { useUser } from "~/hooks/useUser";
 import { getAllDecks } from "~/model/decks";
-import { submitDeck } from "~/model/game";
+import { submitDeck } from "~/model/game/deck";
 import { Deck } from "~/util/types";
 
 const DeckPicker = () => {

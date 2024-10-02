@@ -6,6 +6,8 @@ interface GlobalStore {
   setPeekedCard: (card: Card | null) => void;
   shiftKeyPressed: boolean;
   setShiftKeyPressed: (shiftKeyPressed: boolean) => void;
+  selectedCards: Card[];
+  setSelectedCards: (selectedCards: Card[]) => void;
 }
 
 export const useGlobalStore = create<GlobalStore>((set) => ({
@@ -13,4 +15,6 @@ export const useGlobalStore = create<GlobalStore>((set) => ({
   setPeekedCard: (card) => set({ peekedCard: card }),
   shiftKeyPressed: false,
   setShiftKeyPressed: (shiftKeyPressed) => set({ shiftKeyPressed }),
+  selectedCards: [],
+  setSelectedCards: (selectedCards) => set({ selectedCards }),
 }));
