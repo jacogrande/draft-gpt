@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { useGlobalStore } from "~/hooks/useGlobalStore";
 
 const useShiftSelector = () => {
@@ -8,19 +8,32 @@ const useShiftSelector = () => {
     shiftKeyPressed,
     setSelectedCards,
   } = useGlobalStore();
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Shift") {
-        setShiftKeyPressed(true);
+
+  const handleKeyDown = useCallback(
+    async (e: KeyboardEvent) => {
+      switch (e.key) {
+        case "Shift":
+          setShiftKeyPressed(true);
+          break;
+        case "Escape":
+          setShiftKeyPressed(false);
+          setSelectedCards([]);
+          break;
       }
-    };
+    },
+    [setShiftKeyPressed, setSelectedCards]
+  );
+
+  useEffect(() => {
     const handleKeyUp = (e: KeyboardEvent) => {
       if (e.key === "Shift") {
         setShiftKeyPressed(false);
       }
     };
-    const handleClick = () => {
+    const handleClick = (e: MouseEvent) => {
       if (selectedCards.length === 0 || shiftKeyPressed) return;
+      console.log(e);
+      console.log("resetting selection");
       setShiftKeyPressed(false);
       setSelectedCards([]);
     };
@@ -32,7 +45,13 @@ const useShiftSelector = () => {
       window.removeEventListener("keyup", handleKeyUp);
       window.removeEventListener("click", handleClick);
     };
-  }, [selectedCards, setShiftKeyPressed, shiftKeyPressed, setSelectedCards]);
+  }, [
+    selectedCards,
+    setShiftKeyPressed,
+    shiftKeyPressed,
+    setSelectedCards,
+    handleKeyDown,
+  ]);
 };
 
 export default useShiftSelector;

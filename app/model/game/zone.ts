@@ -47,3 +47,61 @@ export const moveCardToZone = async (
   return true;
 };
 
+/**
+ * Moves multiple cards from their current zones to a target zone
+ * @param gameId - The ID of the current game
+ * @param userId - The ID of the user moving cards
+ * @param cards - An array of cards to move
+ * @param targetZone - The zone to move the cards to
+ * @note Cards can come from different zones
+ * @returns A promise that resolves to true if the operation is successful
+ */
+export const moveManyCardsToZone = async (
+  gameId: string,
+  userId: string,
+  cards: Card[],
+  targetZone: CardZone
+): Promise<boolean> => {
+  const { gameRef, deck } = await getGameAndDeck(gameId, userId);
+  const updatedDeck = { ...deck };
+  const targetZoneField = ZONE_MAP[targetZone];
+  updatedDeck[targetZoneField] = updatedDeck[targetZoneField] || [];
+  for (const card of cards) {
+    // Validate the card's zone
+    const originZoneField = ZONE_MAP[card.zone || "deck"];
+    if (!originZoneField || !updatedDeck[originZoneField]) {
+      console.warn(`Card ${card.id} is in an invalid origin zone: ${card.zone}`);
+      continue; // Skip to the next card
+    }
+
+    const cardIndex = updatedDeck[originZoneField].findIndex(
+      (foundCard: Card) => foundCard.id === card.id
+    );
+    if (cardIndex === -1) {
+      console.warn(`Card ${card.id} not found in zone ${originZoneField}`);
+      continue; // Skip to the next card
+    }
+
+    // move the card to the target zone
+    const [movedCard] = updatedDeck[originZoneField].splice(cardIndex, 1);
+    movedCard.zone = targetZone;
+    if (targetZoneField === "deck") {
+      // Place the card on top of the deck
+      updatedDeck[targetZoneField].unshift(movedCard);
+    } else {
+      updatedDeck[targetZoneField].push(movedCard);
+    }
+  }
+
+  await setDoc(
+    gameRef,
+    {
+      decks: {
+        [userId]: updatedDeck,
+      },
+    },
+    { merge: true }
+  );
+
+  return true;
+};

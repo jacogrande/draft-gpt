@@ -19,7 +19,9 @@ const InteractionLog = () => {
       <div className="flex h-full overflow-y-auto flex-col w-full border rounded-md gap-2 mt-2 p-2">
         {game?.log?.map((log) => (
           <p
-            key={log.timestamp.nanoseconds + log.uid + log.message}
+            key={
+              log.timestamp.nanoseconds + log.uid + log.message + Math.random()
+            }
             className="text-xs flex items-center gap-2"
           >
             {getUsername(log.uid)}: {log.message}{" "}

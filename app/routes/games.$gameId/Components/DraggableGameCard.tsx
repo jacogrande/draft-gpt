@@ -6,7 +6,7 @@ import { useZoneRefs } from "~/hooks/game/useZoneRefs";
 import { useGlobalStore } from "~/hooks/useGlobalStore";
 import { useUser } from "~/hooks/useUser";
 import { tapCard } from "~/model/game/card";
-import { moveCardToZone } from "~/model/game/zone";
+import { moveCardToZone, moveManyCardsToZone } from "~/model/game/zone";
 import { GAME_SCALE } from "~/util/constants";
 import { Card as CardType, CardZone } from "~/util/types";
 
@@ -82,20 +82,7 @@ const DraggableGameCard = ({ card, zone }: DraggableGameCardProps) => {
     if (!user || !game) return;
     // move all selected cards to the target zone
     if (selectedCards.length > 0) {
-      const movingPromises = [];
-      for (const selectedCard of selectedCards) {
-        console.log(selectedCard);
-        movingPromises.push(
-          moveCardToZone(
-            game.id,
-            user.uid,
-            selectedCard,
-            selectedCard.zone || "deck",
-            targetZone
-          )
-        );
-      }
-      await Promise.all(movingPromises);
+      await moveManyCardsToZone(game.id, user.uid, selectedCards, targetZone);
       return;
     }
     // move the card being dragged to the target zone
@@ -137,6 +124,7 @@ const DraggableGameCard = ({ card, zone }: DraggableGameCardProps) => {
 
   const handleDoubleClick = async () => {
     if (!user || !game) return;
+    console.log("tapping card");
     await tapCard(game.id, user.uid, card.id);
   };
 

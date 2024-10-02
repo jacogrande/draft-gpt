@@ -35,15 +35,18 @@ const DeckDisplay = ({ deck, scale = 1 }: DeckDisplayProps) => {
     [scale]
   );
 
-  const handleShuffle = async () => {
+  const handleShuffle = async (e: React.MouseEvent<HTMLButtonElement>) => {
     if (!user || !game) return;
+    (e.target as HTMLButtonElement).blur();
     await shuffleDeck(game.id, user.uid);
   };
 
-  const handleDrawCard = (amount: number) => async () => {
-    if (!user || !game) return;
-    await drawCards(game.id, deck, user.uid, amount);
-  };
+  const handleDrawCard =
+    (amount: number) => async (e: React.MouseEvent<HTMLButtonElement>) => {
+      if (!user || !game) return;
+      (e.target as HTMLButtonElement).blur();
+      await drawCards(game.id, deck, user.uid, amount);
+    };
 
   const drawOne = handleDrawCard(1);
   const drawSeven = handleDrawCard(7);

@@ -116,6 +116,11 @@ const Card = ({
       classes.push("opacity-50");
     }
 
+    // handle tapped cards
+    if (card.tapped && !disabled) {
+      classes.push("rotate-90");
+    }
+
     return classes.join(" ");
   };
 

@@ -4,6 +4,7 @@ import { verifySession } from "~/.server/session";
 import Heading from "~/components/Heading";
 import Page from "~/components/Page";
 import { useGame } from "~/hooks/game/useGame";
+import useGameCommands from "~/hooks/game/useGameCommands";
 import useShiftSelector from "~/hooks/useShiftSelector";
 import { useUser } from "~/hooks/useUser";
 import { joinGame } from "~/model/game/lobby";
@@ -20,6 +21,7 @@ const GameRoute = () => {
   const gameId = params.gameId as string;
   const { user } = useUser();
   useShiftSelector();
+  const commandMessage = useGameCommands();
   const { game, loading, error } = useGame(gameId);
   const [gameIsFull, setGameIsFull] = useState<boolean>(false);
 
@@ -75,6 +77,7 @@ const GameRoute = () => {
           )}
         </div>
       </div>
+      {commandMessage}
     </div>
   );
 };

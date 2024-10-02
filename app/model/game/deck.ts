@@ -33,6 +33,11 @@ export const submitDeck = async (
   deck: Deck
 ): Promise<void> => {
   const gameRef = doc(db, "games", gameId);
+  const shuffledCards = shuffleArray<Card>(deck.cards);
+  const newDeck = {
+    ...deck,
+    cards: shuffledCards,
+  };
   await setDoc(
     gameRef,
     {
@@ -40,7 +45,7 @@ export const submitDeck = async (
         [userId]: true,
       },
       decks: {
-        [userId]: deck,
+        [userId]: newDeck,
       },
     },
     { merge: true }
