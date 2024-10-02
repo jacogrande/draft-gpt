@@ -2,13 +2,16 @@ import { useCallback, useEffect, useState } from "react";
 import { useGameStore } from "~/hooks/game/useGame";
 import { useGlobalStore } from "~/hooks/useGlobalStore";
 import { useUser } from "~/hooks/useUser";
-import { tapManyCards } from "~/model/game/card";
+import { tapManyCards, untapBattlefield } from "~/model/game/card";
 import { drawCards, shuffleDeck } from "~/model/game/deck";
 import { moveManyCardsToZone } from "~/model/game/zone";
+import { attemptToAddMana } from "~/util/attemptToAddMana";
 
 const useGameCommands = () => {
   const [toastMessage, setToastMessage] = useState<string>("");
   const [drawing, setDrawing] = useState<boolean>(false);
+  const [adding, setAdding] = useState<boolean>(false);
+  const [addAmount, setAddAmount] = useState<string>("");
   const { game } = useGameStore();
   const { user } = useUser();
   const selectedCards = useGlobalStore((state) => state.selectedCards);
@@ -17,8 +20,10 @@ const useGameCommands = () => {
   const handleKeyDown = useCallback(
     async (e: KeyboardEvent) => {
       if (!game || !user) return;
+      let newAmount = "";
       switch (e.key) {
         case "t":
+          if (selectedCards.length === 0) return;
           await tapManyCards(
             game.id,
             user.uid,
@@ -43,6 +48,12 @@ const useGameCommands = () => {
           await shuffleDeck(game.id, user.uid);
           break;
         case "b":
+          if (adding) {
+            newAmount = addAmount + e.key.toUpperCase();
+            setAddAmount(newAmount);
+            setToastMessage(`*A*dd ${newAmount}`);
+            return;
+          }
           if (selectedCards.length === 0) return;
           setToastMessage("Moved to *B*attlefield");
           await moveManyCardsToZone(
@@ -60,6 +71,12 @@ const useGameCommands = () => {
           setSelectedCards([]);
           break;
         case "g":
+          if (adding) {
+            newAmount = addAmount + e.key.toUpperCase();
+            setAddAmount(newAmount);
+            setToastMessage(`*A*dd ${newAmount}`);
+            return;
+          }
           if (selectedCards.length === 0) return;
           setToastMessage("Moved to *G*raveyard");
           await moveManyCardsToZone(
@@ -70,6 +87,55 @@ const useGameCommands = () => {
           );
           setSelectedCards([]);
           break;
+        case "a":
+          setToastMessage("*A*dd");
+          setAddAmount("");
+          setAdding(true);
+          break;
+        case "w":
+        case "r":
+          newAmount = addAmount + e.key.toUpperCase();
+          setAddAmount(newAmount);
+          setToastMessage(`*A*dd ${newAmount}`);
+          break;
+        case "u":
+          if (adding) {
+            newAmount = addAmount + e.key.toUpperCase();
+            setAddAmount(newAmount);
+            setToastMessage(`*A*dd ${newAmount}`);
+            return;
+          }
+          await untapBattlefield(game.id, user.uid);
+          break;
+        case "Enter":
+          if (adding) {
+            setToastMessage(`*A*dd ${addAmount}`);
+            const tappedLands = attemptToAddMana(
+              addAmount,
+              game.decks[user.uid]
+            );
+            if (!tappedLands) {
+              setToastMessage("Not enough available mana");
+              return;
+            }
+            await tapManyCards(
+              game.id,
+              user.uid,
+              tappedLands.map((card) => card.id)
+            );
+            setAddAmount("");
+            setAdding(false);
+            return;
+          }
+          break;
+        case "Backspace":
+          if (adding) {
+            const newAmount = addAmount.slice(0, -1);
+            setAddAmount(newAmount);
+            setToastMessage(`*A*dd ${newAmount}`);
+            return;
+          }
+          break;
       }
       if (Number.isInteger(Number(e.key))) {
         const amount = Number(e.key);
@@ -77,10 +143,14 @@ const useGameCommands = () => {
           setToastMessage(`*D*raw ${amount}`);
           setDrawing(false);
           drawCards(game.id, game.decks[user.uid], user.uid, amount);
+        } else if (adding) {
+          const newAmount = addAmount + amount;
+          setAddAmount(newAmount);
+          setToastMessage(`*A*dd ${newAmount}`);
         }
       }
     },
-    [game, user, selectedCards, drawing, setSelectedCards]
+    [game, user, selectedCards, drawing, setSelectedCards, adding, addAmount]
   );
 
   useEffect(() => {
@@ -97,6 +167,7 @@ const useGameCommands = () => {
     const timer = setTimeout(() => {
       setToastMessage("");
       setDrawing(false);
+      setAdding(false);
     }, 3000);
     return () => clearTimeout(timer);
   }, [toastMessage]);

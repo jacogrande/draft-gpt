@@ -90,3 +90,27 @@ export const tapManyCards = async (
 
   return true;
 };
+
+export const untapBattlefield = async (
+  gameId: string,
+  userId: string,
+): Promise<boolean> => {
+  const { gameRef, deck } = await getGameAndDeck(gameId, userId);
+  const battlefield = [...deck.battlefield  || []];
+  for(const card of battlefield) {
+    card.tapped = false;
+  }
+  await setDoc(
+    gameRef,
+    {
+      decks: {
+        [userId]: {
+          ...deck,
+          battlefield,
+        },
+      },
+    },
+    { merge: true }
+  );
+  return true;
+};

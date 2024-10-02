@@ -4,14 +4,13 @@ import { useZoneRefs } from "~/hooks/game/useZoneRefs";
 import { useUser } from "~/hooks/useUser";
 import DeckDisplay from "~/routes/games.$gameId/Components/DeckDisplay";
 import DraggableGameCard from "~/routes/games.$gameId/Components/DraggableGameCard";
-import useContextMenu from "~/routes/games.$gameId/Components/useContextMenu";
+import GraveyardDisplay from "~/routes/games.$gameId/Components/GraveyardDisplay";
 import { GAME_SCALE } from "~/util/constants";
 
 const PlayerField = () => {
   const { game } = useGameStore();
   const { setDeckRef, setBattlefieldRef } = useZoneRefs();
   const { user } = useUser();
-  const { handleRightClick, contextMenu } = useContextMenu();
   //========= ZONE LOADING =========//
   const playerDeck = user && game && game.decks[user.uid];
   const deckRef = useRef<HTMLDivElement>(null);
@@ -55,9 +54,10 @@ const PlayerField = () => {
         <div className="border border-base-100" ref={deckRef}>
           <DeckDisplay deck={playerDeck} scale={GAME_SCALE} />
         </div>
-        <div className="border border-base-100"></div>
+        <div className="border border-base-100 mt-3 ml-2">
+          <GraveyardDisplay deck={playerDeck} scale={GAME_SCALE} />
+        </div>
       </div>
-      {contextMenu}
     </div>
   );
 };
