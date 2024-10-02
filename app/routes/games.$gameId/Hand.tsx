@@ -17,7 +17,7 @@ const Hand = () => {
   if (!game || !user) return null;
   return (
     <div
-      className="flex gap-2 w-full border border-base-100 min-h-36 order-last"
+      className="flex gap-2 w-full border border-base-100 min-h-36"
       ref={handRef}
     >
       {game.decks[user.uid]?.hand?.map((card) => (

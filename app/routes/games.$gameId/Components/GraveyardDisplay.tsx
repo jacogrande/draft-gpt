@@ -1,4 +1,6 @@
 import { useMemo } from "react";
+import Subheading from "~/components/Subheading";
+import GraveyardItem from "~/routes/games.$gameId/Components/GraveyardItem";
 import { Deck } from "~/util/types";
 
 type GraveyardDisplayProps = {
@@ -7,6 +9,7 @@ type GraveyardDisplayProps = {
 };
 
 const GraveyardDisplay = ({ deck, scale = 1 }: GraveyardDisplayProps) => {
+  const graveyard = deck.graveyard || [];
   const styles = useMemo(
     () => ({
       width: 250 * scale,
@@ -25,15 +28,17 @@ const GraveyardDisplay = ({ deck, scale = 1 }: GraveyardDisplayProps) => {
     <div className="drawer drawer-end">
       <input id="my-drawer-4" type="checkbox" className="drawer-toggle" />
       <div className="drawer-content">
-        <label
-          htmlFor="my-drawer-4"
-          style={styles}
-          className="border rounded-md bg-base-200 flex items-center justify-center hover:cursor-pointer"
-        >
-          <p style={textStyles} className="font-bold">
-            {deck.graveyard?.length || 0}
-          </p>
-        </label>
+        <div className="tooltip" data-tip="Graveyard">
+          <label
+            htmlFor="my-drawer-4"
+            style={styles}
+            className="border rounded-md bg-base-200 flex items-center justify-center hover:cursor-pointer"
+          >
+            <p style={textStyles} className="font-bold">
+              {deck.graveyard?.length || 0}
+            </p>
+          </label>
+        </div>
       </div>
       <div className="drawer-side">
         <label
@@ -41,14 +46,11 @@ const GraveyardDisplay = ({ deck, scale = 1 }: GraveyardDisplayProps) => {
           aria-label="close sidebar"
           className="drawer-overlay"
         ></label>
-        <ul className="menu bg-base-200 text-base-content min-h-full w-80 p-4">
-          {/* Sidebar content here */}
-          <li>
-            <a>Sidebar Item 1</a>
-          </li>
-          <li>
-            <a>Sidebar Item 2</a>
-          </li>
+        <ul className="bg-base-200 text-base-content z-20 min-h-full w-80 p-4 flex flex-col gap-2">
+          <Subheading>Graveyard</Subheading>
+          {graveyard.map((card) => (
+            <GraveyardItem key={card.id} card={card} />
+          ))}
         </ul>
       </div>
     </div>

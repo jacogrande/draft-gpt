@@ -19,6 +19,8 @@ const DEFAULTS = {
   IMAGE_WIDTH: (250 - 16 /* padding */ - 8) /* border */ * 0.98,
   IMAGE_HEIGHT: 144,
   FONT_SIZE: 11,
+  SM_FONT_SIZE: 11,
+  LG_FONT_SIZE: 13,
   PADDING: 8,
   BORDER_RADIUS: 16,
   SCALE: 1,
@@ -38,11 +40,17 @@ const Card = ({
   scale = DEFAULTS.SCALE,
   showPickHighlight,
 }: CardProps) => {
+  const getFontSize = () => {
+    if (card && card.name.length > 20) return DEFAULTS.SM_FONT_SIZE;
+    return DEFAULTS.LG_FONT_SIZE;
+  };
+
   const styles = {
     width: `${DEFAULTS.WIDTH * scale}px`,
     height: `${DEFAULTS.HEIGHT * scale}px`,
     imageWidth: `${DEFAULTS.IMAGE_WIDTH * scale}px`,
     imageHeight: `${DEFAULTS.IMAGE_HEIGHT * scale}px`,
+    titleFontSize: `${getFontSize() * scale}px`,
     fontSize: `${DEFAULTS.FONT_SIZE * scale}px`,
     padding: `${DEFAULTS.PADDING * scale}px`,
     borderRadius: `${DEFAULTS.BORDER_RADIUS * scale}px`,
@@ -141,7 +149,9 @@ const Card = ({
     >
       {/* NAME AND COST */}
       <div className="flex justify-between items-center bg-base-100 w-full rounded-md py-1 px-2 border border-black">
-        <p>{card.name}</p>
+        <p style={{ fontSize: styles.titleFontSize }} className="font-semibold">
+          {card.name}
+        </p>
         {/* <p>{card.mana_cost}</p> */}
         <ManaCost manaCost={card.mana_cost} scale={scale} />
       </div>

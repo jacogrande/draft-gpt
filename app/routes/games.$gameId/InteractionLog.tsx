@@ -22,9 +22,10 @@ const InteractionLog = () => {
             key={
               log.timestamp.nanoseconds + log.uid + log.message + Math.random()
             }
-            className="text-xs flex items-center gap-2"
+            className="text-xs flex items-center gap-1"
           >
-            {getUsername(log.uid)}: {log.message}{" "}
+            <span className="font-bold">{getUsername(log.uid)}</span>
+            {log.message}{" "}
             {log.targetCard && getCardNameFromGame(log.targetCard, game)}
           </p>
         ))}

@@ -60,7 +60,9 @@ export const tapManyCards = async (
   for (const cardId of cardIds) {
     const card = deck.battlefield.find((card: Card) => card.id === cardId);
     if (!card) {
-      console.warn(`Card ${cardId} not found on the battlefield for user ${userId}`);
+      console.warn(
+        `Card ${cardId} not found on the battlefield for user ${userId}`
+      );
       continue; // Skip to the next card ID
     }
 
@@ -93,12 +95,15 @@ export const tapManyCards = async (
 
 export const untapBattlefield = async (
   gameId: string,
-  userId: string,
+  userId: string
 ): Promise<boolean> => {
   const { gameRef, deck } = await getGameAndDeck(gameId, userId);
-  const battlefield = [...deck.battlefield  || []];
-  for(const card of battlefield) {
-    card.tapped = false;
+  const battlefield = [...(deck.battlefield || [])];
+  for (const card of battlefield) {
+    if (card.tapped) {
+      logUntap(gameId, userId, card.id);
+      card.tapped = false;
+    }
   }
   await setDoc(
     gameRef,

@@ -7,6 +7,8 @@ type ZoneRefs = {
   setBattlefieldRef: (ref: React.RefObject<HTMLDivElement> | null) => void;
   deckRef: React.RefObject<HTMLDivElement> | null;
   setDeckRef: (ref: React.RefObject<HTMLDivElement> | null) => void;
+  graveyardRef: React.RefObject<HTMLDivElement> | null;
+  setGraveyardRef: (ref: React.RefObject<HTMLDivElement> | null) => void;
 };
 
 export const useZoneRefs = create<ZoneRefs>((set) => ({
@@ -16,4 +18,6 @@ export const useZoneRefs = create<ZoneRefs>((set) => ({
   setBattlefieldRef: (ref) => set({ battlefieldRef: ref }),
   deckRef: null,
   setDeckRef: (ref) => set({ deckRef: ref }),
+  graveyardRef: null,
+  setGraveyardRef: (ref) => set({ graveyardRef: ref }),
 }));

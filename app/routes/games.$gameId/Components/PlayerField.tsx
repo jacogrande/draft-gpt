@@ -9,12 +9,13 @@ import { GAME_SCALE } from "~/util/constants";
 
 const PlayerField = () => {
   const { game } = useGameStore();
-  const { setDeckRef, setBattlefieldRef } = useZoneRefs();
+  const { setDeckRef, setBattlefieldRef, setGraveyardRef } = useZoneRefs();
   const { user } = useUser();
   //========= ZONE LOADING =========//
   const playerDeck = user && game && game.decks[user.uid];
   const deckRef = useRef<HTMLDivElement>(null);
   const fieldRef = useRef<HTMLDivElement>(null);
+  const graveyardRef = useRef<HTMLDivElement>(null);
   const { lands, battlefieldCards } = useMemo(() => {
     const battlefield = playerDeck?.battlefield || [];
     const lands =
@@ -31,7 +32,15 @@ const PlayerField = () => {
   useEffect(() => {
     setDeckRef(deckRef);
     setBattlefieldRef(fieldRef);
-  }, [deckRef, fieldRef, setDeckRef, setBattlefieldRef]);
+    setGraveyardRef(graveyardRef);
+  }, [
+    deckRef,
+    fieldRef,
+    graveyardRef,
+    setDeckRef,
+    setBattlefieldRef,
+    setGraveyardRef,
+  ]);
 
   if (!playerDeck) return null;
   return (
@@ -54,7 +63,7 @@ const PlayerField = () => {
         <div className="border border-base-100" ref={deckRef}>
           <DeckDisplay deck={playerDeck} scale={GAME_SCALE} />
         </div>
-        <div className="border border-base-100 mt-3 ml-2">
+        <div className="border border-base-100 mt-3 ml-2" ref={graveyardRef}>
           <GraveyardDisplay deck={playerDeck} scale={GAME_SCALE} />
         </div>
       </div>

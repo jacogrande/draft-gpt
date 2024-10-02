@@ -67,8 +67,8 @@ const GameRoute = () => {
         <div className="flex flex-1 flex-col gap-2">
           {allReady ? (
             <>
-              <Hand />
               <GameScreen />
+              <Hand />
             </>
           ) : (
             <div className="flex flex-col gap-8 flex-1 items-center justify-center">

@@ -13,13 +13,18 @@ import { Card as CardType, CardZone } from "~/util/types";
 type DraggableGameCardProps = {
   card: CardType;
   zone: CardZone;
+  childrenOverride?: React.ReactNode;
 };
 
-const DraggableGameCard = ({ card, zone }: DraggableGameCardProps) => {
+const DraggableGameCard = ({
+  card,
+  zone,
+  childrenOverride,
+}: DraggableGameCardProps) => {
   const [isDragging, setIsDragging] = useState(false);
   const { game } = useGameStore();
   const { user } = useUser();
-  const { battlefieldRef, deckRef, handRef } = useZoneRefs();
+  const { battlefieldRef, deckRef, handRef, graveyardRef } = useZoneRefs();
   const { selectedCards } = useGlobalStore();
 
   const highlightZone = (ref: React.RefObject<HTMLDivElement>) => {
@@ -53,21 +58,29 @@ const DraggableGameCard = ({ card, zone }: DraggableGameCardProps) => {
   };
 
   const onDrag: DraggableEventHandler = (_e, data) => {
-    if (!battlefieldRef || !deckRef || !handRef) return;
+    if (!battlefieldRef || !deckRef || !handRef || !graveyardRef) return;
     const { node } = data;
     const cardRect = node.getBoundingClientRect();
     const inBattlefield = checkZone(battlefieldRef, cardRect);
     const inDeck = checkZone(deckRef, cardRect);
     const inHand = checkZone(handRef, cardRect);
+    const inGraveyard = checkZone(graveyardRef, cardRect);
     // highlight based on zone priority (hand -> deck -> battlefield)
     if (inHand) {
       highlightZone(handRef);
       removeHighlight(battlefieldRef);
       removeHighlight(deckRef);
+      removeHighlight(graveyardRef);
     } else if (inDeck) {
       highlightZone(deckRef);
       removeHighlight(battlefieldRef);
       removeHighlight(handRef);
+      removeHighlight(graveyardRef);
+    } else if (inGraveyard) {
+      highlightZone(graveyardRef);
+      removeHighlight(deckRef);
+      removeHighlight(handRef);
+      removeHighlight(battlefieldRef);
     } else if (inBattlefield) {
       highlightZone(battlefieldRef);
       removeHighlight(deckRef);
@@ -75,6 +88,8 @@ const DraggableGameCard = ({ card, zone }: DraggableGameCardProps) => {
     } else {
       removeHighlight(battlefieldRef);
       removeHighlight(deckRef);
+      removeHighlight(handRef);
+      removeHighlight(graveyardRef);
     }
   };
 
@@ -97,7 +112,15 @@ const DraggableGameCard = ({ card, zone }: DraggableGameCardProps) => {
 
   const handleStop: DraggableEventHandler = (_e, data) => {
     setIsDragging(false);
-    if (!battlefieldRef || !deckRef || !handRef || !game || !user) return;
+    if (
+      !battlefieldRef ||
+      !deckRef ||
+      !handRef ||
+      !graveyardRef ||
+      !game ||
+      !user
+    )
+      return;
     const { node } = data;
     const cardRect = node.getBoundingClientRect();
     const inBattlefield = checkZone(battlefieldRef, cardRect);
@@ -107,6 +130,7 @@ const DraggableGameCard = ({ card, zone }: DraggableGameCardProps) => {
     removeHighlight(battlefieldRef);
     removeHighlight(deckRef);
     removeHighlight(handRef);
+    removeHighlight(graveyardRef);
     // move card to the appropriate zone
     if (inHand && zone !== "hand") {
       handleMoveCard("hand");
@@ -141,7 +165,7 @@ const DraggableGameCard = ({ card, zone }: DraggableGameCardProps) => {
     >
       <div onDoubleClick={handleDoubleClick}>
         <div className={`transition-transform ${isDragging && "-rotate-12"}`}>
-          <Card card={card} scale={GAME_SCALE} />
+          {childrenOverride || <Card card={card} scale={GAME_SCALE} />}
         </div>
       </div>
     </Draggable>
