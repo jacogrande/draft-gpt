@@ -3,7 +3,8 @@ import { useGameStore } from "~/hooks/game/useGame";
 import { useGlobalStore } from "~/hooks/useGlobalStore";
 import { useUser } from "~/hooks/useUser";
 import { tapManyCards } from "~/model/game/card";
-import { drawCards } from "~/model/game/deck";
+import { drawCards, shuffleDeck } from "~/model/game/deck";
+import { moveManyCardsToZone } from "~/model/game/zone";
 
 const useGameCommands = () => {
   const [toastMessage, setToastMessage] = useState<string>("");
@@ -11,6 +12,7 @@ const useGameCommands = () => {
   const { game } = useGameStore();
   const { user } = useUser();
   const selectedCards = useGlobalStore((state) => state.selectedCards);
+  const setSelectedCards = useGlobalStore((state) => state.setSelectedCards);
 
   const handleKeyDown = useCallback(
     async (e: KeyboardEvent) => {
@@ -24,8 +26,49 @@ const useGameCommands = () => {
           );
           break;
         case "d":
-          setToastMessage("*D*raw ...");
-          setDrawing(true);
+          // draw cards if no cards are selected
+          if (selectedCards.length === 0) {
+            setToastMessage("*D*raw ...");
+            setDrawing(true);
+          }
+          // otherwise move selected cards to deck
+          else {
+            setToastMessage("Moved to *D*eck");
+            await moveManyCardsToZone(game.id, user.uid, selectedCards, "deck");
+            setSelectedCards([]);
+          }
+          break;
+        case "s":
+          setToastMessage("*S*huffle");
+          await shuffleDeck(game.id, user.uid);
+          break;
+        case "b":
+          if (selectedCards.length === 0) return;
+          setToastMessage("Moved to *B*attlefield");
+          await moveManyCardsToZone(
+            game.id,
+            user.uid,
+            selectedCards,
+            "battlefield"
+          );
+          setSelectedCards([]);
+          break;
+        case "h":
+          if (selectedCards.length === 0) return;
+          setToastMessage("Moved to *H*and");
+          await moveManyCardsToZone(game.id, user.uid, selectedCards, "hand");
+          setSelectedCards([]);
+          break;
+        case "g":
+          if (selectedCards.length === 0) return;
+          setToastMessage("Moved to *G*raveyard");
+          await moveManyCardsToZone(
+            game.id,
+            user.uid,
+            selectedCards,
+            "graveyard"
+          );
+          setSelectedCards([]);
           break;
       }
       if (Number.isInteger(Number(e.key))) {
@@ -37,7 +80,7 @@ const useGameCommands = () => {
         }
       }
     },
-    [game, user, selectedCards, drawing]
+    [game, user, selectedCards, drawing, setSelectedCards]
   );
 
   useEffect(() => {
