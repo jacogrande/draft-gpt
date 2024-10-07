@@ -1,7 +1,8 @@
 import React, { useEffect } from "react";
 
-type MenuItem = {
+export type ContextMenuItem = {
   label: string;
+  icon?: React.ReactNode;
   action: () => void;
 };
 
@@ -9,7 +10,7 @@ type CustomContextMenuProps = {
   x: number;
   y: number;
   isVisible: boolean;
-  menuItems: MenuItem[];
+  menuItems: ContextMenuItem[];
   onClose: () => void;
 };
 
@@ -46,12 +47,13 @@ const CustomContextMenu: React.FC<CustomContextMenuProps> = ({
       {menuItems.map((item, index) => (
         <li key={index}>
           <button
-            className="px-4 py-2 hover:bg-gray-100 cursor-pointer w-full"
+            className="px-4 py-2 hover:bg-gray-100 cursor-pointer w-full flex items-center gap-2"
             onClick={() => {
               item.action();
               onClose();
             }}
           >
+            {item.icon}
             {item.label}
           </button>
         </li>

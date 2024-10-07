@@ -16,10 +16,12 @@ const useGameCommands = () => {
   const { user } = useUser();
   const selectedCards = useGlobalStore((state) => state.selectedCards);
   const setSelectedCards = useGlobalStore((state) => state.setSelectedCards);
+  const pauseCommands = useGlobalStore((state) => state.pauseCommands);
 
   const handleKeyDown = useCallback(
     async (e: KeyboardEvent) => {
       if (!game || !user) return;
+      if (pauseCommands) return;
       let newAmount = "";
       switch (e.key) {
         case "t":
@@ -151,7 +153,16 @@ const useGameCommands = () => {
         }
       }
     },
-    [game, user, selectedCards, drawing, setSelectedCards, adding, addAmount]
+    [
+      game,
+      user,
+      selectedCards,
+      drawing,
+      setSelectedCards,
+      adding,
+      addAmount,
+      pauseCommands,
+    ]
   );
 
   useEffect(() => {

@@ -109,6 +109,15 @@ export type InteractionLog = {
   targetCard?: string;
 }
 
+export type Counter = {
+  id: string;
+  ownerId: string;
+  value: string;
+  color: string;
+  position: {x: number, y: number}; // position of the counter in the player's game field
+  // NOTE: When displaying opponent counters, we'll need to invert the y axis since their board is flipped
+}
+
 export type Game = {
   id: string;
   name: string;
@@ -119,4 +128,5 @@ export type Game = {
   decks: Record<string, Deck>;
   readyMap: Record<string, boolean>;
   log?: InteractionLog[];
+  counters?: Counter[];
 }

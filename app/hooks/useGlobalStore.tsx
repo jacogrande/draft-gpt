@@ -8,6 +8,8 @@ interface GlobalStore {
   setShiftKeyPressed: (shiftKeyPressed: boolean) => void;
   selectedCards: Card[];
   setSelectedCards: (selectedCards: Card[]) => void;
+  pauseCommands: boolean;
+  setPauseCommands: (pauseCommands: boolean) => void;
 }
 
 export const useGlobalStore = create<GlobalStore>((set) => ({
@@ -17,4 +19,6 @@ export const useGlobalStore = create<GlobalStore>((set) => ({
   setShiftKeyPressed: (shiftKeyPressed) => set({ shiftKeyPressed }),
   selectedCards: [],
   setSelectedCards: (selectedCards) => set({ selectedCards }),
+  pauseCommands: false,
+  setPauseCommands: (pauseCommands) => set({ pauseCommands }),
 }));
