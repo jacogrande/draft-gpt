@@ -5,6 +5,7 @@ import { useUser } from "~/hooks/useUser";
 import DeckDisplay from "~/routes/games.$gameId/Components/DeckDisplay";
 import DraggableGameCard from "~/routes/games.$gameId/Components/DraggableGameCard";
 import GraveyardDisplay from "~/routes/games.$gameId/Components/GraveyardDisplay";
+import useContextMenu from "~/routes/games.$gameId/Components/useContextMenu";
 import { GAME_SCALE } from "~/util/constants";
 
 const PlayerField = () => {
@@ -29,6 +30,10 @@ const PlayerField = () => {
     return { lands, battlefieldCards: otherCards };
   }, [playerDeck]);
 
+  //========= CONTEXT MENU =========//
+  const { handleContextMenu, component: contextMenu } = useContextMenu();
+
+  //========= REF EFFECT =========//
   useEffect(() => {
     setDeckRef(deckRef);
     setBattlefieldRef(fieldRef);
@@ -47,6 +52,7 @@ const PlayerField = () => {
     <div
       className="flex-1 flex flex-col border border-base-100 relative"
       ref={fieldRef}
+      onContextMenu={handleContextMenu}
     >
       <div className="flex-1 flex gap-2 items-center">
         {battlefieldCards.map((card) => (
@@ -67,6 +73,7 @@ const PlayerField = () => {
           <GraveyardDisplay deck={playerDeck} scale={GAME_SCALE} />
         </div>
       </div>
+      {contextMenu}
     </div>
   );
 };

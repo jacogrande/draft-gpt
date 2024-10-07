@@ -1,46 +1,50 @@
-import { useCallback, useRef, useState } from "react";
+import { useState } from "react";
+import CustomContextMenu from "~/routes/games.$gameId/Components/CustomContextMenu";
 
 const useContextMenu = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [pos, setPos] = useState({ x: 0, y: 0 });
-  const ref = useRef<HTMLUListElement>(null);
+  const [contextMenuPosition, setContextMenuPosition] = useState<{
+    x: number;
+    y: number;
+  } | null>(null);
+  const [isContextMenuVisible, setIsContextMenuVisible] = useState(false);
 
-  const handleRightClick = useCallback((e: React.MouseEvent) => {
-    if (!ref.current) return;
-    e.preventDefault();
-    const { target, clientX, clientY } = e;
-    const rect = (target as HTMLElement).getBoundingClientRect();
-    const ulRect = ref.current.getBoundingClientRect();
-    const xDiff = clientX - rect.x - ulRect.width;
-    const yDiff = clientY - rect.y + ulRect.height;
-    setPos({ x: xDiff, y: yDiff });
-    // setPos({ x: e.clientX, y: e.clientY });
-    setIsOpen(true);
-  }, []);
+  const handleContextMenu = (event: React.MouseEvent<HTMLDivElement>) => {
+    event.preventDefault(); // Prevent the default context menu from appearing
+    setContextMenuPosition({ x: event.clientX, y: event.clientY });
+    setIsContextMenuVisible(true);
+  };
 
-  const contextMenu = (
-    <ul
-      className="absolute menu bg-base-200 rounded-box w-56 z-20"
-      ref={ref}
-      style={{
-        top: pos.y,
-        left: pos.x,
-        display: isOpen ? "block" : "none",
-      }}
-    >
-      <li>
-        <button>a</button>
-      </li>
-      <li>
-        <a>Item 2</a>
-      </li>
-      <li>
-        <a>Item 3</a>
-      </li>
-    </ul>
+  const handleCloseContextMenu = () => {
+    setIsContextMenuVisible(false);
+  };
+
+  const menuItems = [
+    {
+      label: "Option 1",
+      action: () => {
+        console.log("Option 1 selected");
+      },
+    },
+    {
+      label: "Option 2",
+      action: () => {
+        console.log("Option 2 selected");
+      },
+    },
+    // Add more menu items as needed
+  ];
+
+  const component = (
+    <CustomContextMenu
+      x={contextMenuPosition?.x || 0}
+      y={contextMenuPosition?.y || 0}
+      isVisible={isContextMenuVisible}
+      menuItems={menuItems}
+      onClose={handleCloseContextMenu}
+    />
   );
 
-  return { handleRightClick, contextMenu };
+  return { handleContextMenu, component };
 };
 
 export default useContextMenu;
