@@ -38,6 +38,7 @@
 - [x] Decklist while drafting
 - [x] Setting tooltip
 - [ ] Figure out weird setting sync issue
+- [ ] Hover a card for flavor text
 
 ## Decks
 
@@ -50,20 +51,20 @@
 
 - [x] Game route
 - [x] Game lobby management
-- [ ] Deck fetching / shuffling
-- [ ] Hand management
-- [ ] Card drawing
-- [ ] Board Zone management
-- [ ] Interaction log
-- [ ] Graveyard
-- [ ] Tapping
+- [x] Deck fetching / shuffling
+- [x] Hand management
+- [x] Card drawing
+- [x] Board Zone management
+- [x] Interaction log
+- [x] Graveyard
+- [x] Tapping
 - [ ] Game Resetting
 - [x] Life Total
 - [ ] Chat
 - [ ] Extra counters
-- [ ] Opponent deck
-- [ ] Opponent board
-- [ ] Opponent state following
+- [x] Opponent deck
+- [x] Opponent board
+- [x] Opponent state following
 - [ ] Hand order management - let players drag to rearrange cards in hand
 
 ## Quality of Life
