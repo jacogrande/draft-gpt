@@ -90,15 +90,15 @@ const PackDisplayScreen = () => {
     <div className="flex flex-col items-center justify-center flex-1 pl-8 pb-8 relative">
       <ResponsiveGrid itemWidth={CARD_WIDTH_SCALED}>
         {cards.map((card) => (
-          <Card key={card.id} card={card} />
+          <Card key={card.id} card={card} showPickHighlight />
         ))}
       </ResponsiveGrid>
-      {selectedCard && (
+      {!isNewRound() && !isDraftFinished() && (
         <div className="sticky w-full bottom-2 flex justify-end mt-4 z-20">
           <button
             className="btn btn-primary px-8"
             onClick={handleConfirmSelection}
-            disabled={loading}
+            disabled={loading || !selectedCard}
           >
             Pick Card
           </button>
