@@ -6,7 +6,7 @@ export type Setting = {
   description: string;
   legendaryComponents: LegendaryComponent[];
   newMechanic: Mechanic;
-  setSynergies: Mechanic[];
+  setArchetypes: Mechanic[];
 };
 
 type LegendaryComponent = {
@@ -54,7 +54,7 @@ export const isSetting = (setting: unknown): setting is Setting => {
     "description" in setting &&
     "legendaryComponents" in setting &&
     "newMechanic" in setting &&
-    "setSynergies" in setting
+    "setArchetypes" in setting
   );
 };
 

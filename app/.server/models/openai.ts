@@ -30,7 +30,7 @@ export const generateSetData = async (
     )}`;
   }
   const completion = await openai.chat.completions.create({
-    model: "gpt-4o-mini",
+    model: "gpt-4o",
     messages: [
       {
         role: "system",
@@ -45,7 +45,7 @@ export const generateSetData = async (
       type: "json_schema",
       json_schema: SETTING_JSON_SCHEMA,
     },
-    temperature: randomNumberInRange(1.3, 1.8),
+    temperature: randomNumberInRange(1.4, 2),
     top_p: 0.9,
     frequency_penalty: 0.2,
   });
@@ -68,7 +68,7 @@ export const generatePack = async (
     JSON.stringify(setting)
   );
   const completion = await openai.chat.completions.create({
-    model: "gpt-4o-mini",
+    model: "gpt-4o",
     messages: [
       {
         role: "system",

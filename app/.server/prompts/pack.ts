@@ -8,8 +8,11 @@ export const PACK_USER_PRMOPT = `You've been provided with this data as directio
 ## Instructions
 With this theme and design in mind, create 12 new cards for this set. Make sure the cards are all seriously designed and aesthetically similar to standard Magic: The Gathering cards. The cards should be mostly common and uncommon, with a Rare/Mythic or two sprinkled in.
 
-### Mechanics
-Be sure that these cards reinforce the designated design space of this set. The new cards should be built with the archetypes established by the set design object. Only a two or three cards should leverage the new mechanic. The rest should deeply explore the other synergies and archetypes established in the setting object. Remember, when the word "spell" is used, it refers to a card on the stack.
+### Archetypes
+Be sure that each card fits into one of the archetypes established by the set design object. Most cards should deeply explore the synergies defined in the archetypes, while a few cards should leverage the new set mechanic. Remember, when the word "spell" is used, it refers to a card currently being played on the stack. The pack should have a wide breadth of archetype support so that players can explore deck building from a few different directions.
+
+### Unique mechanic
+Make sure that only one or two cards implement the new mechanic.
 
 ### Cards for Everyone
 Make sure that there are cards designed for Timmys (loves playing big creatures and casting big powerful spells), Johnnys (loves building complex combo decks), and Spikes (loves the competition and strives to win).
@@ -18,7 +21,7 @@ Make sure that there are cards designed for Timmys (loves playing big creatures 
 Make sure the new cards have very unique names. Use "Show, don't tell" to help with the worldbuilding and aesthetics of the set. The name and flavor of the cards should not only fit with the set design, but add new details to it. The names of the cards should all sound like real Magic cards.
 
 ### Power Level
-This set should have a similar power level to a Vintage Cube, Modern Masters set, or Competitive Magic decks. It should encourage high power, competitive play with strong cards. The mana curve should be relatively low and the value of each card should be relatively high.
+Cards in this pack should be very strong. This set should have a similar power level to a Vintage Cube, Modern Masters set, or Competitive Magic decks. It should encourage high power, competitive play with strong cards. The mana curve should be relatively low and the value of each card should be relatively high.
 
 ### Art Direction
 Make sure each card has unique art direction. This direction will be provided to the card's artist. The direction should have a clear and concise description of an image, along with a few style ideas. The art themes and styles should be consistent across the set. Make sure the art direction incorporates the set details / description in a way that helps define the world.
@@ -128,7 +131,8 @@ export const PACK_FUNCTION_SCHEMA = {
                 "(optional) name of a card that is linked to this one",
             },
           },
-          description: "12 entirely new, well designed cards for this set",
+          description:
+            "12 entirely new, well designed cards for this set. Each card should fit into one of the archetypes of the set.",
           additionalProperties: false,
         },
       },
