@@ -1,6 +1,6 @@
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "~/model/firebase";
-import { logShuffle } from "~/model/loggers";
+import { logInteraction, logShuffle } from "~/model/loggers";
 import shuffleArray from "~/util/shuffleArray";
 import { Card, Deck } from "~/util/types";
 
@@ -110,6 +110,7 @@ export const drawCards = async (
     },
     { merge: true }
   );
+  logInteraction(`drew ${amount} cards`)(gameId, userId);
   return true;
 };
 

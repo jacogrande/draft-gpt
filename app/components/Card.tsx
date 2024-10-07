@@ -18,7 +18,7 @@ const DEFAULTS = {
   HEIGHT: 350,
   IMAGE_WIDTH: (250 - 16 /* padding */ - 8) /* border */ * 0.98,
   IMAGE_HEIGHT: 144,
-  FONT_SIZE: 11,
+  FONT_SIZE: 12,
   SM_FONT_SIZE: 11,
   LG_FONT_SIZE: 13,
   PADDING: 8,
@@ -43,6 +43,11 @@ const Card = ({
   const getFontSize = () => {
     if (card && card.name.length > 20) return DEFAULTS.SM_FONT_SIZE;
     return DEFAULTS.LG_FONT_SIZE;
+  };
+  const getRulesFontSize = () => {
+    if (card && card.rules_text.length > 150)
+      return DEFAULTS.SM_FONT_SIZE * scale;
+    return DEFAULTS.FONT_SIZE * scale;
   };
 
   const styles = {
@@ -180,7 +185,7 @@ const Card = ({
       </div>
       {/* CARD BODY */}
       <div className="flex flex-col gap-4 p-2 w-[97%] flex-1 bg-base-100 rounded-b-md justify-center border border-black border-t-0">
-        <p>{card.rules_text}</p>
+        <p style={{ fontSize: getRulesFontSize() }}>{card.rules_text}</p>
       </div>
       {/* POWER AND TOUGHNESS */}
       {card.type.toLowerCase() === "creature" && (

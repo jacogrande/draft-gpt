@@ -126,6 +126,7 @@ const DraggableGameCard = ({
     const inBattlefield = checkZone(battlefieldRef, cardRect);
     const inDeck = checkZone(deckRef, cardRect);
     const inHand = checkZone(handRef, cardRect);
+    const inGraveyard = checkZone(graveyardRef, cardRect);
     // remove all highlights
     removeHighlight(battlefieldRef);
     removeHighlight(deckRef);
@@ -136,6 +137,8 @@ const DraggableGameCard = ({
       handleMoveCard("hand");
     } else if (inDeck && zone !== "deck") {
       handleMoveCard("deck");
+    } else if (inGraveyard && zone !== "graveyard") {
+      handleMoveCard("graveyard");
     } else if (inBattlefield && zone !== "battlefield") {
       handleMoveCard("battlefield");
     }

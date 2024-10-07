@@ -20,4 +20,3 @@ export const logInteraction = (message: string) => async (gameId: string, uid: s
 export const logShuffle = logInteraction("shuffled");
 export const logTap = logInteraction("tapped");
 export const logUntap = logInteraction("untapped");
-// export const 

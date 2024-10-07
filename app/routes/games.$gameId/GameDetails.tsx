@@ -60,7 +60,7 @@ const GameDetails = () => {
   };
 
   return (
-    <div className="flex flex-col gap-4 h-full min-w-48 rounded-lg p-4">
+    <div className="flex flex-col gap-4 h-full w-[264px] rounded-lg p-4">
       <h1 className="text-2xl font-bold text-primary mb-8 flex items-center gap-2">
         {game?.name}
         <div className="tooltip" data-tip="Copy Game ID">

@@ -1,5 +1,6 @@
 import { setDoc } from "firebase/firestore";
 import { getGameAndDeck } from "~/model/game/deck";
+import { logInteraction } from "~/model/loggers";
 import { ZONE_MAP } from "~/util/constants";
 import { Card, CardZone } from "~/util/types";
 
@@ -44,6 +45,7 @@ export const moveCardToZone = async (
     },
     { merge: true }
   );
+  logInteraction(`moved ${card.name} to ${targetZone}`)(gameId, userId);
   return true;
 };
 

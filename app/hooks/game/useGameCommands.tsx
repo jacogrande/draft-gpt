@@ -94,6 +94,7 @@ const useGameCommands = () => {
           break;
         case "w":
         case "r":
+          if (!adding) return;
           newAmount = addAmount + e.key.toUpperCase();
           setAddAmount(newAmount);
           setToastMessage(`*A*dd ${newAmount}`);

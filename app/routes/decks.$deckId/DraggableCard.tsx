@@ -5,11 +5,15 @@ import { useDeckEditorStore } from "~/routes/decks.$deckId/store";
 import { moveCardToSideboard } from "~/model/decks";
 import { useUser } from "~/hooks/useUser";
 import { useDeckStore } from "~/hooks/useDeck";
+import { useState } from "react";
+import { useGlobalStore } from "~/hooks/useGlobalStore";
 
 const DraggableCard = ({ card }: { card: CardType }) => {
+  const [isDragging, setIsDragging] = useState(false);
   const sideboardRect = useDeckEditorStore((state) => state.sideboardRect);
   const sideboardRef = useDeckEditorStore((state) => state.sideboardRef);
   const deck = useDeckStore((state) => state.deck);
+  const { selectedCards } = useGlobalStore();
   const { user } = useUser();
 
   const isCardInSideboard = (rect: DOMRect) => {
@@ -46,11 +50,16 @@ const DraggableCard = ({ card }: { card: CardType }) => {
 
   const onStop: DraggableEventHandler = (_e, data) => {
     if (!deck || !user) return;
+    setIsDragging(false);
     const { node } = data;
     const rect = node.getBoundingClientRect();
     if (!sideboardRect) return;
     if (!isCardInSideboard(rect)) return;
-    moveCardToSideboard(deck.id, user.uid, card.id);
+    if (selectedCards.length > 0) {
+      console.log("epic");
+    } else {
+      moveCardToSideboard(deck.id, user.uid, card.id);
+    }
   };
 
   const SCALE = 0.65;
@@ -63,9 +72,12 @@ const DraggableCard = ({ card }: { card: CardType }) => {
       scale={1}
       onStop={onStop}
       onDrag={onDrag}
+      onStart={() => setIsDragging(true)}
     >
       <div>
-        <Card card={card} scale={SCALE} />
+        <div className={`transition-transform ${isDragging && "-rotate-12"}`}>
+          <Card card={card} scale={SCALE} />
+        </div>
       </div>
     </Draggable>
   );
