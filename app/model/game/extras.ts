@@ -59,4 +59,50 @@ export const updateCounterValue = async (
   }
 };
 
+/**
+ * Updates the position of a counter
+ * @param gameId - the id of the game to update the counter for 
+ * @param counterId - the id of the counter to update
+ * @param position - the new position of the counter
+ */
+export const updateCounterPosition = async (
+  gameId: string,
+  counterId: string,
+  position: {x: number, y: number}
+) => {
+  const gameRef = doc(db, "games", gameId);
+  const gameData = await getDoc(gameRef);
+  if (!gameData.exists()) throw new Error("Game not found");
+  const counters = gameData.data().counters || [];
+  for (const counter of counters) {
+    if (counter.id === counterId) {
+      counter.position = position;
+      await setDoc(gameRef, {
+        counters,
+      }, { merge: true });
+      return;
+    }
+  }
+};
+
+/**
+ * Deletes a counter in a game
+ * @param gameId - the id of the game to delete the counter from
+ * @param counterId - the id of the counter to delete
+ */
+export const deleteCounter = async (
+  gameId: string,
+  counterId: string
+): Promise<void> => {
+  const gameRef = doc(db, "games", gameId);
+  const gameData = await getDoc(gameRef);
+  if (!gameData.exists()) throw new Error("Game not found");
+  const counters = gameData.data().counters || [];
+  // remove the counter from the array
+  const newCounters = counters.filter((counter: Counter) => counter.id !== counterId);
+  await setDoc(gameRef, {
+    counters: newCounters,
+  }, { merge: true });
+};
+
 //========= TOKENS =========//
