@@ -146,9 +146,9 @@ export const cleanupLobbyUsers = async (lobbyId: string): Promise<void> => {
     activeUserIds.includes(user.uid)
   );
   if (activeUsers.length === lobby.activeUsers.length) return;
-  await updateDoc(lobbyRef, {
-    activeUsers: activeUsers,
-  });
+  // await updateDoc(lobbyRef, {
+  //   activeUsers: activeUsers,
+  // });
 };
 
 /**
