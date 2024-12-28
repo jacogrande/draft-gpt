@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useUser } from "~/hooks/useUser";
 import { cleanupLobbyUsers, sendPulse } from "~/model/lobby";
 
-export const HEARTBEAT_INTERVAL = 30 * 1000; // 30 seconds
+export const HEARTBEAT_INTERVAL = 30 * 1000 * 1000; // 30 seconds
 export const CLEANUP_INTERVAL = 0.5 * 60 * 1000; // 1 minute
 export const MAX_IDLE_TIME = 3 * 60 * 1000; // 3 minutes
 
