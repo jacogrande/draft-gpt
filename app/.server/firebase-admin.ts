@@ -1,9 +1,9 @@
 import admin from "firebase-admin";
 import { getAuth } from "firebase-admin/auth";
-import serviceAccount from "~/service-account.json";
 import { User } from "~/util/types";
 
 if (admin.apps.length === 0) {
+  const serviceAccount = JSON.parse(process.env.SERVICE_KEY || "{}");
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
     storageBucket: "draft-gpt-81aaa.appspot.com",
