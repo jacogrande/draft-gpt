@@ -3,6 +3,7 @@ import Card from "~/components/Card";
 import { useGameStore } from "~/hooks/game/useGame";
 import { useUser } from "~/hooks/useUser";
 import DeckDisplay from "~/routes/games.$gameId/Components/DeckDisplay";
+import DraggableGameToken from "~/routes/games.$gameId/Components/DraggableGameToken";
 import { GAME_SCALE } from "~/util/constants";
 
 const OpponentField = () => {
@@ -30,6 +31,12 @@ const OpponentField = () => {
     return { lands, battlefieldCards: otherCards };
   }, [opponentDeck]);
 
+  // ========= TOKENS FOR THIS USER ========= //
+  const opponentTokens = useMemo(() => {
+    if (!game?.tokens || !user?.uid) return [];
+    return game.tokens.filter((token) => token.ownerId !== user.uid);
+  }, [game, user]);
+
   if (!opponentDeck) return null;
   return (
     <div className="flex-1 flex flex-col gap-4">
@@ -48,6 +55,11 @@ const OpponentField = () => {
         {battlefieldCards.map((card) => (
           <div key={card.id} className="rotate-180">
             <Card card={card} scale={GAME_SCALE} />
+          </div>
+        ))}
+        {opponentTokens.map((token) => (
+          <div key={token.id} className="rotate-180">
+            <DraggableGameToken token={token} scale={GAME_SCALE} />
           </div>
         ))}
       </div>

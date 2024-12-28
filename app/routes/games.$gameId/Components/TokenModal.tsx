@@ -1,5 +1,8 @@
 import { useState } from "react";
+import { useGameStore } from "~/hooks/game/useGame";
 import { useGlobalStore } from "~/hooks/useGlobalStore";
+import { useUser } from "~/hooks/useUser";
+import { createToken } from "~/model/game/extras";
 
 type TokenModalProps = {
   showTokenModal: boolean;
@@ -19,10 +22,19 @@ const TokenModal = ({ showTokenModal, setShowTokenModal }: TokenModalProps) => {
     toughness: null,
   });
   const setPauseCommands = useGlobalStore((state) => state.setPauseCommands);
+  const { user } = useUser();
+  const { game } = useGameStore();
+  if (!game || !user) return null;
 
-  const submitTokenForm = (e: React.FormEvent<HTMLFormElement>) => {
+  const submitTokenForm = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("Submitting token form");
+    await createToken(
+      game.id,
+      user.uid,
+      formData.name,
+      formData.power,
+      formData.toughness
+    );
     closeModal();
   };
 

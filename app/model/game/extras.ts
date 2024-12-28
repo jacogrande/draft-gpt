@@ -3,7 +3,7 @@
 import { arrayUnion, doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "~/model/firebase";
 import { randomUid } from "~/util/randomUid";
-import { Counter } from "~/util/types";
+import { Counter, Token } from "~/util/types";
 
 /**
  * Creates a new counter in the game
@@ -106,3 +106,80 @@ export const deleteCounter = async (
 };
 
 //========= TOKENS =========//
+/**
+ * Creates a new token in the game
+ * @param gameId - the id of the game to create the token for
+ * @param userId - the id of the user to create the token for
+ * @param name - the name of the token
+ * @param power - the power of the token
+ * @param toughness - the toughness of the token
+ * @returns the id of the created token
+ */
+export const createToken = async (
+  gameId: string,
+  userId: string,
+  name: string,
+  power: number | null,
+  toughness: number | null
+): Promise<string> => {
+  const gameRef = doc(db, "games", gameId);
+  const token: Token = {
+    id: randomUid(),
+    ownerId: userId,
+    name,
+    power,
+    toughness,
+  };
+  await setDoc(gameRef, {
+    tokens: arrayUnion(token),
+  }, { merge: true });
+  return token.id;
+};
+
+/**
+ * Deletes a token from the game
+ * @param gameId - the id of the game to delete the token from
+ * @param tokenId - the id of the token to delete
+ */
+export const deleteToken = async (
+  gameId: string,
+  tokenId: string
+): Promise<void> => {
+  const gameRef = doc(db, "games", gameId);
+  const gameData = await getDoc(gameRef);
+  if (!gameData.exists()) throw new Error("Game not found");
+  const tokens = gameData.data().tokens || [];
+  // remove the token from the array
+  const newTokens = tokens.filter((token: Token) => token.id !== tokenId);
+  await setDoc(gameRef, {
+    tokens: newTokens,
+  }, { merge: true });
+};
+
+/**
+ * Taps or untaps a token
+ * @param gameId - the id of the game to tap the token for
+ * @param tokenId - the id of the token to tap
+ * @param tap - whether to tap or untap the token
+ */
+export const tapToken = async (
+  gameId: string,
+  tokenId: string,
+  tap: boolean = true
+) => {
+  const gameRef = doc(db, "games", gameId);
+  const gameData = await getDoc(gameRef);
+  if (!gameData.exists()) throw new Error("Game not found");
+  const tokens = gameData.data().tokens || [];
+  for (const token of tokens) {
+    if (token.id === tokenId) {
+      token.tapped = tap;
+      console.log(token);
+      await setDoc(gameRef, {
+        tokens,
+      }, { merge: true });
+      return;
+    }
+  }
+};
+

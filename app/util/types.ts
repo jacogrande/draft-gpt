@@ -118,6 +118,15 @@ export type Counter = {
   // NOTE: When displaying opponent counters, we'll need to invert the y axis since their board is flipped
 }
 
+export type Token = {
+  id: string;
+  ownerId: string;
+  name: string;
+  power: number | null;
+  toughness: number | null;
+  tapped?: boolean;
+}
+
 export type Game = {
   id: string;
   name: string;
@@ -129,4 +138,5 @@ export type Game = {
   readyMap: Record<string, boolean>;
   log?: InteractionLog[];
   counters?: Counter[];
+  tokens?: Token[];
 }
