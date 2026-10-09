@@ -10,7 +10,8 @@ const PORT = Number(process.env.FAKE_SERVICES_PORT ?? 4010);
 const completion = (message: unknown) => ({ choices: [{ message }] });
 
 const reply = (path: string, body: { tools?: unknown }) => {
-  if (path.includes("text-to-image")) return { image: CANNED_IMAGE };
+  if (path.includes("/images/generations"))
+    return { data: [{ b64_json: CANNED_IMAGE }] };
   if (body.tools)
     return completion({
       tool_calls: [{ function: { arguments: JSON.stringify(cannedPack()) } }],
@@ -31,4 +32,4 @@ createServer((request, response) => {
     });
     response.end(JSON.stringify(reply(request.url ?? "", JSON.parse(raw || "{}"))));
   });
-}).listen(PORT, () => console.log(`Fake OpenAI and getimg on :${PORT}`));
+}).listen(PORT, () => console.log(`Fake OpenAI on :${PORT}`));

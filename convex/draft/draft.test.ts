@@ -24,8 +24,12 @@ afterEach(() => {
   vi.useRealTimers();
 });
 
-const settle = (backend: Backend) =>
-  backend.finishAllScheduledFunctions(vi.runAllTimers);
+const settle = async (backend: Backend) => {
+  while (vi.getTimerCount() > 0) {
+    vi.advanceTimersToNextTimer();
+    await backend.finishInProgressScheduledFunctions();
+  }
+};
 
 const startedDraft = async (usernames: string[]) => {
   const backend = startBackend();
@@ -91,6 +95,18 @@ test("starting generates a setting from the players' ideas and deals everyone a 
   }
 });
 
+test("card art is painted from the card's art direction and the setting, in a named tradition, with no text", async () => {
+  await startedDraft(["Ana", "Ben"]);
+
+  expect(world.artPrompts).toHaveLength(24);
+  expect(world.artPrompts[0]).toContain("A knight of frosted glass.");
+  expect(world.artPrompts[0]).toContain("Glasswake");
+  expect(world.artPrompts[0]).toContain("No text");
+  for (const prompt of world.artPrompts) {
+    expect(prompt).toMatch(/Tradition: Made in the tradition of .+/);
+  }
+});
+
 test("a picked card joins the picker's deck and the pack passes on", async () => {
   const { lobbyId, players } = await startedDraft(["Ana", "Ben"]);
   const [ana, ben] = players;
@@ -146,6 +162,7 @@ test("three rounds of picks finish the draft with a 45-card deck each", async ()
     const deck = await player.as.query(api.deck.decks.forLobby, { lobbyId });
     expect(deck?.cards).toHaveLength(45);
   }
+  expect(world.packRequests).toBe(9);
   expect((await lobbyOf(players[0], lobbyId))?.round).toBe(3);
 });
 

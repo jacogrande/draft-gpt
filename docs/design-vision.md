@@ -27,7 +27,24 @@ A generated card carries all of the product's personality: a painted illustratio
 
 ## Card art
 
-Art should look like a painted fantasy book cover from the 1970s: pulp fantasy oils and acrylics in the manner of Frank Frazetta, Brom, and Michael Whelan. Each image prompt is the card's own art direction plus one of these style lines, chosen at random (`app/.server/prompts/imageAdditives.ts`). Art within a set should feel like it comes from the same world.
+Art should look like pulp: a small illustration made quickly and by hand for a cheap fantasy paperback, magazine, or storybook, which is how early Magic card art looked. Loose and economical, with big simple shapes, flat areas of colour, a few strokes standing in for detail, and corners left barely finished. A little odd and charming, never polished, glossy, rendered, or photographic.
+
+Three things keep it from tipping into modern fantasy art:
+
+- **Restraint.** No intricate ornament, no swarms of particles or sparks, no glowing effects the scene did not ask for.
+- **Understatement.** The subject is caught in a quiet, ordinary, or odd moment. No heroic poses, no epic scale, no sweeping vistas.
+- **Few colours.** Each tradition names three or four, slightly faded like an old printed cover.
+
+Within that, variety is the point. Each card is made in one of 28 traditions, picked at random, so a pack looks like a shelf of old paperbacks and storybooks by different hands. They range across:
+
+- **Pulp and paperback covers:** weird-fiction pastels, sword-and-planet oils, lurid newsstand covers, surreal and luminous science-fantasy paperbacks.
+- **Ink and line:** rulebook ink, horror comics, clear-line European comics, whimsical and macabre magazine illustration.
+- **Storybook and folk:** fairy-tale gouache, gnarled ink and wash, Russian folk-tale outline, medieval bestiary margins, Japanese warrior prints.
+- **Odd ones out:** Polish posters, decadent black and white, the first collectible card game art.
+
+Each tradition names the illustrators it draws on (Margaret Brundage, Frank Frazetta, Richard Powers, Arthur Rackham, Moebius, Quinton Hoover, and so on), a kind of light, and three or four colours. Everyone named is no longer living and stands for a school; prompts do not name living artists. The full list is `convex/draft/artSchools.ts`, and a sample of every one is in `docs/specs/card-art-traditions.html`.
+
+Each image is a wide landscape crop with one large subject against a plain or barely suggested background, readable at thumbnail size, with no text, border, or frame, because the card component supplies those. The shared direction is in `convex/draft/artPrompt.ts`.
 
 ## Type
 

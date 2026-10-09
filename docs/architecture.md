@@ -14,7 +14,7 @@ Convex
   auth (Google through Convex Auth)
   queries    per-viewer reads, reactive
   mutations  every state change, each a transaction
-  actions    OpenAI and getimg.ai  ──▶ file storage (card art)
+  actions    OpenAI (cards and art)  ──▶ file storage (card art)
   scheduler  generation, retries, daily cleanup
 ```
 
@@ -28,7 +28,7 @@ The backend is grouped by domain. Each folder holds its tables (`tables.ts`), it
 |---|---|---|---|
 | `convex/identity/` | Users and usernames | `username.ts` | `users.ts`, `viewer.ts` |
 | `convex/lobby/` | Lobbies, members, seats, readiness, worldbuilding chat, presence | `roster.ts` | `lobbies.ts`, `departure.ts`, `messages.ts`, `presence.ts`, `cleanup.ts`, `access.ts` |
-| `convex/draft/` | Settings, packs, cards, picks, rounds, generation | `seating.ts`, `passing.ts`, `parsing.ts`, `retry.ts` | `start.ts`, `picks.ts`, `rounds.ts`, `generated.ts`, `failures.ts`, `generation.ts`, `settings.ts` |
+| `convex/draft/` | Settings, packs, cards, picks, rounds, generation | `seating.ts`, `passing.ts`, `parsing.ts`, `retry.ts`, `artPrompt.ts` | `start.ts`, `picks.ts`, `rounds.ts`, `generated.ts`, `failures.ts`, `generation.ts`, `settings.ts` |
 | `convex/deck/` | Decks | `zones.ts` | `decks.ts`, `drafted.ts` |
 
 `convex/card.ts` is the card face shared by draft and deck. `convex/errors.ts` lists every rejection code. `convex/draft/openai.ts` and `images.ts` are the only files that call outside services.
@@ -75,7 +75,7 @@ A lobby's `status` moves `open` → `generating` → `drafting` → (`generating
 
 1. `startDraft` requires two or more members, all ready. It freezes `participantIds` in seat order and schedules setting generation.
 2. `generation.createSetting` sends the worldbuilding messages to the model, saves the setting, and deals round 1: one pack per participant, each with a passing order.
-3. `generation.createPack` runs once per pack, in parallel. It asks for twelve cards, generates art for each, and saves them. When the last pack of the round is saved, each is topped up to fifteen from the setting's card pool and the lobby becomes `drafting`.
+3. `generation.createPack` runs once per pack, in parallel. It asks for twelve cards, paints art for each (four at a time, from a prompt built by `draft/artPrompt.ts`), and saves them. A card whose art fails is saved without it. When the last pack of the round is saved, each is topped up to fifteen from the setting's card pool and the lobby becomes `drafting`.
 4. `picks.current` gives each player only the pack at the front of their queue. `picks.pick` marks the card, passes the pack, and adds the card to the player's deck in one transaction. The pick that empties the round deals the next one, or completes the draft after round 3.
 5. A failed generation step retries twice with backoff. After the third failure the lobby shows the error and the host can retry.
 
@@ -89,4 +89,4 @@ A lobby's `status` moves `open` → `generating` → `drafting` → (`generating
 - **Games are unprotected.** The play table writes to Firestore from the browser with no Firebase sign-in, so it depends on the Firestore rules being open, and each client holds the opponent's whole deck. Fixing this is step 3 of the roadmap.
 - **A draft cannot be left.** A participant who stops picking holds up the packs in their queue. Handling that is the rest of roadmap step 2.
 - **Test sign-in exists in the code** and is enabled only by `AUTH_TEST_LOGIN` on the deployment. It must never be set in production.
-- **The model and prompts are the 2024 originals** (`gpt-4o`), moved without change.
+- **The card-design model and prompts are the 2024 originals** (`gpt-4o`), moved without change. Card art is current; see `docs/specs/card-art.md`.

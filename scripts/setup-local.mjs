@@ -20,7 +20,6 @@ setEnv("JWKS", JSON.stringify({ keys: [{ use: "sig", ...publicKey }] }));
 setEnv("SITE_URL", "http://localhost:5173");
 setEnv("AUTH_TEST_LOGIN", "true");
 setEnv("OPENAI_BASE_URL", FAKE_SERVICES);
-setEnv("GETIMG_BASE_URL", FAKE_SERVICES);
 
 if (!readFileSync(ENV_FILE, "utf8").includes("VITE_TEST_LOGIN")) {
   appendFileSync(ENV_FILE, "\nVITE_TEST_LOGIN=true\n");

@@ -13,7 +13,7 @@ export const fakeOutsideWorld = () => {
     openaiIsDown: false,
     settingPrompts: [] as string[],
     packRequests: 0,
-    imageRequests: 0,
+    artPrompts: [] as string[],
   };
 
   const openai = (request: { tools?: unknown; messages: { content: string }[] }) => {
@@ -30,12 +30,14 @@ export const fakeOutsideWorld = () => {
 
   vi.stubGlobal("fetch", async (url: unknown, init?: { body?: string }) => {
     const target = String(url);
-    if (target.includes("api.openai.com"))
-      return openai(JSON.parse(init?.body ?? "{}"));
-    if (target.includes("api.getimg.ai")) {
-      world.imageRequests++;
-      return json({ image: CANNED_IMAGE });
+    const request = JSON.parse(init?.body ?? "{}");
+    if (target.endsWith("/v1/images/generations")) {
+      if (world.openaiIsDown)
+        return new Response("unavailable", { status: 500 });
+      world.artPrompts.push(request.prompt);
+      return json({ data: [{ b64_json: CANNED_IMAGE }] });
     }
+    if (target.includes("api.openai.com")) return openai(request);
     throw new Error(`Unexpected request to ${target}`);
   });
 

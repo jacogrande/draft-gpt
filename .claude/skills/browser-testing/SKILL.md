@@ -18,7 +18,7 @@ This starts three things and waits until they answer:
 | Process | Address | Log |
 |---|---|---|
 | Local Convex backend (no account needed) | `127.0.0.1:3210` | `.test-stack/convex.log` |
-| Fake OpenAI and getimg.ai | `127.0.0.1:4010` | `.test-stack/fakes.log` |
+| Fake OpenAI (cards and art) | `127.0.0.1:4010` | `.test-stack/fakes.log` |
 | The app | `http://localhost:5173` | `.test-stack/app.log` |
 
 On first run it also configures auth (section 2). Stop everything, including open browsers, with `./scripts/test-stack.sh stop`. Always stop when you are done.
@@ -34,7 +34,7 @@ Production sign-in is Google only, which a script cannot complete. The local sta
 | `AUTH_TEST_LOGIN=true` | Convex deployment environment | `convex/auth.ts` registers the password provider |
 | `VITE_TEST_LOGIN=true` | `.env.local` | `/join` shows the "Test user" form |
 
-`scripts/setup-local.mjs` sets both, generates the `JWT_PRIVATE_KEY` and `JWKS` that Convex Auth needs, sets `SITE_URL`, and points `OPENAI_BASE_URL` and `GETIMG_BASE_URL` at the fake services. `test-stack.sh start` runs it automatically when `AUTH_TEST_LOGIN` is missing. Run it by hand only if sign-in fails with a token or key error.
+`scripts/setup-local.mjs` sets both, generates the `JWT_PRIVATE_KEY` and `JWKS` that Convex Auth needs, sets `SITE_URL`, and points `OPENAI_BASE_URL` at the fake service. `test-stack.sh start` runs it automatically when `AUTH_TEST_LOGIN` is missing. Run it by hand only if sign-in fails with a token or key error.
 
 Never set either switch on a production deployment. Without the server switch the form does nothing even if it is shown.
 
@@ -145,7 +145,7 @@ curl -s http://127.0.0.1:4010/__fail/off
 ## 6. What this stack does not cover
 
 - **Google sign-in.** It needs real credentials and a person. Check it by hand against a deployment that has `AUTH_GOOGLE_ID` and `AUTH_GOOGLE_SECRET` set.
-- **Real generation.** To see real cards and art, set `OPENAI_API_KEY` and `GETIMG_API_KEY` on the deployment and remove `OPENAI_BASE_URL` and `GETIMG_BASE_URL`. This spends money on every pack; ask first.
+- **Real generation.** To see real cards and art, set `OPENAI_API_KEY` on the local deployment and remove `OPENAI_BASE_URL`. A two-player round costs roughly twenty cents and takes about two minutes; ask first. Put `OPENAI_BASE_URL` back afterwards.
 - **Games.** The play table still writes to the production Firestore project. Do not create or join games from a test session without being asked to.
 
 ## 7. Reporting

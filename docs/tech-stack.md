@@ -22,7 +22,7 @@ What the project is built on and why each piece is here. Versions are the ranges
 | Convex | Database, server functions, scheduler, crons, file storage |
 | Convex Auth (`@convex-dev/auth`, beta) | Sign-in. Google in production; a password provider for local testing only |
 | OpenAI `gpt-4o` | Setting design (JSON schema reply) and pack design (function call), called with `fetch` from `convex/draft/openai.ts` |
-| getimg.ai `flux-schnell` | Card art, 400x264 JPEG, from `convex/draft/images.ts` |
+| OpenAI `gpt-image-2.5-flare` | Card art, 1008x656 JPEG at low quality, from `convex/draft/images.ts`. See `docs/specs/card-art.md`. |
 | Cloud Firestore (client SDK) | The play table only, until roadmap step 3. Project `draft-gpt-81aaa`; its web config in `app/model/firebase.ts` is not a secret. |
 
 ## Frontend
@@ -45,8 +45,8 @@ Set on the Convex deployment (`npx convex env set NAME value`):
 | `SITE_URL` | The app's origin, used for sign-in redirects |
 | `JWT_PRIVATE_KEY`, `JWKS` | Convex Auth signing keys |
 | `AUTH_GOOGLE_ID`, `AUTH_GOOGLE_SECRET` | Google OAuth client |
-| `OPENAI_API_KEY`, `GETIMG_API_KEY` | Generation |
-| `OPENAI_BASE_URL`, `GETIMG_BASE_URL` | Optional. Point at `scripts/fake-services.ts` for local testing. |
+| `OPENAI_API_KEY` | Card design and card art |
+| `OPENAI_BASE_URL` | Optional. Point at `scripts/fake-services.ts` for local testing. |
 | `AUTH_TEST_LOGIN` | `true` enables test sign-in. Local deployments only. |
 
 In `.env.local` for the client build:
@@ -75,4 +75,4 @@ In `.env.local` for the client build:
 
 `./scripts/deploy.sh` runs the tests, deploys Convex production, builds against it with test sign-in off, and deploys the site. It names the Convex project itself, so it does not depend on `.env.local`. For any other production command, prefix it the same way: `CONVEX_DEPLOYMENT=dev:zany-beagle-193 npx convex <command> --prod`.
 
-Production still lacks `AUTH_GOOGLE_ID`, `AUTH_GOOGLE_SECRET`, `OPENAI_API_KEY`, and `GETIMG_API_KEY`, so nobody can sign in or draft there yet. The Google OAuth client's redirect URI is `https://fleet-albatross-186.convex.site/api/auth/callback/google`.
+Production has its Google and OpenAI credentials set. The Google OAuth client's redirect URI is `https://fleet-albatross-186.convex.site/api/auth/callback/google`.

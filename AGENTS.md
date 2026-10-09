@@ -1,6 +1,6 @@
 # DraftGPT
 
-Friends draft a Magic-style card set that an LLM invents for them on the spot, build decks from their picks, and play each other on a shared virtual table. A static React app on a Convex backend, with OpenAI for card design and getimg.ai for card art.
+Friends draft a Magic-style card set that an LLM invents for them on the spot, build decks from their picks, and play each other on a shared virtual table. A static React app on a Convex backend, with OpenAI for card design and card art.
 
 ## Commands
 
@@ -32,6 +32,7 @@ Friends draft a Magic-style card set that an LLM invents for them on the spot, b
 - How the pieces fit, the data model, flows, known gaps: `docs/architecture.md`
 - Dependencies, services, environment variables: `docs/tech-stack.md`
 - The refactor in progress: `docs/specs/refactor-roadmap.md`
+- Card art model, prompt, cost, and limits: `docs/specs/card-art.md`
 - The Convex rewrite, its engineering rules, and what is left to deploy it: `docs/specs/convex-rewrite.md`
 - Why lobbies were rebuilt: `docs/specs/draft-lobby-refactor.md`
 - Planned work: `docs/roadmap.md`

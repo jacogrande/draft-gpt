@@ -274,7 +274,7 @@ Built on the `convex-rewrite` branch. Nothing is committed or deployed.
 
 ### Verified
 
-- `bun run test`: 39 tests pass (26 integration, 3 unit, 10 existing utility tests).
+- `bun run test`: 40 tests pass (27 integration, 3 unit, 10 existing utility tests).
 - `bun run typecheck` is clean. `bun run lint` reports one error, which predates this work (`autoFocus` in the game's `Counter.tsx`).
 - `bun run build` produces a static site with no server bundle (acceptance 18).
 - In a browser with two test users on the local stack: sign-in, username, and sign-out (1, with the test provider standing in for Google); signed-out redirects (2); away and return to the same seat and ready state (4); generation completing with every tab closed (11); queued packs hidden and passed in order (12); a full three-round draft ending in a 45-card deck (10); the deck editor and Add Lands persisting across reload (16).
@@ -297,18 +297,14 @@ Built on the `convex-rewrite` branch. Nothing is committed or deployed.
 - **Tests run on vitest, not `bun test`,** because `convex-test` requires it. Vitest is pinned to 2.x because Remix 2 needs Vite 5.
 - **A bug in Add Lands was fixed on the way through.** With 17 or more lands already present, `calculateManaBase` returned the whole deck, which the old code then appended to itself.
 
-### Known limitation in the tests
-
-Under `convex-test`, packs generated concurrently can fail their first attempt with "Write outside of transaction" from file storage, then succeed on retry. This is the test harness, not Convex, but it means the tests cannot assert an exact number of generation calls.
-
 ### Left to do before this can replace production
 
 Done on 2026-10-08: the Convex production deployment exists with its auth keys and `SITE_URL`, and the static site is live on Firebase Hosting (see `docs/tech-stack.md`, Deployments). The deployed Firestore rules were read and allow all reads and writes unconditionally, so the game table will work without Firebase sign-in; that also leaves the whole Firestore database open to anyone.
 
 Still to do:
 
-1. Create the Google OAuth client, set `AUTH_GOOGLE_ID` and `AUTH_GOOGLE_SECRET` on production, and confirm sign-in by hand.
-2. Set `OPENAI_API_KEY` and `GETIMG_API_KEY` on production and run one real draft.
+1. Done: Google sign-in is configured and was confirmed by hand.
+2. Run one real draft on production. Credentials are set, and card art has since moved to OpenAI (`card-art.md`).
 3. Point `draftgpt.hasslebad.com` at Firebase Hosting, then change `SITE_URL` to match.
 4. Decide whether to import old decks (open decision 1).
 
