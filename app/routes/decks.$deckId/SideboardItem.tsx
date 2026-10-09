@@ -1,12 +1,12 @@
+import { api } from "@convex/_generated/api";
+import { useMutation } from "convex/react";
 import ManaCost from "~/components/ManaCost";
-import { useDeckStore } from "~/hooks/useDeck";
+import { deckIdOf, useDeckStore } from "~/hooks/useDeck";
 import { useGlobalStore } from "~/hooks/useGlobalStore";
-import { useUser } from "~/hooks/useUser";
-import { moveCardToMainboard } from "~/model/decks";
 import { Card } from "~/util/types";
 
 const SideboardItem = ({ card }: { card: Card }) => {
-  const { user } = useUser();
+  const moveToMainboard = useMutation(api.deck.decks.moveToMainboard);
   const { deck } = useDeckStore();
   const setPeekedCard = useGlobalStore((state) => state.setPeekedCard);
 
@@ -15,8 +15,8 @@ const SideboardItem = ({ card }: { card: Card }) => {
   };
 
   const returnToMainboard = async () => {
-    if (!card || !deck || !user) return;
-    await moveCardToMainboard(deck.id, user.uid, card.id);
+    if (!card || !deck) return;
+    await moveToMainboard({ deckId: deckIdOf(deck), cardId: card.id });
   };
 
   return (

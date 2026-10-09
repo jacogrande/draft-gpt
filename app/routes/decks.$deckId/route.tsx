@@ -1,12 +1,10 @@
 import { Link, useParams } from "@remix-run/react";
-import { verifySession } from "~/.server/session";
 import Heading from "~/components/Heading";
 import Page from "~/components/Page";
+import { requireAuth } from "~/components/RequireAuth";
 import useDeck from "~/hooks/useDeck";
 import Mainboard from "~/routes/decks.$deckId/Mainboard";
 import Sideboard from "~/routes/decks.$deckId/Sideboard";
-
-export const loader = verifySession;
 
 const Deck = () => {
   const deckId = useParams().deckId as string;
@@ -32,4 +30,4 @@ const Deck = () => {
   );
 };
 
-export default Deck;
+export default requireAuth(Deck);

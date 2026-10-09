@@ -1,23 +1,20 @@
+import { api } from "@convex/_generated/api";
 import { PlusIcon } from "@heroicons/react/16/solid";
-import { useDeckStore } from "~/hooks/useDeck";
+import { useMutation } from "convex/react";
+import { deckIdOf, useDeckStore } from "~/hooks/useDeck";
 import { useToast } from "~/hooks/useToast";
-import { useUser } from "~/hooks/useUser";
-import { addBasicLandToMainboard } from "~/model/decks";
-import { createBasicLand } from "~/util/createBasicLand";
 import { BasicLand } from "~/util/types";
 
 const BasicAdder = ({ type }: { type: BasicLand }) => {
   const { toast } = useToast();
   const { deck } = useDeckStore();
-  const { user } = useUser();
+  const addBasics = useMutation(api.deck.decks.addBasics);
 
   const handleClick = async () => {
-    if (!deck || !user) return;
+    if (!deck) return;
     try {
-      const card = createBasicLand(type);
-      await addBasicLandToMainboard(deck.id, user.uid, card);
-    } catch (error) {
-      console.error(error);
+      await addBasics({ deckId: deckIdOf(deck), lands: [type] });
+    } catch {
       toast("Unable to add basic land", "error");
     }
   };

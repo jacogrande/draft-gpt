@@ -1,14 +1,14 @@
+import { api } from "@convex/_generated/api";
 import { ChatBubbleOvalLeftEllipsisIcon } from "@heroicons/react/16/solid";
+import { useMutation, useQuery } from "convex/react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useLobbyStore } from "~/hooks/lobby/useLobby";
+import { LobbyView } from "~/hooks/lobby/useLobby";
 import { useToast } from "~/hooks/useToast";
-import { useUser } from "~/hooks/useUser";
-import { postWorldbuildingMessage } from "~/model/lobby";
 import ChatMessage from "~/routes/lobbies.$lobbyId/ChatMessage";
 
-const WorldbuildingChat = () => {
-  const { lobby } = useLobbyStore();
-  const { user } = useUser();
+const WorldbuildingChat = ({ lobby }: { lobby: LobbyView }) => {
+  const messages = useQuery(api.lobby.messages.list, { lobbyId: lobby.id });
+  const post = useMutation(api.lobby.messages.post);
   const [message, setMessage] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
@@ -29,18 +29,15 @@ const WorldbuildingChat = () => {
       setLoading(true);
       try {
         if (!message) return;
-        if (!lobby) throw new Error("Lobby not found");
-        if (!user) throw new Error("User not found");
-        await postWorldbuildingMessage(message, user.uid, lobby.id);
+        await post({ lobbyId: lobby.id, text: message });
         setMessage("");
-      } catch (error) {
-        console.error(error);
+      } catch {
         toast("Unable to send message", "error");
       } finally {
         setLoading(false);
       }
     },
-    [message, lobby, toast, user]
+    [message, lobby.id, post, toast]
   );
 
   const handleOpen = () => {
@@ -87,11 +84,11 @@ const WorldbuildingChat = () => {
         Worldbuilding
       </button>
       <div className="dropdown-content menu py-4 pl-8 bg-none flex flex-col gap-2 rounded-box">
-        {lobby?.worldbuildingMessages?.map((message) => (
+        {messages?.map((message) => (
           <ChatMessage
-            key={message.timestamp.toDate().toString()}
-            message={message.message}
-            sentByUser={message.posterId === user?.uid}
+            key={message.id}
+            message={message.text}
+            sentByUser={message.userId === lobby.viewerId}
           />
         ))}
         <form className="flex gap-4 items-end" onSubmit={handleSubmit}>

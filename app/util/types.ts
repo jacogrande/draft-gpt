@@ -1,5 +1,4 @@
 import { Timestamp } from "firebase/firestore";
-import { GeneratedCard, Setting } from "~/.server/prompts/responseTypes";
 
 export type DaisyColor =
   | "primary"
@@ -27,61 +26,31 @@ export type User = {
   uid: string;
   email: string;
   username: string;
-}
+};
 
 export type PublicUser = {
   username: string;
   uid: string;
-}
-
-export type WorldbuildingMessage = {
-  message: string;
-  posterId: string;
-  timestamp: Timestamp;
-}
-
-export type Lobby = {
-  id: string;
-  name: string;
-  creatingPacks: boolean;
-  createdBy: string;
-  activeUsers: PublicUser[];
-  createdAt: Timestamp;
-  activityMap: Record<string, Timestamp>;
-  draftStarted?: boolean;
-  readyMap?: Record<string, boolean>;
-  setting?: string; // setting id
-  lastActive: Timestamp;
-  worldbuildingMessages?: WorldbuildingMessage[];
-  currentRound: number;
 };
 
-export type Pack = {
+export type Card = {
   id: string;
-  currentHolder: string;
-  order: string[];
-  position: number;
-  lobbyId: string;
-  cardCount: number;
-  round: number;
-}
-
-export type SettingWithMetadata = Setting & {
-  lobbyId: string;
-  id: string;
-  icon: string;
-  createdAt: string;
-  createdBy: string;
-}
-
-export type Card = GeneratedCard & {
-  id: string;
-  packId: string;
+  name: string;
+  mana_cost: string;
+  art_direction: string;
+  image_url?: string | null;
+  type: string;
+  subtype: string;
+  rarity: string;
+  rules_text: string;
+  flavor_text: string;
+  power: number;
+  toughness: number;
+  set: string;
+  legendary: boolean;
   zone?: CardZone;
-  createdAt: Timestamp;
-  pickedBy: string;
   tapped?: boolean;
-}
+};
 
 export type CardColor = "red" | "white" | "blue" | "black" | "green" | "multi" | "colorless";
 
@@ -96,9 +65,9 @@ export type Deck = {
   hand?: Card[];
   graveyard?: Card[];
   battlefield?: Card[];
-  createdAt: Timestamp;
-  createdBy: string;
-}
+  createdAt: number;
+  createdBy?: string;
+};
 
 export type BasicLand = "plains" | "forest" | "mountain" | "swamp" | "island";
 

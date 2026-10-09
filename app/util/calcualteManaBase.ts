@@ -9,7 +9,7 @@ export const calculateManaBase = (cards: Card[]) => {
     (card) => card.type === "Land" || card.type === "Basic Land"
   ).length;
   const missingLands = TOTAL_LANDS - existingLands;
-  if (missingLands <= 0) return cards;
+  if (missingLands <= 0) return [];
   const symbolOccurrences = countSymbolOccurrences(cards);
   const totalManaCost = Object.values(symbolOccurrences).reduce(
     (a, b) => a + b,

@@ -1,53 +1,66 @@
+import { api } from "@convex/_generated/api";
+import { useNavigate } from "@remix-run/react";
+import { useMutation } from "convex/react";
 import Heading from "~/components/Heading";
-import { useLobbyStore } from "~/hooks/lobby/useLobby";
+import { LobbyView, viewerMember } from "~/hooks/lobby/useLobby";
 import { useToast } from "~/hooks/useToast";
-import { useUser } from "~/hooks/useUser";
-import { startDraft } from "~/model/draft";
-import { readyUp } from "~/model/lobby";
 import WorldbuildingChat from "~/routes/lobbies.$lobbyId/WorldbuildingChat";
+import { rejectionCode } from "~/util/rejection";
 
-const StartingScreen = () => {
-  const { lobby } = useLobbyStore();
-  const { user } = useUser();
+const START_REFUSALS: Record<string, string> = {
+  NEED_TWO_PLAYERS: "A draft needs at least two players",
+  PLAYERS_NOT_READY: "Everyone needs to ready up first",
+};
+
+const StartingScreen = ({ lobby }: { lobby: LobbyView }) => {
+  const setReady = useMutation(api.lobby.lobbies.setReady);
+  const startDraft = useMutation(api.draft.start.startDraft);
+  const leave = useMutation(api.lobby.lobbies.leave);
+  const navigate = useNavigate();
   const { toast } = useToast();
 
-  const handleReadyUp = async () => {
-    if (!user || !lobby) {
-      toast("Unable to get user or lobby data", "error");
-      return;
+  const lobbyId = lobby.id;
+  const isReady = viewerMember(lobby)?.ready ?? false;
+  const readyCount = lobby.members.filter((member) => member.ready).length;
+  const canStart =
+    lobby.members.length >= 2 && readyCount === lobby.members.length;
+
+  const handleStart = async () => {
+    try {
+      await startDraft({ lobbyId });
+    } catch (error) {
+      const reason = START_REFUSALS[rejectionCode(error) ?? ""];
+      toast(reason ?? "Unable to start the draft", "error");
     }
-    await readyUp(lobby.id, user.uid);
   };
 
-  const handleStartDraft = async () => {
-    if (!user || !lobby) {
-      toast("Unable to get user or lobby data", "error");
-      return;
-    }
-    await startDraft(lobby.id);
+  const handleLeave = async () => {
+    await leave({ lobbyId });
+    navigate("/lobbies");
   };
 
-  if (!user || !lobby) return null;
-  const readyCount = lobby.readyMap ? Object.keys(lobby.readyMap).length : 0;
-  const isReady = lobby.readyMap && lobby.readyMap[user.uid];
-  const playerCount = lobby.activeUsers.length;
-  const allReady = readyCount === playerCount;
   return (
     <div className="flex flex-col gap-8 flex-1 items-center justify-center relative">
       <Heading>
-        {readyCount} / {playerCount} players are ready
+        {readyCount} / {lobby.members.length} players are ready
       </Heading>
-      {!isReady && (
-        <button className="btn btn-primary" onClick={handleReadyUp}>
-          Ready Up
+      <div className="flex gap-2">
+        <button
+          className="btn btn-primary"
+          onClick={() => setReady({ lobbyId, ready: !isReady })}
+        >
+          {isReady ? "Not Ready" : "Ready Up"}
         </button>
-      )}
-      {allReady && (
-        <button className="btn btn-primary" onClick={handleStartDraft}>
-          Start Game
+        {canStart && (
+          <button className="btn btn-primary" onClick={handleStart}>
+            Start Draft
+          </button>
+        )}
+        <button className="btn btn-ghost" onClick={handleLeave}>
+          Leave Lobby
         </button>
-      )}
-      <WorldbuildingChat />
+      </div>
+      <WorldbuildingChat lobby={lobby} />
     </div>
   );
 };

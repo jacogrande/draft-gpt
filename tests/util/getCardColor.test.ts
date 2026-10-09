@@ -1,4 +1,4 @@
-import { expect, test } from "bun:test";
+import { expect, test } from "vitest";
 import { getCardColor } from "~/util/getCardColor";
 
 test("returns colorless for empty string", () => {

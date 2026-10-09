@@ -1,3 +1,4 @@
+import { ConvexAuthProvider } from "@convex-dev/auth/react";
 import type { LinksFunction } from "@remix-run/node";
 import {
   Links,
@@ -6,11 +7,11 @@ import {
   Scripts,
   ScrollRestoration,
 } from "@remix-run/react";
-
-import { useEffect } from "react";
+import { ConvexReactClient } from "convex/react";
 import { ToastProvider } from "~/hooks/useToast";
-import { useUserProvider } from "~/hooks/useUser";
 import "./tailwind.css";
+
+const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL);
 
 export const links: LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -26,12 +27,6 @@ export const links: LinksFunction = () => [
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {
-  const subscribeToUserChanges = useUserProvider();
-
-  useEffect(() => {
-    return subscribeToUserChanges();
-  }, [subscribeToUserChanges]);
-
   return (
     <html lang="en">
       <head>
@@ -50,6 +45,29 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
+export function HydrateFallback() {
+  return (
+    <div className="flex min-h-screen items-center justify-center">
+      <span className="loading loading-dots loading-lg"></span>
+    </div>
+  );
+}
+
 export default function App() {
-  return <Outlet />;
+  return (
+    <ConvexAuthProvider client={convex}>
+      <Outlet />
+    </ConvexAuthProvider>
+  );
+}
+
+export function ErrorBoundary() {
+  return (
+    <div className="flex min-h-screen flex-col items-center justify-center gap-4">
+      <h1 className="text-2xl font-bold">Something went wrong</h1>
+      <a href="/" className="link link-primary">
+        Back to the home page
+      </a>
+    </div>
+  );
 }

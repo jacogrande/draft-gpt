@@ -1,4 +1,4 @@
-import { expect, test } from "bun:test";
+import { expect, test } from "vitest";
 import { parseManaCost } from "~/util/parseManaCost";
 
 test("parses all colors", () => {

@@ -8,3 +8,9 @@ node_modules
 *.DS_Store
 
 app/service-account.json
+
+.env.local
+
+.convex
+.test-stack
+.firebase

@@ -1,4 +1,3 @@
-import { Timestamp } from "firebase/firestore";
 import { randomUid } from "~/util/randomUid";
 import { BasicLand, Card } from "~/util/types";
 
@@ -27,8 +26,5 @@ export const createBasicLand = (type: BasicLand): Card => {
     legendary: false,
     image_url: IMAGES[type],
     id: randomUid(),
-    packId: "",
-    createdAt: Timestamp.now(),
-    pickedBy: "",
   };
 };

@@ -1,8 +1,8 @@
 import { Link, useParams } from "@remix-run/react";
 import { useEffect, useState } from "react";
-import { verifySession } from "~/.server/session";
 import Heading from "~/components/Heading";
 import Page from "~/components/Page";
+import { requireAuth } from "~/components/RequireAuth";
 import { useGame } from "~/hooks/game/useGame";
 import useGameCommands from "~/hooks/game/useGameCommands";
 import useShiftSelector from "~/hooks/useShiftSelector";
@@ -13,8 +13,6 @@ import GameDetails from "~/routes/games.$gameId/GameDetails";
 import GameScreen from "~/routes/games.$gameId/GameScreen";
 import Hand from "~/routes/games.$gameId/Hand";
 import { REQUIRED_PLAYERS_FOR_GAME } from "~/util/constants";
-
-export const loader = verifySession;
 
 const GameRoute = () => {
   const params = useParams();
@@ -82,4 +80,4 @@ const GameRoute = () => {
   );
 };
 
-export default GameRoute;
+export default requireAuth(GameRoute);

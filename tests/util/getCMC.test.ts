@@ -1,4 +1,4 @@
-import { expect, test } from "bun:test";
+import { expect, test } from "vitest";
 import { getCMC } from "~/util/getCMC";
 
 test("returns 0 for empty string", () => {

@@ -1,23 +1,21 @@
-import { useMemo } from "react";
+import { api } from "@convex/_generated/api";
+import { useQuery } from "convex/react";
 import CardListItem from "~/components/CardListItem";
-import { useLobbyStore } from "~/hooks/lobby/useLobby";
-import useDeck from "~/hooks/useDeck";
+import { useLobbyId } from "~/hooks/lobby/useLobby";
 import { getCMC } from "~/util/getCMC";
 
 const DeckList = () => {
-  const { lobby } = useLobbyStore();
-  const { deck } = useDeck(lobby?.id || "");
-  const sortedDeck = useMemo(() => {
-    if (!deck) return null;
-    return deck.cards.sort((a, b) => getCMC(a.mana_cost) - getCMC(b.mana_cost)); // sort by name
-  }, [deck]);
+  const deck = useQuery(api.deck.decks.forLobby, { lobbyId: useLobbyId() });
+  const sorted = [...(deck?.cards ?? [])].sort(
+    (a, b) => getCMC(a.mana_cost) - getCMC(b.mana_cost)
+  );
 
   return (
     <ul
       className="flex flex-col gap-2 text-2xs"
       style={{ maxHeight: "calc(100vh - 200px)" }}
     >
-      {sortedDeck?.map((card) => (
+      {sorted.map((card) => (
         <CardListItem key={card.id} card={card} />
       ))}
     </ul>

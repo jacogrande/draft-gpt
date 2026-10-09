@@ -1,9 +1,10 @@
-import { useState, useEffect } from "react";
+import { api } from "@convex/_generated/api";
+import { useQuery } from "convex/react";
+import { useState } from "react";
 import Heading from "~/components/Heading";
 import { useGameStore } from "~/hooks/game/useGame";
 import { useToast } from "~/hooks/useToast";
 import { useUser } from "~/hooks/useUser";
-import { getAllDecks } from "~/model/decks";
 import { submitDeck } from "~/model/game/deck";
 import { Deck } from "~/util/types";
 
@@ -11,22 +12,17 @@ const DeckPicker = () => {
   const { user } = useUser();
   const { toast } = useToast();
   const game = useGameStore((state) => state.game);
-  const [decks, setDecks] = useState<Deck[] | null>(null);
+  const decks = useQuery(api.deck.decks.list);
   const [selectedDeck, setSelectedDeck] = useState<Deck | null>(null);
-
-  useEffect(() => {
-    if (!user) return;
-    (async () => {
-      const decks = await getAllDecks(user.uid);
-      setDecks(decks);
-    })();
-  }, [user]);
 
   const handleReadyUp = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!user || !selectedDeck || !game) return;
     try {
-      await submitDeck(game.id, user.uid, selectedDeck);
+      await submitDeck(game.id, user.uid, {
+        ...selectedDeck,
+        createdBy: user.uid,
+      });
     } catch (error) {
       console.error(error);
       toast("Unable to ready up", "error");

@@ -1,10 +1,8 @@
 import { Outlet, useParams } from "@remix-run/react";
-import { verifySession } from "~/.server/session";
 import Heading from "~/components/Heading";
 import Page from "~/components/Page";
+import { requireAuth } from "~/components/RequireAuth";
 import LobbyList from "~/routes/lobbies/LobbyList";
-
-export const loader = verifySession;
 
 const Lobbies = () => {
   const params = useParams();
@@ -20,4 +18,4 @@ const Lobbies = () => {
   );
 };
 
-export default Lobbies;
+export default requireAuth(Lobbies);

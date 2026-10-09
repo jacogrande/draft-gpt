@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import ManaCost from "~/components/ManaCost";
-import { usePacksStore } from "~/hooks/lobby/usePacks";
+import { usePacksStore } from "~/hooks/draft/usePacks";
 import { useGlobalStore } from "~/hooks/useGlobalStore";
 import { CARD_TEXTURES } from "~/util/constants";
 import { getCardColor } from "~/util/getCardColor";

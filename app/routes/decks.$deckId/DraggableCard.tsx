@@ -1,10 +1,10 @@
+import { api } from "@convex/_generated/api";
+import { useMutation } from "convex/react";
 import Draggable, { DraggableEventHandler } from "react-draggable";
 import Card from "~/components/Card";
 import { Card as CardType } from "~/util/types";
 import { useDeckEditorStore } from "~/routes/decks.$deckId/store";
-import { moveCardToSideboard } from "~/model/decks";
-import { useUser } from "~/hooks/useUser";
-import { useDeckStore } from "~/hooks/useDeck";
+import { deckIdOf, useDeckStore } from "~/hooks/useDeck";
 import { useState } from "react";
 import { useGlobalStore } from "~/hooks/useGlobalStore";
 
@@ -14,7 +14,7 @@ const DraggableCard = ({ card }: { card: CardType }) => {
   const sideboardRef = useDeckEditorStore((state) => state.sideboardRef);
   const deck = useDeckStore((state) => state.deck);
   const { selectedCards } = useGlobalStore();
-  const { user } = useUser();
+  const moveToSideboard = useMutation(api.deck.decks.moveToSideboard);
 
   const isCardInSideboard = (rect: DOMRect) => {
     if (!sideboardRect) return false;
@@ -49,17 +49,14 @@ const DraggableCard = ({ card }: { card: CardType }) => {
   };
 
   const onStop: DraggableEventHandler = (_e, data) => {
-    if (!deck || !user) return;
+    if (!deck) return;
     setIsDragging(false);
     const { node } = data;
     const rect = node.getBoundingClientRect();
     if (!sideboardRect) return;
     if (!isCardInSideboard(rect)) return;
-    if (selectedCards.length > 0) {
-      console.log("epic");
-    } else {
-      moveCardToSideboard(deck.id, user.uid, card.id);
-    }
+    if (selectedCards.length > 0) return;
+    void moveToSideboard({ deckId: deckIdOf(deck), cardId: card.id });
   };
 
   const SCALE = 0.65;

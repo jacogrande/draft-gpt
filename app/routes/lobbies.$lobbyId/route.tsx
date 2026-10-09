@@ -1,103 +1,70 @@
 import { GlobeAmericasIcon } from "@heroicons/react/16/solid";
-import { useParams } from "@remix-run/react";
-import { useEffect } from "react";
-import { verifySession } from "~/.server/session";
 import Page from "~/components/Page";
-import useHeartbeat from "~/hooks/lobby/useHeartbeat";
-import { useLobby } from "~/hooks/lobby/useLobby";
-import { usePacks } from "~/hooks/lobby/usePacks";
-import useSetting from "~/hooks/lobby/useSetting";
-import useIdToken from "~/hooks/useIdToken";
-import { useUser } from "~/hooks/useUser";
-import { joinLobby } from "~/model/lobby";
-import DraftStartingScreen from "~/routes/lobbies.$lobbyId/DraftStartingScreen";
+import { requireAuth } from "~/components/RequireAuth";
+import { useJoinLobby } from "~/hooks/lobby/useJoinLobby";
+import {
+  LobbyView,
+  useLobby,
+  useLobbyId,
+  viewerMember,
+} from "~/hooks/lobby/useLobby";
+import { useHeartbeat } from "~/hooks/lobby/usePresence";
+import DraftFinished from "~/routes/lobbies.$lobbyId/DraftFinished";
+import GeneratingScreen from "~/routes/lobbies.$lobbyId/GeneratingScreen";
 import LobbyDetails from "~/routes/lobbies.$lobbyId/LobbyDetails";
+import LobbyNotice from "~/routes/lobbies.$lobbyId/LobbyNotice";
 import PackDisplayScreen from "~/routes/lobbies.$lobbyId/PackDisplayScreen";
 import SettingInfo from "~/routes/lobbies.$lobbyId/SettingInfo";
 import StartingScreen from "~/routes/lobbies.$lobbyId/StartingScreen";
 
-export const loader = verifySession;
+const REFUSALS = {
+  full: "This lobby is full.",
+  "in-progress": "This draft is already in progress.",
+  closed: "This lobby is closed.",
+};
+
+const Screen = ({ lobby }: { lobby: LobbyView }) => {
+  if (lobby.status === "open") return <StartingScreen lobby={lobby} />;
+  if (lobby.status === "generating") return <GeneratingScreen lobby={lobby} />;
+  if (lobby.status === "drafting") return <PackDisplayScreen lobby={lobby} />;
+  return <DraftFinished lobby={lobby} />;
+};
 
 const Lobby = () => {
-  //========= PARAM VALIDATION =========//
-  const params = useParams();
-  const lobbyId = params.lobbyId as string;
-  const { user } = useUser();
-  const { lobby, loading } = useLobby(lobbyId); // setup lobby listener
-  useSetting(lobbyId); // setup setting listener
-  const packs = usePacks(lobbyId); // setup pack listener
-  const idToken = useIdToken();
-  useHeartbeat({ lobbyId });
+  const lobbyId = useLobbyId();
+  const lobby = useLobby();
+  const admission = useJoinLobby(lobbyId);
+  const isMember = Boolean(lobby && viewerMember(lobby));
+  useHeartbeat(lobbyId, isMember);
 
-  /**
-   * Join the lobby once user is loaded
-   */
-  useEffect(() => {
-    (async () => {
-      if (!user) return;
-      await joinLobby(user, lobbyId);
-    })();
-  }, [lobbyId, user]);
-
-  /**
-   * Attempt to leave the lobby when the user navigates away from the page
-   * This isn't guaranteed to work, but it's a best effort
-   * Hence the heartbeat system
-   */
-  useEffect(() => {
-    if (!idToken || !lobbyId) return;
-    const unloadListener = () => {
-      console.log("leaving lobby");
-      fetch("/api/leaveLobby", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          token: idToken,
-          lobbyId,
-        }),
-      });
-    };
-    window.addEventListener("onhashchange", unloadListener);
-    window.addEventListener("beforeunload", unloadListener);
-    return () => {
-      window.removeEventListener("beforeunload", unloadListener);
-      window.removeEventListener("onhashchange", unloadListener);
-    };
-  }, [idToken, lobbyId]);
-
-  const getCurrentScreen = () => {
-    if (!lobby) return null;
-    const { draftStarted } = lobby;
-    if (!draftStarted) return <StartingScreen />;
-    if (packs.length === 0) return <DraftStartingScreen />;
-    return <PackDisplayScreen />;
-  };
-
-  if (loading)
+  if (lobby === undefined || admission === "joining")
     return (
       <Page>
         <span className="loading loading-dots loading-lg"></span>
       </Page>
     );
+  if (lobby === null) return <LobbyNotice>Lobby not found.</LobbyNotice>;
+  if (admission !== "joined")
+    return <LobbyNotice>{REFUSALS[admission]}</LobbyNotice>;
+  if (!isMember || lobby.status === "closed")
+    return <LobbyNotice>You are no longer in this lobby.</LobbyNotice>;
   return (
     <Page>
       <div className="flex flex-col flex-1 w-full h-full">
-        <div className="flex justify-between items-center items-start">
+        <div className="flex justify-between items-start">
           <h1 className="text-2xl font-bold text-primary mb-8 flex items-center gap-2">
-            {lobby?.name}
+            {lobby.name}
             <GlobeAmericasIcon className="h-5 w-5" />
           </h1>
           <SettingInfo />
         </div>
         <div className="flex flex-1 justify-between ">
-          <LobbyDetails />
-          {getCurrentScreen()}
+          <LobbyDetails lobby={lobby} />
+          <Screen lobby={lobby} />
         </div>
       </div>
     </Page>
   );
 };
 
-export default Lobby;
+export default requireAuth(Lobby);

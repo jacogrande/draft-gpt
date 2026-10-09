@@ -1,32 +1,19 @@
+import { api } from "@convex/_generated/api";
 import { PencilSquareIcon } from "@heroicons/react/16/solid";
-import {
-  json,
-  Link,
-  Outlet,
-  redirect,
-  useLoaderData,
-  useParams,
-} from "@remix-run/react";
-import { verifySession } from "~/.server/session";
+import { Link, Outlet, useParams } from "@remix-run/react";
+import { useQuery } from "convex/react";
 import Heading from "~/components/Heading";
 import Page from "~/components/Page";
-import { getAllDecks } from "~/model/decks";
+import { requireAuth } from "~/components/RequireAuth";
 import { Deck } from "~/util/types";
-
-export const loader = async ({ request }: { request: Request }) => {
-  const session = await verifySession({ request });
-  if (!session) return redirect("/join");
-  const decks = await getAllDecks((session as { user: string }).user);
-  return json({ decks });
-};
 
 const Decks = () => {
   const params = useParams();
   const deckId = params.deckId;
-  const data = useLoaderData<typeof loader>();
-  const decks = (data.decks as Deck[]) || [];
+  const decks = useQuery(api.deck.decks.list);
 
   if (deckId) return <Outlet />;
+  if (!decks) return null;
   if (!decks.length)
     return (
       <Page>
@@ -75,7 +62,7 @@ const DeckRow = ({ deck }: { deck: Deck }) => {
       <th>{deck.name}</th>
       <td>{deck.cards.length}</td>
       <td>{deck.sideboard?.length || 0}</td>
-      <td>{new Date(deck.createdAt.seconds * 1000).toLocaleString()}</td>
+      <td>{new Date(deck.createdAt).toLocaleString()}</td>
       <td>
         <div className="tooltip" data-tip="Edit">
           <Link to={`/decks/${deck.id}`} className="link link-primary">
@@ -87,4 +74,4 @@ const DeckRow = ({ deck }: { deck: Deck }) => {
   );
 };
 
-export default Decks;
+export default requireAuth(Decks);

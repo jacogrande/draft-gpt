@@ -1,8 +1,9 @@
 import { InformationCircleIcon } from "@heroicons/react/24/outline";
-import { useSettingStore } from "~/hooks/lobby/useSetting";
+import { useSetting } from "~/hooks/draft/usePacks";
+import { useLobbyId } from "~/hooks/lobby/useLobby";
 
 const SettingInfo = () => {
-  const { setting } = useSettingStore();
+  const setting = useSetting(useLobbyId());
 
   if (!setting) return null;
   return (

@@ -1,54 +1,17 @@
-import { doc, onSnapshot } from "firebase/firestore";
-import { useState, useEffect } from "react";
-import { create } from "zustand";
-import { db } from "~/model/firebase";
-import { Lobby } from "~/util/types";
+import { api } from "@convex/_generated/api";
+import { Id } from "@convex/_generated/dataModel";
+import { useParams } from "@remix-run/react";
+import { useQuery } from "convex/react";
 
-type LobbyStore = {
-  lobby: Lobby | null;
-  setLobby: (lobby: Lobby | null) => void;
-};
+export const useLobbyId = () => useParams().lobbyId as Id<"lobbies">;
 
-export const useLobbyStore = create<LobbyStore>((set) => ({
-  lobby: null,
-  setLobby: (lobby) => set({ lobby }),
-}));
+export const useLobby = () =>
+  useQuery(api.lobby.lobbies.get, { lobbyId: useLobbyId() });
 
-export function useLobby(lobbyId: string): { lobby: Lobby | null; loading: boolean; error: Error | null } {
-  const { lobby, setLobby } = useLobbyStore();
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<Error | null>(null);
+export type LobbyView = NonNullable<ReturnType<typeof useLobby>>;
+export type LobbyMember = LobbyView["members"][number];
 
-  /**
-    * Fetches a snapshot of the lobby document from the database
-    * and sets the lobby state to the data of the document
-    */
-  useEffect(() => {
-    setLoading(true);
-    setError(null);
+export const isHost = (lobby: LobbyView) => lobby.hostId === lobby.viewerId;
 
-    const lobbyRef = doc(db, 'lobbies', lobbyId);
-    const unsubscribe = onSnapshot(
-      lobbyRef,
-      (doc) => {
-        if (doc.exists()) {
-          setLobby({ id: doc.id, ...doc.data() } as Lobby);
-        } else {
-          setLobby(null);
-          setError(new Error('Lobby not found'));
-        }
-        setLoading(false);
-      },
-      (err) => {
-        console.error('Error fetching lobby:', err);
-        setError(err);
-        setLoading(false);
-      }
-    );
-
-    // Cleanup function to unsubscribe from the snapshot listener
-    return () => unsubscribe();
-  }, [lobbyId, setLobby]);
-
-  return { lobby, loading, error };
-}
+export const viewerMember = (lobby: LobbyView) =>
+  lobby.members.find((member) => member.userId === lobby.viewerId) ?? null;

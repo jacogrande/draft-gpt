@@ -1,18 +1,18 @@
+import { api } from "@convex/_generated/api";
 import { Square3Stack3DIcon } from "@heroicons/react/16/solid";
+import { useMutation } from "convex/react";
 import { FaMountainSun } from "react-icons/fa6";
 import Subheading from "~/components/Subheading";
-import { useDeckStore } from "~/hooks/useDeck";
+import { deckIdOf, useDeckStore } from "~/hooks/useDeck";
 import { useToast } from "~/hooks/useToast";
-import { useUser } from "~/hooks/useUser";
-import { addManyCardsToDeck } from "~/model/decks";
 import DraggableCard from "~/routes/decks.$deckId/DraggableCard";
 import { calculateManaBase } from "~/util/calcualteManaBase";
 import { getCMC } from "~/util/getCMC";
-import { Card as CardType } from "~/util/types";
+import { BasicLand, Card as CardType } from "~/util/types";
 
 const Mainboard = () => {
   const { deck } = useDeckStore();
-  const { user } = useUser();
+  const addBasics = useMutation(api.deck.decks.addBasics);
   const { toast } = useToast();
 
   const renderMainboard = () => {
@@ -30,12 +30,13 @@ const Mainboard = () => {
   };
 
   const handleAddLands = async () => {
-    if (!deck || !user) return;
+    if (!deck) return;
     try {
-      const manaBase = calculateManaBase(deck.cards);
-      await addManyCardsToDeck(deck.id, user.uid, manaBase);
-    } catch (error) {
-      console.error(error);
+      const lands = calculateManaBase(deck.cards)
+        .filter((card) => card.type === "Basic Land")
+        .map((card) => card.subtype as BasicLand);
+      await addBasics({ deckId: deckIdOf(deck), lands });
+    } catch {
       toast("Unable to calculate mana base", "error");
       return;
     }

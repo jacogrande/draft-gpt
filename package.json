@@ -4,22 +4,23 @@
   "sideEffects": false,
   "type": "module",
   "scripts": {
-    "build": "remix vite:build",
     "dev": "remix vite:dev",
-    "start": "remix-serve ./build/server/index.js",
-    "typecheck": "tsc"
+    "dev:backend": "convex dev",
+    "build": "remix vite:build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "typecheck": "tsc && tsc -p convex",
+    "lint": "eslint app convex tests"
   },
   "dependencies": {
+    "@auth/core": "0.41.1",
+    "@convex-dev/auth": "^0.0.96",
     "@heroicons/react": "^2.1.5",
     "@remix-run/node": "^2.12.0",
     "@remix-run/react": "^2.12.0",
-    "@remix-run/serve": "^2.12.0",
     "@tailwindcss/typography": "^0.5.15",
-    "cookie": "^0.6.0",
+    "convex": "^1.46.0",
     "firebase": "^10.13.1",
-    "firebase-admin": "^12.5.0",
-    "isbot": "^4.1.0",
-    "openai": "^4.62.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-draggable": "^4.4.6",
@@ -28,12 +29,15 @@
     "zustand": "^5.0.0-rc.2"
   },
   "devDependencies": {
+    "@edge-runtime/vm": "^5.0.0",
     "@remix-run/dev": "^2.12.0",
     "@types/react": "^18.2.20",
     "@types/react-dom": "^18.2.7",
     "@typescript-eslint/eslint-plugin": "^6.7.4",
     "@typescript-eslint/parser": "^6.7.4",
+    "agent-browser": "^0.38.2",
     "autoprefixer": "^10.4.19",
+    "convex-test": "^0.0.60",
     "daisyui": "^4.12.10",
     "eslint": "^8.38.0",
     "eslint-import-resolver-typescript": "^3.6.1",
@@ -46,10 +50,9 @@
     "typescript": "^5.1.6",
     "vite": "^5.1.0",
     "vite-tsconfig-paths": "^4.2.1",
-    "@types/bun": "latest"
+    "vitest": "^2.1.9"
   },
   "engines": {
     "node": ">=20.0.0"
-  },
-  "module": "index.ts"
+  }
 }
