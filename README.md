@@ -1,40 +1,34 @@
-# Welcome to Remix!
+# DraftGPT
 
-- 📖 [Remix docs](https://remix.run/docs)
+Draft a Magic-style card set that an LLM invents for your group, build decks from your picks, and play each other in the browser.
 
-## Development
-
-Run the dev server:
-
-```shellscript
-npm run dev
-```
-
-## Deployment
-
-First, build your app for production:
+## Run it locally
 
 ```sh
-npm run build
+bun install
+./scripts/test-stack.sh start
 ```
 
-Then run the app in production mode:
+Open http://localhost:5173. This runs a local Convex backend with no account, a test sign-in form, and fake AI services, so drafts are instant and free. Stop it with `./scripts/test-stack.sh stop`.
+
+To run against a real Convex project instead:
 
 ```sh
-npm start
+npx convex dev        # log in and create or pick a project
+bun run dev
 ```
 
-Now you'll need to pick a host to deploy it to.
+Then set the variables listed in `docs/tech-stack.md` on that deployment.
 
-### DIY
+## Check your work
 
-If you're familiar with deploying Node applications, the built-in Remix app server is production-ready.
+```sh
+bun run test
+bun run typecheck
+bun run lint
+bun run build
+```
 
-Make sure to deploy the output of `npm run build`
+## Documentation
 
-- `build/server`
-- `build/client`
-
-## Styling
-
-This template comes with [Tailwind CSS](https://tailwindcss.com/) already configured for a simple default starting experience. You can use whatever css framework you prefer. See the [Vite docs on css](https://vitejs.dev/guide/features.html#css) for more information.
+Start with `AGENTS.md`, which indexes everything in `docs/`.
