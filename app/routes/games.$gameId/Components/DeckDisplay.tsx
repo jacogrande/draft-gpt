@@ -1,19 +1,16 @@
 import { useMemo, useState } from "react";
-import { useGameStore } from "~/hooks/game/useGame";
-import { useUser } from "~/hooks/useUser";
-import { shuffleDeck, drawCards } from "~/model/game/deck";
-import { Deck } from "~/util/types";
+import { useGameActions } from "~/hooks/game/useGameActions";
 
 type DeckDisplayProps = {
-  deck: Deck;
+  count: number;
   scale?: number;
+  own?: boolean;
 };
 
-const DeckDisplay = ({ deck, scale = 1 }: DeckDisplayProps) => {
-  const { game } = useGameStore();
-  const { user } = useUser();
+const DeckDisplay = ({ count, scale = 1, own = false }: DeckDisplayProps) => {
+  const { shuffle, draw } = useGameActions();
   const [isHovered, setIsHovered] = useState(false);
-  const isPlayerDeck = user && deck.createdBy === user.uid;
+  const isPlayerDeck = own;
 
   const styles = useMemo(
     () => ({
@@ -36,16 +33,14 @@ const DeckDisplay = ({ deck, scale = 1 }: DeckDisplayProps) => {
   );
 
   const handleShuffle = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    if (!user || !game) return;
     (e.target as HTMLButtonElement).blur();
-    await shuffleDeck(game.id, user.uid);
+    await shuffle();
   };
 
   const handleDrawCard =
     (amount: number) => async (e: React.MouseEvent<HTMLButtonElement>) => {
-      if (!user || !game) return;
       (e.target as HTMLButtonElement).blur();
-      await drawCards(game.id, deck, user.uid, amount);
+      await draw(amount);
     };
 
   const drawOne = handleDrawCard(1);
@@ -58,6 +53,7 @@ const DeckDisplay = ({ deck, scale = 1 }: DeckDisplayProps) => {
         role="button"
         tabIndex={0}
         className="relative rounded-md ml-4 bg-black"
+        data-library-count={count}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
@@ -72,7 +68,7 @@ const DeckDisplay = ({ deck, scale = 1 }: DeckDisplayProps) => {
           }`}
         >
           <p className="text-white font-bold" style={textStyles}>
-            {deck.cards.length}
+            {count}
           </p>
         </div>
 

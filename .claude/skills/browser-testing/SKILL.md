@@ -21,7 +21,7 @@ This starts three things and waits until they answer:
 | Fake OpenAI (cards and art) | `127.0.0.1:4010` | `.test-stack/fakes.log` |
 | The app | `http://localhost:5173` | `.test-stack/app.log` |
 
-On first run it also configures auth (section 2). Stop everything, including open browsers, with `./scripts/test-stack.sh stop`. Always stop when you are done.
+On first run it also configures auth (section 2). The first page load after a dependency change can come up blank while Vite re-optimises; open `/join` once and wait a few seconds before running the sign-in script. Stop everything, including open browsers, with `./scripts/test-stack.sh stop`. Always stop when you are done.
 
 Drafts on this stack cost nothing and take a few seconds: the setting is always "Glasswake" and every pack is twelve copies of "Glass Sentinel N", topped up to fifteen.
 
@@ -144,6 +144,22 @@ ab --session ana snapshot | grep "Draft Finished"
 
 Two players take about 75 seconds. Each ends with 45 cards.
 
+**Play a game.** Both players need a deck, so finish a draft first.
+
+```sh
+ab --session ana open http://localhost:5173/      # click the "Create a Game" ref
+GAME=$(ab --session ana get url)
+ab --session ben open "$GAME"                     # or Find a Game and type the code in the heading
+ab --session ana select 'select[aria-label="Deck"]' "<deck name>"   # then click Ready Up; same for ben
+ab --session ana press d; ab --session ana press 7                  # draw seven
+ab --session ana drag 'button.card' '[data-field=player]'           # hand to battlefield
+ab --session ana dblclick '[data-field=player] button.card'         # tap
+ab --session ben get count '[data-field=opponent] button.card.rotate-90'
+ab --session ben get text '[data-opponent-hand]'                    # "6 in hand · 0 in graveyard"
+```
+
+Other stable selectors: `[data-library-count]` on each library, `input[aria-label="Your life total"]`, `[data-tapped]` on tokens. The right-click menu on the player's field needs a dispatched `contextmenu` event (`ab eval`). A third session that opens `$GAME` should see "This game is full."
+
 **Make generation fail, then recover**
 
 ```sh
@@ -156,7 +172,6 @@ curl -s http://127.0.0.1:4010/__fail/off
 
 - **Google sign-in.** It needs real credentials and a person. Check it by hand against a deployment that has `AUTH_GOOGLE_ID` and `AUTH_GOOGLE_SECRET` set.
 - **Real generation.** To see real cards and art, set `OPENAI_API_KEY` on the local deployment and remove `OPENAI_BASE_URL`. A two-player round costs roughly twenty cents and takes about two minutes; ask first. Put `OPENAI_BASE_URL` back afterwards.
-- **Games.** The play table still writes to the production Firestore project. Do not create or join games from a test session without being asked to.
 
 ## 7. Reporting
 

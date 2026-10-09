@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import colors from "tailwindcss/colors";
 import { DefaultColors } from "tailwindcss/types/generated/colors";
-import { Counter } from "~/util/types";
+import { GameCounter as Counter } from "~/hooks/game/useGame";
 
 const OpponencyCounter = ({ counter }: { counter: Counter }) => {
   const bgColor = colors[counter.color as keyof DefaultColors][500];

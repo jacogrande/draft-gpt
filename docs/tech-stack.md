@@ -23,7 +23,6 @@ What the project is built on and why each piece is here. Versions are the ranges
 | Convex Auth (`@convex-dev/auth`, beta) | Sign-in. Google in production; a password provider for local testing only |
 | OpenAI `gpt-4o` | Setting design (JSON schema reply) and pack design (function call), called with `fetch` from `convex/draft/openai.ts` |
 | OpenAI `gpt-image-2.5-flare` | Card art, 1008x656 JPEG at low quality, from `convex/draft/images.ts`. See `docs/specs/card-art.md`. |
-| Cloud Firestore (client SDK) | The play table only, until roadmap step 3. Project `draft-gpt-81aaa`; its web config in `app/model/firebase.ts` is not a secret. |
 
 ## Frontend
 
@@ -61,6 +60,7 @@ In `.env.local` for the client build:
 ## Deliberate absences
 
 - **No application server.** Convex is the backend; the app is static files.
+- **No Firebase SDK.** Firebase is only the static host. The Firestore database in project `draft-gpt-81aaa` is no longer used.
 - **No OpenAI SDK.** Two `fetch` calls are simpler to replace in tests than a client library.
 - **No component tests.** Behaviour is tested through the backend's public functions and in a real browser.
 

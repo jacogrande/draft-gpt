@@ -1,5 +1,3 @@
-import { Timestamp } from "firebase/firestore";
-
 export type DaisyColor =
   | "primary"
   | "primary-content"
@@ -28,11 +26,6 @@ export type User = {
   username: string;
 };
 
-export type PublicUser = {
-  username: string;
-  uid: string;
-};
-
 export type Card = {
   id: string;
   name: string;
@@ -48,13 +41,10 @@ export type Card = {
   toughness: number;
   set: string;
   legendary: boolean;
-  zone?: CardZone;
   tapped?: boolean;
 };
 
 export type CardColor = "red" | "white" | "blue" | "black" | "green" | "multi" | "colorless";
-
-export type CardZone = "deck" | "hand" | "battlefield" | "graveyard";
 
 export type Deck = {
   id: string;
@@ -62,50 +52,7 @@ export type Deck = {
   name: string;
   cards: Card[];
   sideboard?: Card[];
-  hand?: Card[];
-  graveyard?: Card[];
-  battlefield?: Card[];
   createdAt: number;
-  createdBy?: string;
 };
 
 export type BasicLand = "plains" | "forest" | "mountain" | "swamp" | "island";
-
-export type InteractionLog = {
-  uid: string;
-  message: string;
-  timestamp: Timestamp;
-  targetCard?: string;
-}
-
-export type Counter = {
-  id: string;
-  ownerId: string;
-  value: string;
-  color: string;
-  position: {x: number, y: number}; // position of the counter in the player's game field
-  // NOTE: When displaying opponent counters, we'll need to invert the y axis since their board is flipped
-}
-
-export type Token = {
-  id: string;
-  ownerId: string;
-  name: string;
-  power: number | null;
-  toughness: number | null;
-  tapped?: boolean;
-}
-
-export type Game = {
-  id: string;
-  name: string;
-  createdAt: Timestamp;
-  createdBy: string;
-  activeUsers: PublicUser[];
-  lifeTotals: Record<string, number>; // user id -> life total
-  decks: Record<string, Deck>;
-  readyMap: Record<string, boolean>;
-  log?: InteractionLog[];
-  counters?: Counter[];
-  tokens?: Token[];
-}

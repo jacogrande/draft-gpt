@@ -1,43 +1,35 @@
 import { HeartIcon } from "@heroicons/react/16/solid";
 import { useEffect, useState } from "react";
-import { useGameStore } from "~/hooks/game/useGame";
-import { useUser } from "~/hooks/useUser";
-import { updateLifeTotal } from "~/model/game/player";
-import { STARTING_LIFE } from "~/util/constants";
+import { GamePlayer } from "~/hooks/game/useGame";
+import { useGameActions } from "~/hooks/game/useGameActions";
 
-const LifeTotalEditor = ({ userId }: { userId: string }) => {
-  const [lifeTotal, setLifeTotal] = useState<number>(STARTING_LIFE);
-  const { game } = useGameStore();
-  const { user } = useUser();
+type LifeTotalEditorProps = { player: GamePlayer; editable: boolean };
 
-  useEffect(() => {
-    if (!game || !user) return;
-    if (user.uid !== userId) return;
-    setLifeTotal(game.lifeTotals[user.uid]);
-  }, [game, user, userId]);
+const LifeTotalEditor = ({ player, editable }: LifeTotalEditorProps) => {
+  const [lifeTotal, setLifeTotal] = useState<string>(String(player.life));
+  const { setLife } = useGameActions();
+
+  useEffect(() => setLifeTotal(String(player.life)), [player.life]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!game || !user) return;
-    const newLifeTotal = Number(e.target.value);
-    setLifeTotal(newLifeTotal);
-    updateLifeTotal(game.id, user.uid, newLifeTotal);
+    setLifeTotal(e.target.value);
+    const life = Number(e.target.value);
+    if (e.target.value !== "" && Number.isInteger(life)) void setLife(life);
   };
 
-  if (!game || !user) return null;
-  if (user.uid !== userId)
+  if (!editable)
     return (
       <div className="w-full py-4 rounded border flex items-center relative">
         <HeartIcon className="h-5 w-5 absolute left-2" />
-        <p className="text-center flex-1">{game.lifeTotals[userId]}</p>
+        <p className="text-center flex-1">{player.life}</p>
       </div>
     );
-
-  //========= LIFE INPUT =========//
   return (
     <div className="w-full flex items-center relative">
       <HeartIcon className="h-5 w-5 absolute left-2" />
       <input
         type="number"
+        aria-label="Your life total"
         className="w-full py-4 text-center pl-3 rounded border flex items-center justify-center"
         value={lifeTotal}
         onChange={handleChange}

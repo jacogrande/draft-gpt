@@ -1,9 +1,9 @@
 import ManaCost from "~/components/ManaCost";
+import { GameCard } from "~/hooks/game/useGame";
 import { useGlobalStore } from "~/hooks/useGlobalStore";
 import DraggableGameCard from "~/routes/games.$gameId/Components/DraggableGameCard";
-import { Card } from "~/util/types";
 
-const GraveyardItem = ({ card }: { card: Card }) => {
+const GraveyardItem = ({ card }: { card: GameCard }) => {
   const setPeekedCard = useGlobalStore((state) => state.setPeekedCard);
 
   const handleMouseOver = () => {

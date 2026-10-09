@@ -1,10 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
-import { useGameStore } from "~/hooks/game/useGame";
+import { useGame, viewerSeat } from "~/hooks/game/useGame";
+import { useGameActions } from "~/hooks/game/useGameActions";
 import { useGlobalStore } from "~/hooks/useGlobalStore";
-import { useUser } from "~/hooks/useUser";
-import { tapManyCards, untapBattlefield } from "~/model/game/card";
-import { drawCards, shuffleDeck } from "~/model/game/deck";
-import { moveManyCardsToZone } from "~/model/game/zone";
 import { attemptToAddMana } from "~/util/attemptToAddMana";
 
 const useGameCommands = () => {
@@ -12,25 +9,22 @@ const useGameCommands = () => {
   const [drawing, setDrawing] = useState<boolean>(false);
   const [adding, setAdding] = useState<boolean>(false);
   const [addAmount, setAddAmount] = useState<string>("");
-  const { game } = useGameStore();
-  const { user } = useUser();
+  const game = useGame();
+  const side = game?.status === "playing" ? viewerSeat(game)?.side : null;
+  const { moveCards, tapCards, untapAll, draw, shuffle } = useGameActions();
   const selectedCards = useGlobalStore((state) => state.selectedCards);
   const setSelectedCards = useGlobalStore((state) => state.setSelectedCards);
   const pauseCommands = useGlobalStore((state) => state.pauseCommands);
 
   const handleKeyDown = useCallback(
     async (e: KeyboardEvent) => {
-      if (!game || !user) return;
-      if (pauseCommands) return;
+      if (!side || pauseCommands) return;
+      const selectedIds = selectedCards.map((card) => card.id);
       let newAmount = "";
       switch (e.key) {
         case "t":
           if (selectedCards.length === 0) return;
-          await tapManyCards(
-            game.id,
-            user.uid,
-            selectedCards.map((card) => card.id)
-          );
+          await tapCards(selectedIds);
           break;
         case "d":
           // draw cards if no cards are selected
@@ -41,13 +35,13 @@ const useGameCommands = () => {
           // otherwise move selected cards to deck
           else {
             setToastMessage("Moved to *D*eck");
-            await moveManyCardsToZone(game.id, user.uid, selectedCards, "deck");
+            await moveCards(selectedIds, "library");
             setSelectedCards([]);
           }
           break;
         case "s":
           setToastMessage("*S*huffle");
-          await shuffleDeck(game.id, user.uid);
+          await shuffle();
           break;
         case "b":
           if (adding) {
@@ -58,18 +52,13 @@ const useGameCommands = () => {
           }
           if (selectedCards.length === 0) return;
           setToastMessage("Moved to *B*attlefield");
-          await moveManyCardsToZone(
-            game.id,
-            user.uid,
-            selectedCards,
-            "battlefield"
-          );
+          await moveCards(selectedIds, "battlefield");
           setSelectedCards([]);
           break;
         case "h":
           if (selectedCards.length === 0) return;
           setToastMessage("Moved to *H*and");
-          await moveManyCardsToZone(game.id, user.uid, selectedCards, "hand");
+          await moveCards(selectedIds, "hand");
           setSelectedCards([]);
           break;
         case "g":
@@ -81,12 +70,7 @@ const useGameCommands = () => {
           }
           if (selectedCards.length === 0) return;
           setToastMessage("Moved to *G*raveyard");
-          await moveManyCardsToZone(
-            game.id,
-            user.uid,
-            selectedCards,
-            "graveyard"
-          );
+          await moveCards(selectedIds, "graveyard");
           setSelectedCards([]);
           break;
         case "a":
@@ -108,24 +92,17 @@ const useGameCommands = () => {
             setToastMessage(`*A*dd ${newAmount}`);
             return;
           }
-          await untapBattlefield(game.id, user.uid);
+          await untapAll();
           break;
         case "Enter":
           if (adding) {
             setToastMessage(`*A*dd ${addAmount}`);
-            const tappedLands = attemptToAddMana(
-              addAmount,
-              game.decks[user.uid]
-            );
+            const tappedLands = attemptToAddMana(addAmount, side.battlefield);
             if (!tappedLands) {
               setToastMessage("Not enough available mana");
               return;
             }
-            await tapManyCards(
-              game.id,
-              user.uid,
-              tappedLands.map((card) => card.id)
-            );
+            await tapCards(tappedLands.map((card) => card.id));
             setAddAmount("");
             setAdding(false);
             return;
@@ -145,7 +122,7 @@ const useGameCommands = () => {
         if (drawing) {
           setToastMessage(`*D*raw ${amount}`);
           setDrawing(false);
-          drawCards(game.id, game.decks[user.uid], user.uid, amount);
+          void draw(amount);
         } else if (adding) {
           const newAmount = addAmount + amount;
           setAddAmount(newAmount);
@@ -154,8 +131,12 @@ const useGameCommands = () => {
       }
     },
     [
-      game,
-      user,
+      side,
+      moveCards,
+      tapCards,
+      untapAll,
+      draw,
+      shuffle,
       selectedCards,
       drawing,
       setSelectedCards,

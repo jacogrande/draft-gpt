@@ -1,49 +1,39 @@
 import { api } from "@convex/_generated/api";
-import { useQuery } from "convex/react";
+import { Id } from "@convex/_generated/dataModel";
+import { useMutation, useQuery } from "convex/react";
 import { useState } from "react";
 import Heading from "~/components/Heading";
-import { useGameStore } from "~/hooks/game/useGame";
+import { GameView, viewerSeat } from "~/hooks/game/useGame";
 import { useToast } from "~/hooks/useToast";
-import { useUser } from "~/hooks/useUser";
-import { submitDeck } from "~/model/game/deck";
-import { Deck } from "~/util/types";
 
-const DeckPicker = () => {
-  const { user } = useUser();
+const DeckPicker = ({ game }: { game: GameView }) => {
   const { toast } = useToast();
-  const game = useGameStore((state) => state.game);
   const decks = useQuery(api.deck.decks.list);
-  const [selectedDeck, setSelectedDeck] = useState<Deck | null>(null);
+  const chooseDeck = useMutation(api.game.setup.chooseDeck);
+  const [deckId, setDeckId] = useState<string>("");
 
   const handleReadyUp = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!user || !selectedDeck || !game) return;
     try {
-      await submitDeck(game.id, user.uid, {
-        ...selectedDeck,
-        createdBy: user.uid,
-      });
-    } catch (error) {
-      console.error(error);
+      await chooseDeck({ gameId: game.id, deckId: deckId as Id<"decks"> });
+    } catch {
       toast("Unable to ready up", "error");
     }
   };
 
-  const handleSelectDeck = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const deckId = e.currentTarget.value;
-    setSelectedDeck(decks?.find((deck) => deck.id === deckId) || null);
-  };
-
+  if (viewerSeat(game)?.ready)
+    return <Heading>Waiting for your opponent</Heading>;
   return (
     <div className="flex flex-col items-center gap-8">
       <Heading>Setup Game</Heading>
       <form className="flex items-center gap-2" onSubmit={handleReadyUp}>
         <select
           className="select select-bordered w-full max-w-xs"
-          onChange={handleSelectDeck}
-          value={selectedDeck?.id}
+          aria-label="Deck"
+          onChange={(e) => setDeckId(e.currentTarget.value)}
+          value={deckId}
         >
-          <option disabled selected>
+          <option disabled value="">
             Pick a deck
           </option>
           {decks?.map((deck) => (
@@ -52,7 +42,9 @@ const DeckPicker = () => {
             </option>
           ))}
         </select>
-        <button className="btn btn-primary">Ready Up</button>
+        <button className="btn btn-primary" disabled={!deckId}>
+          Ready Up
+        </button>
       </form>
     </div>
   );

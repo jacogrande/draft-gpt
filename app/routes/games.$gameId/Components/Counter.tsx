@@ -2,14 +2,10 @@ import React, { useState, useRef, useEffect } from "react";
 import Draggable, { DraggableEventHandler } from "react-draggable";
 import colors from "tailwindcss/colors";
 import { DefaultColors } from "tailwindcss/types/generated/colors";
+import { api } from "@convex/_generated/api";
+import { useMutation } from "convex/react";
+import { GameCounter as CounterType } from "~/hooks/game/useGame";
 import { useGlobalStore } from "~/hooks/useGlobalStore";
-import { useGameStore } from "~/hooks/game/useGame";
-import {
-  deleteCounter,
-  updateCounterPosition,
-  updateCounterValue,
-} from "~/model/game/extras";
-import { Counter as CounterType } from "~/util/types";
 
 const Counter = ({ counter }: { counter: CounterType }) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -26,16 +22,17 @@ const Counter = ({ counter }: { counter: CounterType }) => {
 
   const bgColor = colors[counter.color as keyof DefaultColors][500];
 
-  const { game } = useGameStore();
+  const setValue = useMutation(api.game.counters.setValue);
+  const move = useMutation(api.game.counters.move);
+  const remove = useMutation(api.game.counters.remove);
   const setPauseCommands = useGlobalStore((state) => state.setPauseCommands);
 
   const menuRef = useRef<HTMLDivElement>(null);
 
   const handleDragStop: DraggableEventHandler = (_e, data) => {
-    if (!game) return;
     const { x, y } = data;
     setPosition({ x, y });
-    updateCounterPosition(game.id, counter.id, { x, y });
+    void move({ counterId: counter.id, position: { x, y } });
   };
 
   const handleContextMenu = (e: React.MouseEvent) => {
@@ -55,8 +52,7 @@ const Counter = ({ counter }: { counter: CounterType }) => {
   };
 
   const handleDelete = () => {
-    if (!game) return;
-    deleteCounter(game.id, counter.id);
+    void remove({ counterId: counter.id });
 
     // Close the context menu
     setContextMenu({ ...contextMenu, isVisible: false });
@@ -74,9 +70,7 @@ const Counter = ({ counter }: { counter: CounterType }) => {
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!game) return;
-    const newValue = e.target.value;
-    updateCounterValue(game.id, counter.id, newValue);
+    void setValue({ counterId: counter.id, value: e.target.value });
   };
 
   // Optionally, close context menu on click outside
@@ -119,6 +113,7 @@ const Counter = ({ counter }: { counter: CounterType }) => {
             <input
               type="text"
               value={counter.value}
+              maxLength={4}
               className="bg-transparent text-center w-full outline-none"
               onFocus={handleFocus}
               onBlur={handleBlur}

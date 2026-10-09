@@ -1,5 +1,5 @@
 import { parseManaCost } from "~/util/parseManaCost";
-import { Card, Deck } from "~/util/types";
+import { Card } from "~/util/types";
 
 const LAND_COLORS: Record<string, string> = {
   plains: "w",
@@ -9,8 +9,10 @@ const LAND_COLORS: Record<string, string> = {
   forest: "g",
 };
 
-export const attemptToAddMana = (amount: string, deck: Deck): Card[] | null => {
-  if (!deck.battlefield) return null;
+export const attemptToAddMana = <C extends Card>(
+  amount: string,
+  battlefield: C[]
+): C[] | null => {
 
   // count occurrences of mana symbols
   const manaSymbols = parseManaCost(amount.toLowerCase());
@@ -19,7 +21,7 @@ export const attemptToAddMana = (amount: string, deck: Deck): Card[] | null => {
     manaRequirements[symbol] = (manaRequirements[symbol] || 0) + 1;
   }
 
-  const basicLands = deck.battlefield.filter(
+  const basicLands = battlefield.filter(
     (card) => !card.tapped && card.type.startsWith("Basic Land")
   );
   if (basicLands.length === 0) {
@@ -28,7 +30,7 @@ export const attemptToAddMana = (amount: string, deck: Deck): Card[] | null => {
   }
 
   // Group lands by their basic land type
-  const landTypes: Record<string, Card[]> = {};
+  const landTypes: Record<string, C[]> = {};
   for (const land of basicLands) {
     const landType = land.name.toLowerCase(); // e.g., "mountain"
     if (!landTypes[landType]) {
@@ -40,7 +42,7 @@ export const attemptToAddMana = (amount: string, deck: Deck): Card[] | null => {
   // Determine the color each basic land produces
 
   // List to store selected lands to tap
-  const selectedLands: Card[] = [];
+  const selectedLands: C[] = [];
 
   // Step 1: Tap lands for colored mana
   for (const colorSymbol of ["w", "u", "b", "r", "g"]) {

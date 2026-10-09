@@ -1,18 +1,16 @@
 import { useState } from "react";
 import Draggable, { DraggableEventHandler } from "react-draggable";
 import Card from "~/components/Card";
-import { useGameStore } from "~/hooks/game/useGame";
+import type { Zone } from "@convex/game/table";
+import { GameCard } from "~/hooks/game/useGame";
+import { useGameActions } from "~/hooks/game/useGameActions";
 import { useZoneRefs } from "~/hooks/game/useZoneRefs";
 import { useGlobalStore } from "~/hooks/useGlobalStore";
-import { useUser } from "~/hooks/useUser";
-import { tapCard } from "~/model/game/card";
-import { moveCardToZone, moveManyCardsToZone } from "~/model/game/zone";
 import { GAME_SCALE } from "~/util/constants";
-import { Card as CardType, CardZone } from "~/util/types";
 
 type DraggableGameCardProps = {
-  card: CardType;
-  zone: CardZone;
+  card: GameCard;
+  zone: Zone;
   childrenOverride?: React.ReactNode;
 };
 
@@ -22,10 +20,9 @@ const DraggableGameCard = ({
   childrenOverride,
 }: DraggableGameCardProps) => {
   const [isDragging, setIsDragging] = useState(false);
-  const { game } = useGameStore();
-  const { user } = useUser();
+  const { moveCards, tapCards } = useGameActions();
   const { battlefieldRef, deckRef, handRef, graveyardRef } = useZoneRefs();
-  const { selectedCards } = useGlobalStore();
+  const { selectedCards, setSelectedCards } = useGlobalStore();
 
   const highlightZone = (ref: React.RefObject<HTMLDivElement>) => {
     if (!ref.current) return;
@@ -93,34 +90,18 @@ const DraggableGameCard = ({
     }
   };
 
-  const handleMoveCard = async (targetZone: CardZone) => {
-    if (!user || !game) return;
-    // move all selected cards to the target zone
-    if (selectedCards.length > 0) {
-      await moveManyCardsToZone(game.id, user.uid, selectedCards, targetZone);
-      return;
-    }
-    // move the card being dragged to the target zone
-    await moveCardToZone(
-      game.id,
-      user.uid,
-      card,
-      card.zone || "deck",
+  const handleMoveCard = async (targetZone: Zone) => {
+    if (selectedCards.length === 0) return moveCards([card.id], targetZone);
+    await moveCards(
+      selectedCards.map((selected) => selected.id),
       targetZone
     );
+    setSelectedCards([]);
   };
 
   const handleStop: DraggableEventHandler = (_e, data) => {
     setIsDragging(false);
-    if (
-      !battlefieldRef ||
-      !deckRef ||
-      !handRef ||
-      !graveyardRef ||
-      !game ||
-      !user
-    )
-      return;
+    if (!battlefieldRef || !deckRef || !handRef || !graveyardRef) return;
     const { node } = data;
     const cardRect = node.getBoundingClientRect();
     const inBattlefield = checkZone(battlefieldRef, cardRect);
@@ -135,8 +116,8 @@ const DraggableGameCard = ({
     // move card to the appropriate zone
     if (inHand && zone !== "hand") {
       handleMoveCard("hand");
-    } else if (inDeck && zone !== "deck") {
-      handleMoveCard("deck");
+    } else if (inDeck && zone !== "library") {
+      handleMoveCard("library");
     } else if (inGraveyard && zone !== "graveyard") {
       handleMoveCard("graveyard");
     } else if (inBattlefield && zone !== "battlefield") {
@@ -149,11 +130,7 @@ const DraggableGameCard = ({
     setIsDragging(true);
   };
 
-  const handleDoubleClick = async () => {
-    if (!user || !game) return;
-    console.log("tapping card");
-    await tapCard(game.id, user.uid, card.id);
-  };
+  const handleDoubleClick = () => tapCards([card.id]);
 
   return (
     <Draggable

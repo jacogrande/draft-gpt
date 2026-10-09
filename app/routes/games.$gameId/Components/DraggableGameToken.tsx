@@ -1,101 +1,55 @@
+import { api } from "@convex/_generated/api";
+import { useMutation } from "convex/react";
 import React, { useEffect, useRef, useState } from "react";
 import Draggable from "react-draggable";
-import { useGameStore } from "~/hooks/game/useGame";
-import { deleteToken, tapToken } from "~/model/game/extras";
-import { Token } from "~/util/types";
+import { GameToken } from "~/hooks/game/useGame";
+import TokenFace from "~/routes/games.$gameId/Components/TokenFace";
 
-type DraggableGameTokenProps = {
-  token: Token;
-  scale: number;
-  disabled?: boolean;
-};
+type DraggableGameTokenProps = { token: GameToken; scale: number };
 
-const DraggableGameToken: React.FC<DraggableGameTokenProps> = ({
-  token,
-  scale,
-}) => {
-  const { game } = useGameStore();
-  const [contextMenu, setContextMenu] = useState<{
-    isVisible: boolean;
-    x: number;
-    y: number;
-  }>({
-    isVisible: false,
-    x: 0,
-    y: 0,
-  });
+const HIDDEN = { isVisible: false, x: 0, y: 0 };
 
+const DraggableGameToken = ({ token, scale }: DraggableGameTokenProps) => {
+  const setTapped = useMutation(api.game.tokens.setTapped);
+  const remove = useMutation(api.game.tokens.remove);
+  const [contextMenu, setContextMenu] = useState(HIDDEN);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  // Handle right-click to show context menu
   const handleContextMenu = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    console.log("epic");
-    setContextMenu({
-      isVisible: true,
-      x: e.clientX,
-      y: e.clientY,
-    });
+    setContextMenu({ isVisible: true, x: e.clientX, y: e.clientY });
   };
 
   const handleDelete = () => {
-    if (!game) return;
-    deleteToken(game.id, token.id);
-    setContextMenu({ isVisible: false, x: 0, y: 0 }); // Hide the menu after deleting
+    void remove({ tokenId: token.id });
+    setContextMenu(HIDDEN);
   };
 
-  // Close the context menu if clicked outside
   useEffect(() => {
+    if (!contextMenu.isVisible) return;
     const handleClickOutside = (e: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
-        setContextMenu({ isVisible: false, x: 0, y: 0 });
+        setContextMenu(HIDDEN);
       }
     };
-
-    if (contextMenu.isVisible) {
-      document.addEventListener("mousedown", handleClickOutside);
-    } else {
-      document.removeEventListener("mousedown", handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [contextMenu]);
-
-  const handleDoubleClick = () => {
-    if (!game) return;
-    tapToken(game.id, token.id, !token.tapped);
-  };
-
-  const DIMENSIONS = {
-    width: 250 * scale,
-    height: 350 * scale,
-  };
-  console.log(token);
 
   return (
     <>
       <Draggable>
         <div
-          className={
-            "border border-gray-400 bg-white rounded p-1 text-center text-sm flex flex-col justify-between"
+          onContextMenu={handleContextMenu}
+          onDoubleClick={() =>
+            setTapped({ tokenId: token.id, tapped: !token.tapped })
           }
-          style={DIMENSIONS}
-          onContextMenu={handleContextMenu} // Right-click to show context menu
-          onDoubleClick={handleDoubleClick}
         >
-          <div className="w-full text-left">{token.name}</div>
-          {token.power != null && token.toughness != null && (
-            <div className="text-sm text-right">
-              {token.power}/{token.toughness}
-            </div>
-          )}
+          <TokenFace token={token} scale={scale} />
         </div>
       </Draggable>
 
-      {/* Context Menu */}
       {contextMenu.isVisible && (
         <div
           ref={menuRef}

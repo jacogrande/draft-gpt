@@ -3,6 +3,7 @@ import { Doc, Id } from "../_generated/dataModel";
 import { mutation, MutationCtx, query } from "../_generated/server";
 import { reject } from "../errors";
 import { findViewer, requireViewer } from "../identity/viewer";
+import { findOwnDeck } from "./owned";
 import { basicLand, toMainboard, toSideboard } from "./zones";
 
 const landType = v.union(
@@ -24,9 +25,7 @@ const present = (deck: Doc<"decks">) => ({
 
 const requireOwnDeck = async (ctx: MutationCtx, deckId: Id<"decks">) => {
   const userId = await requireViewer(ctx);
-  const deck = await ctx.db.get(deckId);
-  if (!deck || deck.userId !== userId) return reject("DECK_NOT_FOUND");
-  return deck;
+  return (await findOwnDeck(ctx, userId, deckId)) ?? reject("DECK_NOT_FOUND");
 };
 
 export const list = query({
@@ -46,8 +45,8 @@ export const get = query({
   args: { deckId: v.id("decks") },
   handler: async (ctx, { deckId }) => {
     const userId = await findViewer(ctx);
-    const deck = userId && (await ctx.db.get(deckId));
-    return deck && deck.userId === userId ? present(deck) : null;
+    const deck = userId && (await findOwnDeck(ctx, userId, deckId));
+    return deck ? present(deck) : null;
   },
 });
 

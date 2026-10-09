@@ -1,48 +1,25 @@
-import { useMemo } from "react";
 import Card from "~/components/Card";
-import { useGameStore } from "~/hooks/game/useGame";
-import { useUser } from "~/hooks/useUser";
+import {
+  GameSide,
+  splitBattlefield,
+  useGameExtras,
+} from "~/hooks/game/useGame";
 import DeckDisplay from "~/routes/games.$gameId/Components/DeckDisplay";
-import DraggableGameToken from "~/routes/games.$gameId/Components/DraggableGameToken";
+import TokenFace from "~/routes/games.$gameId/Components/TokenFace";
 import { GAME_SCALE } from "~/util/constants";
 
-const OpponentField = () => {
-  const { game } = useGameStore();
-  const { user } = useUser();
-  const opponentDeck = useMemo(() => {
-    if (!game || !user) return null;
-    const opponentId = game.activeUsers.find(
-      (activeUser) => activeUser.uid !== user.uid
-    )?.uid;
-    if (!opponentId) return null;
-    return game.decks[opponentId];
-  }, [game, user]);
+type OpponentFieldProps = { ownerId: string; side: GameSide };
 
-  const { lands, battlefieldCards } = useMemo(() => {
-    const battlefield = opponentDeck?.battlefield || [];
-    const lands =
-      battlefield.filter(
-        (card) => card.type === "Land" || card.type === "Basic Land"
-      ) || [];
-    const otherCards =
-      battlefield.filter(
-        (card) => card.type !== "Land" && card.type !== "Basic Land"
-      ) || [];
-    return { lands, battlefieldCards: otherCards };
-  }, [opponentDeck]);
+const OpponentField = ({ ownerId, side }: OpponentFieldProps) => {
+  const { lands, spells } = splitBattlefield(side.battlefield);
+  const tokens = useGameExtras().tokens.filter(
+    (token) => token.ownerId === ownerId
+  );
 
-  // ========= TOKENS FOR THIS USER ========= //
-  const opponentTokens = useMemo(() => {
-    if (!game?.tokens || !user?.uid) return [];
-    return game.tokens.filter((token) => token.ownerId !== user.uid);
-  }, [game, user]);
-
-  if (!opponentDeck) return null;
   return (
-    <div className="flex-1 flex flex-col gap-4">
-      {/* Deck / Lands */}
+    <div className="flex-1 flex flex-col gap-4" data-field="opponent">
       <div className="flex">
-        <DeckDisplay deck={opponentDeck} scale={GAME_SCALE} />
+        <DeckDisplay count={side.libraryCount} scale={GAME_SCALE} />
         <div className="flex-1 flex gap-2">
           {lands.map((card) => (
             <div key={card.id} className="rotate-180">
@@ -50,16 +27,19 @@ const OpponentField = () => {
             </div>
           ))}
         </div>
+        <p className="text-xs opacity-60 self-start" data-opponent-hand>
+          {side.handCount} in hand · {side.graveyard.length} in graveyard
+        </p>
       </div>
       <div className="flex-1 flex gap-2 items-center">
-        {battlefieldCards.map((card) => (
+        {spells.map((card) => (
           <div key={card.id} className="rotate-180">
             <Card card={card} scale={GAME_SCALE} />
           </div>
         ))}
-        {opponentTokens.map((token) => (
+        {tokens.map((token) => (
           <div key={token.id} className="rotate-180">
-            <DraggableGameToken token={token} scale={GAME_SCALE} />
+            <TokenFace token={token} scale={GAME_SCALE} />
           </div>
         ))}
       </div>

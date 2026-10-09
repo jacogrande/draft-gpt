@@ -19,7 +19,16 @@ export type RejectionCode =
   | "TIMER_NOT_RUNNING"
   | "TIMER_NOT_PAUSED"
   | "DECK_NOT_FOUND"
-  | "CARD_NOT_IN_DECK";
+  | "CARD_NOT_IN_DECK"
+  | "INVALID_GAME_CODE"
+  | "GAME_NOT_FOUND"
+  | "NOT_A_PLAYER"
+  | "GAME_NOT_OPEN"
+  | "GAME_NOT_STARTED"
+  | "INVALID_LIFE_TOTAL"
+  | "INVALID_TOKEN"
+  | "INVALID_COUNTER"
+  | "PIECE_NOT_FOUND";
 
 export function reject(code: RejectionCode): never {
   throw new ConvexError({ code });

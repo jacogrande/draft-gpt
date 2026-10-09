@@ -1,7 +1,8 @@
 import { MagnifyingGlassCircleIcon } from "@heroicons/react/16/solid";
+import { api } from "@convex/_generated/api";
 import { useNavigate } from "@remix-run/react";
+import { useConvex } from "convex/react";
 import { useState } from "react";
-import { getGameByName } from "~/model/game/lobby";
 
 type FindGameModalProps = {
   modalRef: React.RefObject<HTMLDialogElement>;
@@ -11,17 +12,15 @@ const FindGameModal = ({ modalRef }: FindGameModalProps) => {
   const [gameCode, setGameCode] = useState<string>("");
   const [error, setError] = useState<string>("");
   const navigate = useNavigate();
+  const convex = useConvex();
 
   const findGame = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    try {
-      const game = await getGameByName(gameCode);
-      if (!game) throw new Error("Game not found");
-      navigate(`/games/${game.id}`);
-    } catch (error) {
-      console.error(error);
-      setError("Game not found");
-    }
+    const gameId = await convex.query(api.game.games.findByCode, {
+      code: gameCode,
+    });
+    if (gameId) navigate(`/games/${gameId}`);
+    else setError("Game not found");
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

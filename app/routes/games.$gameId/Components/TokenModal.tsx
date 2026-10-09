@@ -1,40 +1,35 @@
+import { api } from "@convex/_generated/api";
+import { useMutation } from "convex/react";
 import { useState } from "react";
-import { useGameStore } from "~/hooks/game/useGame";
+import { useGameId } from "~/hooks/game/useGame";
 import { useGlobalStore } from "~/hooks/useGlobalStore";
-import { useUser } from "~/hooks/useUser";
-import { createToken } from "~/model/game/extras";
 
 type TokenModalProps = {
   showTokenModal: boolean;
   setShowTokenModal: (showTokenModal: boolean) => void;
 };
 
-type TokenFormData = {
-  name: string;
-  power: number | null;
-  toughness: number | null;
-};
+type TokenFormData = { name: string; power: string; toughness: string };
+
+const EMPTY_FORM: TokenFormData = { name: "", power: "", toughness: "" };
+
+const stat = (typed: string) => (typed === "" ? null : Number(typed));
 
 const TokenModal = ({ showTokenModal, setShowTokenModal }: TokenModalProps) => {
-  const [formData, setFormData] = useState<TokenFormData>({
-    name: "",
-    power: null,
-    toughness: null,
-  });
+  const [formData, setFormData] = useState<TokenFormData>(EMPTY_FORM);
   const setPauseCommands = useGlobalStore((state) => state.setPauseCommands);
-  const { user } = useUser();
-  const { game } = useGameStore();
-  if (!game || !user) return null;
+  const gameId = useGameId();
+  const createToken = useMutation(api.game.tokens.create);
 
   const submitTokenForm = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    await createToken(
-      game.id,
-      user.uid,
-      formData.name,
-      formData.power,
-      formData.toughness
-    );
+    await createToken({
+      gameId,
+      name: formData.name,
+      power: stat(formData.power),
+      toughness: stat(formData.toughness),
+    });
+    setFormData(EMPTY_FORM);
     closeModal();
   };
 
@@ -59,7 +54,7 @@ const TokenModal = ({ showTokenModal, setShowTokenModal }: TokenModalProps) => {
       }));
     };
 
-  const disabled = formData.name.length === 0;
+  const disabled = formData.name.trim().length === 0;
 
   return (
     <>
@@ -90,14 +85,14 @@ const TokenModal = ({ showTokenModal, setShowTokenModal }: TokenModalProps) => {
               className="input input-bordered flex-1"
               type="number"
               placeholder="Power?"
-              value={formData.power || ""}
+              value={formData.power}
               onChange={handleChange("power")}
             />
             <input
               className="input input-bordered flex-1"
               type="number"
               placeholder="Toughness?"
-              value={formData.toughness || ""}
+              value={formData.toughness}
               onChange={handleChange("toughness")}
             />
           </div>

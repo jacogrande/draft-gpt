@@ -1,6 +1,6 @@
 # Architecture
 
-DraftGPT is a static single-page app in front of a Convex backend. Convex holds sign-in, lobbies, drafts, and decks, and is the only place state changes. The play table is the exception: games still live in Firestore until step 3 of `docs/specs/refactor-roadmap.md`.
+DraftGPT is a static single-page app in front of a Convex backend. Convex holds sign-in, lobbies, drafts, decks, and games, and is the only place state changes.
 
 ## The shape of the system
 
@@ -8,7 +8,6 @@ DraftGPT is a static single-page app in front of a Convex backend. Convex holds 
 Browser (static SPA, Remix in SPA mode)
   routes + components
   hooks  ── useQuery / useMutation ──▶  Convex
-  model/game ── Firestore SDK ─────▶  Firestore (games only)
 
 Convex
   auth (Google through Convex Auth)
@@ -29,7 +28,8 @@ The backend is grouped by domain. Each folder holds its tables (`tables.ts`), it
 | `convex/identity/` | Users and usernames | `username.ts` | `users.ts`, `viewer.ts` |
 | `convex/lobby/` | Lobbies, members, seats, readiness, worldbuilding chat, presence | `roster.ts`, `away.ts` | `lobbies.ts`, `departure.ts`, `messages.ts`, `presence.ts`, `sightings.ts`, `cleanup.ts`, `access.ts` |
 | `convex/draft/` | Settings, packs, cards, picks, rounds, generation, absences | `seating.ts`, `passing.ts`, `absence.ts`, `parsing.ts`, `retry.ts`, `artPrompt.ts` | `start.ts`, `picks.ts`, `picking.ts`, `rounds.ts`, `absences.ts`, `absent.ts`, `autopilot.ts`, `returning.ts`, `generated.ts`, `scheduling.ts`, `failures.ts`, `generation.ts`, `settings.ts` |
-| `convex/deck/` | Decks | `zones.ts` | `decks.ts`, `drafted.ts` |
+| `convex/deck/` | Decks | `zones.ts` | `decks.ts`, `drafted.ts`, `owned.ts` |
+| `convex/game/` | Games, seats, each player's zones, life, tokens, counters, the log, presence | `seats.ts`, `table.ts`, `extras.ts` | `games.ts`, `setup.ts`, `play.ts`, `tokens.ts`, `counters.ts`, `log.ts`, `presence.ts`, `cleanup.ts`, `access.ts` |
 
 `convex/card.ts` is the card face shared by draft and deck. `convex/errors.ts` lists every rejection code. `convex/draft/openai.ts` and `images.ts` are the only files that call outside services.
 
@@ -42,7 +42,6 @@ The split inside each domain is functional core, imperative shell: pure files de
 | `app/routes/` | Pages and their route-local components |
 | `app/components/` | Shared components. `Card.tsx` renders every card. `RequireAuth.tsx` guards signed-in pages. |
 | `app/hooks/` | Convex queries and mutations wrapped for components, plus small zustand stores for UI state |
-| `app/model/game/` | Firestore reads and writes for the play table |
 | `app/util/` | Pure helpers, shared types, constants |
 
 ## Data model
@@ -62,7 +61,13 @@ Convex tables:
 | `cards` | Every generated card, with its pack and `pickedBy` |
 | `decks` | One per player per draft, with whole cards embedded in `cards` and `sideboard` |
 
-Card art is in Convex file storage. Firestore still holds `games/{gameId}`, one document per game.
+| `games` | `code` (four characters), `status` (`open`, `playing`, `closed`) |
+| `gamePlayers` | One row per seat: `seat`, `life`, and `side`, the player's `library`, `hand`, `battlefield`, and `graveyard` as arrays of whole cards |
+| `gameTokens`, `gameCounters` | One row per token or counter, with its owner |
+| `gameLog` | One row per logged action |
+| `gamePresence` | `lastSeenAt` per player, for display only |
+
+Card art is in Convex file storage.
 
 A lobby's `status` moves `open` → `generating` → `drafting` → (`generating` → `drafting` for rounds 2 and 3) → `complete`. `closed` is reached when the last member leaves an open lobby or cleanup closes an abandoned one.
 
@@ -92,12 +97,13 @@ A heartbeat is only sent while the tab is visible, so a player who switches to a
 
 **Decks.** A deck is created by the first pick of a draft. The deckbuilder moves cards between mainboard and sideboard and adds basic lands.
 
-**Play.** Unchanged: the game document in Firestore holds a copy of each player's deck split into zones, and every action rewrites that player's part of it.
+**Play.** Creating a game seats its creator; the other player joins by code or URL, and `join` is idempotent like a lobby's. Each player chooses a deck, the server shuffles a copy of its mainboard into their library, and the game starts when both have chosen. Every table action is one mutation that rewrites the acting player's own `gamePlayers` row and writes the log, so two players acting at once never overwrite each other. `games.get` sends each viewer their own hand and only counts for the opponent's hand and both libraries. Details are in `docs/specs/game-lobbies.md`.
 
 ## Trust boundaries and known gaps
 
 - **Convex functions are the boundary.** Every mutation checks the caller and their membership or ownership. Page guards in the browser are for navigation only.
-- **Games are unprotected.** The play table writes to Firestore from the browser with no Firebase sign-in, so it depends on the Firestore rules being open, and each client holds the opponent's whole deck. Fixing this is step 3 of the roadmap.
+- **The old Firestore database is unused but still open.** Nothing reads or writes it any more, and its deployed rules allow anyone to. Lock or delete it in the Firebase console; Firebase Hosting does not depend on it.
+- **Token and counter placement is per screen.** Token positions are not stored and counter positions are in the owner's screen coordinates. Step 4 of the roadmap.
 - **A draft cannot be left.** A participant stays in the draft to the end; if they go away, their picks are made at random after the reconnect countdown. If the host is the one away, nobody can pause or skip and the countdown simply runs out.
 - **Test sign-in exists in the code** and is enabled only by `AUTH_TEST_LOGIN` on the deployment. It must never be set in production.
 - **The card-design model and prompts are the 2024 originals** (`gpt-4o`), moved without change. Rebuilding card creation is step 6 of the roadmap. Card art is current; see `docs/specs/card-art.md`.

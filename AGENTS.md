@@ -15,8 +15,8 @@ Friends draft a Magic-style card set that an LLM invents for them on the spot, b
 
 ## Rules
 
-- **Functional core, imperative shell.** Rules of the game are pure functions in the core files of each domain (`roster.ts`, `seating.ts`, `passing.ts`, `parsing.ts`, `zones.ts`). Convex functions load, call them, and write. Do not put a rules decision in a handler.
-- **Code lives with its domain.** `convex/identity`, `lobby`, `draft`, `deck`, each with its own `tables.ts` and tests. A domain changes another's data only by calling a function that domain exports.
+- **Functional core, imperative shell.** Rules of the game are pure functions in the core files of each domain (`roster.ts`, `seating.ts`, `passing.ts`, `absence.ts`, `parsing.ts`, `zones.ts`, `seats.ts`, `table.ts`). Convex functions load, call them, and write. Do not put a rules decision in a handler.
+- **Code lives with its domain.** `convex/identity`, `lobby`, `draft`, `deck`, `game`, each with its own `tables.ts` and tests. A domain changes another's data only by calling a function that domain exports.
 - **Mutations reject, queries return nothing.** A mutation checks the caller first and rejects with a code from `convex/errors.ts`. A query that the caller may not see returns `null` or `[]`, because a thrown query crashes the page during sign-out and leave.
 - **Integration tests first.** New backend behaviour gets a test in `convex/<domain>/*.test.ts` that drives public functions as signed-in players. Write a unit test only for core logic where a silent regression would be costly.
 - **Check screens in a browser.** After changing anything a player sees, follow `.claude/skills/browser-testing/SKILL.md`.
@@ -35,6 +35,7 @@ Friends draft a Magic-style card set that an LLM invents for them on the spot, b
 - Card art model, prompt, cost, and limits: `docs/specs/card-art.md`
 - The Convex rewrite, its engineering rules, and what is left to deploy it: `docs/specs/convex-rewrite.md`
 - Why lobbies were rebuilt: `docs/specs/draft-lobby-refactor.md`
+- How the play table's seats, views, and log behave: `docs/specs/game-lobbies.md`
 - Planned work: `docs/roadmap.md`
 - How to write and maintain these docs: `docs/documentation-guide.md`
 - Design history: `.notes/`. A journal that predates the rewrite; where it disagrees with `docs/` or the code, it is out of date.
@@ -42,5 +43,4 @@ Friends draft a Magic-style card set that an LLM invents for them on the spot, b
 ## Working here
 
 - A change that makes one of these docs false updates the doc in the same commit.
-- The play table (`app/model/game`, `app/routes/games.$gameId`) still writes to the production Firestore project. Do not create games from a test session unless asked.
 - Add a line to this file when an agent makes a mistake the line would have prevented. Keep it under about 100 lines.

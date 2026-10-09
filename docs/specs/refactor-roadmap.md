@@ -28,6 +28,9 @@ Remaining:
 Card design keeps the 2024 model and prompts for now; rebuilding it is step 6.
 
 ## Step 3: Game Lobbies
+
+Status: done (2026-10-09). See `game-lobbies.md`.
+
 Ensure that game state is properly handled in game lobbies. The same logic and changes we made in Draft lobbies should apply here. Ensure all game states can be represented and are identical in both instances.
 
 ## Step 4: Game View

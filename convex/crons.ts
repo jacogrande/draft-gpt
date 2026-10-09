@@ -9,4 +9,10 @@ crons.daily(
   internal.lobby.cleanup.closeAbandoned
 );
 
+crons.daily(
+  "close abandoned games",
+  { hourUTC: 9, minuteUTC: 30 },
+  internal.game.cleanup.closeAbandoned
+);
+
 export default crons;

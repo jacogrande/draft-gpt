@@ -1,15 +1,15 @@
 import { useMemo } from "react";
 import Subheading from "~/components/Subheading";
+import { GameCard } from "~/hooks/game/useGame";
 import GraveyardItem from "~/routes/games.$gameId/Components/GraveyardItem";
-import { Deck } from "~/util/types";
 
 type GraveyardDisplayProps = {
-  deck: Deck;
+  cards: GameCard[];
   scale?: number;
 };
 
-const GraveyardDisplay = ({ deck, scale = 1 }: GraveyardDisplayProps) => {
-  const graveyard = deck.graveyard || [];
+const GraveyardDisplay = ({ cards, scale = 1 }: GraveyardDisplayProps) => {
+  const graveyard = cards;
   const styles = useMemo(
     () => ({
       width: 250 * scale,
@@ -35,7 +35,7 @@ const GraveyardDisplay = ({ deck, scale = 1 }: GraveyardDisplayProps) => {
             className="border rounded-md bg-base-200 flex items-center justify-center hover:cursor-pointer"
           >
             <p style={textStyles} className="font-bold">
-              {deck.graveyard?.length || 0}
+              {graveyard.length}
             </p>
           </label>
         </div>

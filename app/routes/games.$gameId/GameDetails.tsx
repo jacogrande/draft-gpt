@@ -1,75 +1,89 @@
+import { api } from "@convex/_generated/api";
 import { CheckIcon } from "@heroicons/react/16/solid";
+import { useNavigate } from "@remix-run/react";
+import { useMutation } from "convex/react";
 import { IoCopy } from "react-icons/io5";
 import Subheading from "~/components/Subheading";
-import { useGameStore } from "~/hooks/game/useGame";
+import { GamePlayer, GameView } from "~/hooks/game/useGame";
+import { usePresentPlayerIds } from "~/hooks/game/useGamePresence";
 import { useToast } from "~/hooks/useToast";
 import CardPreview from "~/routes/games.$gameId/Components/CardPreview";
 import InteractionLog from "~/routes/games.$gameId/InteractionLog";
 import LifeTotalEditor from "~/routes/games.$gameId/LifeTotalEditor";
-import { REQUIRED_PLAYERS_FOR_GAME } from "~/util/constants";
 
-const GameDetails = () => {
-  const { game } = useGameStore();
+const PlayerName = ({ player, away }: { player: GamePlayer; away: boolean }) => (
+  <span className="flex items-center gap-2" data-away={away}>
+    <span className={away ? "opacity-50" : ""}>{player.username}</span>
+    {away && <span className="text-xs italic opacity-50">away</span>}
+  </span>
+);
+
+const GameDetails = ({ game }: { game: GameView }) => {
   const { toast } = useToast();
-  const allReady =
-    game && Object.keys(game.readyMap).length === REQUIRED_PLAYERS_FOR_GAME;
+  const navigate = useNavigate();
+  const leave = useMutation(api.game.games.leave);
+  const present = usePresentPlayerIds(game.id);
 
-  const onCopy = () => {
+  const onCopy = async () => {
     try {
-      navigator.clipboard.writeText(game?.name || "");
+      await navigator.clipboard.writeText(game.code);
       toast("Game ID copied to clipboard", "success");
-    } catch (error) {
-      console.error("Failed to copy game ID:", error);
+    } catch {
       toast("Failed to copy game ID", "error");
     }
   };
 
-  const renderPlayerList = () => {
-    if (!game) return null;
-    return (
-      <ul className="flex flex-col gap-2">
-        <Subheading>Players</Subheading>
-        {game.activeUsers.map((user) => (
-          <li key={user.uid} className="flex items-center gap-2">
-            {user.username}
-            {game.readyMap[user.uid] && (
-              <CheckIcon className="h-4 w-4 text-success" />
-            )}
+  const handleLeave = async () => {
+    await leave({ gameId: game.id });
+    navigate("/");
+  };
+
+  const playerList = (
+    <ul className="flex flex-col gap-2">
+      <Subheading>Players</Subheading>
+      {game.players.map((player) => (
+        <li key={player.userId} className="flex items-center gap-2">
+          <PlayerName player={player} away={!present.has(player.userId)} />
+          {player.ready && <CheckIcon className="h-4 w-4 text-success" />}
+        </li>
+      ))}
+      <button className="btn btn-ghost btn-sm mt-4" onClick={handleLeave}>
+        Leave game
+      </button>
+    </ul>
+  );
+
+  const gameStatus = (
+    <div className="flex flex-col gap-8 flex-1">
+      <CardPreview />
+      <ul className="flex flex-col gap-8">
+        {game.players.map((player) => (
+          <li key={player.userId} className="flex flex-col gap-2">
+            <Subheading>
+              <PlayerName player={player} away={!present.has(player.userId)} />
+            </Subheading>
+            <LifeTotalEditor
+              player={player}
+              editable={player.userId === game.viewerId}
+            />
           </li>
         ))}
       </ul>
-    );
-  };
-
-  const renderGameStatus = () => {
-    if (!game) return null;
-    return (
-      <div className="flex flex-col gap-8 flex-1">
-        <CardPreview />
-        <ul className="flex flex-col gap-8">
-          {game.activeUsers.map((activeUser) => (
-            <li key={activeUser.uid} className="flex flex-col gap-2">
-              <Subheading>{activeUser.username}</Subheading>
-              <LifeTotalEditor userId={activeUser.uid} />
-            </li>
-          ))}
-        </ul>
-          <InteractionLog />
-      </div>
-    );
-  };
+      <InteractionLog game={game} />
+    </div>
+  );
 
   return (
     <div className="flex flex-col gap-4 h-full w-[264px] rounded-lg p-4">
       <h1 className="text-2xl font-bold text-primary mb-8 flex items-center gap-2">
-        {game?.name}
+        {game.code}
         <div className="tooltip" data-tip="Copy Game ID">
-          <button onClick={onCopy}>
+          <button onClick={onCopy} aria-label="Copy Game ID">
             <IoCopy className="h-5 w-5" />
           </button>
         </div>
       </h1>
-      {allReady ? renderGameStatus() : renderPlayerList()}
+      {game.status === "playing" ? gameStatus : playerList}
     </div>
   );
 };

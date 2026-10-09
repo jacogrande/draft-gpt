@@ -32,7 +32,7 @@ A small group of friends who already know how to play Magic, are on a voice call
 ## Non-goals
 
 - **Rules enforcement.** No turns, phases, stack, or legality checks.
-- **Preventing cheating.** The interaction log keeps players honest; hidden information is not protected.
+- **Preventing cheating.** The interaction log keeps players honest. The server keeps each player's hand and library from the other, and nothing beyond that.
 - **Play without voice chat.** Turn order and intent are communicated out loud.
 - **Collections, trading, or an economy.** A deck exists because of a draft and belongs to it.
 - **Faithfully reproducing real Magic cards.** The cards are original; only the game's conventions are borrowed.

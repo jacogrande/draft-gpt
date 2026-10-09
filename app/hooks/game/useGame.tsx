@@ -1,55 +1,41 @@
-import { doc, onSnapshot } from "firebase/firestore";
-import { useState, useEffect } from "react";
-import { create } from "zustand";
-import { db } from "~/model/firebase";
-import { Game } from "~/util/types"; // Make sure to define the Game type
+import { api } from "@convex/_generated/api";
+import { Id } from "@convex/_generated/dataModel";
+import { useParams } from "@remix-run/react";
+import { useQuery } from "convex/react";
 
-type GameStore = {
-  game: Game | null;
-  setGame: (game: Game | null) => void;
-};
+export const useGameId = () => useParams().gameId as Id<"games">;
 
-export const useGameStore = create<GameStore>((set) => ({
-  game: null,
-  setGame: (game) => set({ game }),
-}));
+export const useGame = () =>
+  useQuery(api.game.games.get, { gameId: useGameId() });
 
-export function useGame(gameId: string): { game: Game | null; loading: boolean; error: Error | null } {
-  const { game, setGame } = useGameStore();
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<Error | null>(null);
+export type GameView = NonNullable<ReturnType<typeof useGame>>;
+export type GamePlayer = GameView["players"][number];
+export type GameSide = NonNullable<GamePlayer["side"]>;
+export type GameCard = GameSide["battlefield"][number];
 
-  /**
-   * Fetches a snapshot of the game document from the database
-   * and sets the game state to the data of the document
-   */
-  useEffect(() => {
-    setLoading(true);
-    setError(null);
+export const viewerSeat = (game: GameView) =>
+  game.players.find((player) => player.userId === game.viewerId) ?? null;
 
-    const gameRef = doc(db, 'games', gameId);
-    const unsubscribe = onSnapshot(
-      gameRef,
-      (doc) => {
-        if (doc.exists()) {
-          setGame({ id: doc.id, ...doc.data() } as Game);
-        } else {
-          setGame(null);
-          setError(new Error('Game not found'));
-        }
-        setLoading(false);
-      },
-      (err) => {
-        console.error('Error fetching game:', err);
-        setError(err);
-        setLoading(false);
-      }
-    );
+export const opponentSeat = (game: GameView) =>
+  game.players.find((player) => player.userId !== game.viewerId) ?? null;
 
-    // Cleanup function to unsubscribe from the snapshot listener
-    return () => unsubscribe();
-  }, [gameId, setGame]);
+const NO_EXTRAS = { tokens: [], counters: [] };
 
-  return { game, loading, error };
-}
+export const useGameExtras = () =>
+  useQuery(api.game.games.extras, { gameId: useGameId() }) ?? NO_EXTRAS;
 
+type GameExtras = NonNullable<
+  ReturnType<typeof useQuery<typeof api.game.games.extras>>
+>;
+export type GameToken = GameExtras["tokens"][number];
+export type GameCounter = GameExtras["counters"][number];
+
+export const useGameLog = () =>
+  useQuery(api.game.log.recent, { gameId: useGameId() }) ?? [];
+
+const LAND_TYPES = ["Land", "Basic Land"];
+
+export const splitBattlefield = (battlefield: GameCard[]) => ({
+  lands: battlefield.filter((card) => LAND_TYPES.includes(card.type)),
+  spells: battlefield.filter((card) => !LAND_TYPES.includes(card.type)),
+});
