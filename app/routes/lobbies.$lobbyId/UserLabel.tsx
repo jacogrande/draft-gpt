@@ -1,16 +1,25 @@
 import { api } from "@convex/_generated/api";
 import { CheckIcon, StarIcon, XMarkIcon } from "@heroicons/react/16/solid";
 import { useMutation } from "convex/react";
+import { Absence } from "~/hooks/draft/useAbsences";
 import { isHost, LobbyMember, LobbyView } from "~/hooks/lobby/useLobby";
+import ReconnectTimer from "~/routes/lobbies.$lobbyId/ReconnectTimer";
 
 type UserLabelProps = {
   lobby: LobbyView;
   member: LobbyMember;
   away: boolean;
+  absence: Absence | null;
   packCount: number;
 };
 
-const UserLabel = ({ lobby, member, away, packCount }: UserLabelProps) => {
+const UserLabel = ({
+  lobby,
+  member,
+  away,
+  absence,
+  packCount,
+}: UserLabelProps) => {
   const removeMember = useMutation(api.lobby.lobbies.removeMember);
   const isOpen = lobby.status === "open";
   const isViewer = member.userId === lobby.viewerId;
@@ -18,14 +27,16 @@ const UserLabel = ({ lobby, member, away, packCount }: UserLabelProps) => {
 
   return (
     <li
-      className={`flex items-center gap-2 relative ${away ? "opacity-50" : ""}`}
+      className="flex flex-wrap items-center gap-x-2 relative"
       data-away={away}
     >
-      {member.username}
+      <span className={away ? "opacity-50" : ""}>{member.username}</span>
       {member.userId === lobby.hostId && (
         <StarIcon className="h-4 w-4 absolute left-[-1.5rem] text-warning" />
       )}
-      {away && <span className="text-xs italic">away</span>}
+      {away && !absence && (
+        <span className="text-xs italic opacity-50">away</span>
+      )}
       {isOpen && member.ready && <CheckIcon className="h-4 w-4 text-success" />}
       {Array.from({ length: packCount }, (_, index) => (
         <span
@@ -43,6 +54,11 @@ const UserLabel = ({ lobby, member, away, packCount }: UserLabelProps) => {
         >
           <XMarkIcon className="h-4 w-4" />
         </button>
+      )}
+      {absence && (
+        <span className="basis-full">
+          <ReconnectTimer lobby={lobby} member={member} absence={absence} />
+        </span>
       )}
     </li>
   );

@@ -37,6 +37,7 @@ export const draftTables = {
     holderId: v.union(v.id("users"), v.null()),
     cardCount: v.number(),
     ready: v.boolean(),
+    jobId: v.optional(v.id("_scheduled_functions")),
   }).index("by_lobby_round", ["lobbyId", "round"]),
 
   cards: defineTable({
@@ -48,4 +49,11 @@ export const draftTables = {
   })
     .index("by_pack", ["packId"])
     .index("by_setting", ["settingId"]),
+
+  absences: defineTable({
+    lobbyId: v.id("lobbies"),
+    userId: v.id("users"),
+    deadline: v.union(v.number(), v.null()),
+    remainingMs: v.union(v.number(), v.null()),
+  }).index("by_lobby", ["lobbyId"]),
 };

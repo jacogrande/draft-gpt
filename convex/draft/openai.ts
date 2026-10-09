@@ -12,6 +12,7 @@ import { Setting } from "./tables";
 
 const BASE_URL = process.env.OPENAI_BASE_URL ?? "https://api.openai.com";
 const MODEL = "gpt-4o";
+const REPLY_TIMEOUT_MS = 4 * 60_000;
 
 const between = (min: number, max: number) =>
   min + Math.random() * (max - min);
@@ -24,6 +25,7 @@ const complete = async (body: Record<string, unknown>) => {
       Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
     },
     body: JSON.stringify({ model: MODEL, top_p: 0.9, ...body }),
+    signal: AbortSignal.timeout(REPLY_TIMEOUT_MS),
   });
   if (!response.ok) throw new Error(`OpenAI responded ${response.status}`);
   const completion = await response.json();

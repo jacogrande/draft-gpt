@@ -1,16 +1,21 @@
 import { afterEach, beforeEach, expect, test, vi } from "vitest";
 import {
-  Backend,
   openLobby,
-  Player,
   readyEveryone,
   rejection,
   signIn,
   startBackend,
 } from "../../tests/backend";
+import {
+  lobbyOf,
+  packOf,
+  pickFirst,
+  seen,
+  settle,
+  startedDraft,
+} from "../../tests/drafting";
 import { fakeOutsideWorld } from "../../tests/outsideWorld";
 import { api } from "../_generated/api";
-import { Id } from "../_generated/dataModel";
 
 let world: ReturnType<typeof fakeOutsideWorld>;
 
@@ -23,35 +28,6 @@ afterEach(() => {
   vi.unstubAllGlobals();
   vi.useRealTimers();
 });
-
-const settle = async (backend: Backend) => {
-  while (vi.getTimerCount() > 0) {
-    vi.advanceTimersToNextTimer();
-    await backend.finishInProgressScheduledFunctions();
-  }
-};
-
-const startedDraft = async (usernames: string[]) => {
-  const backend = startBackend();
-  const { lobbyId, players } = await openLobby(backend, usernames);
-  await readyEveryone(lobbyId, players);
-  await players[0].as.mutation(api.draft.start.startDraft, { lobbyId });
-  await settle(backend);
-  return { backend, lobbyId, players };
-};
-
-const lobbyOf = (player: Player, lobbyId: Id<"lobbies">) =>
-  player.as.query(api.lobby.lobbies.get, { lobbyId });
-
-const packOf = (player: Player, lobbyId: Id<"lobbies">) =>
-  player.as.query(api.draft.picks.current, { lobbyId });
-
-const pickFirst = async (player: Player, lobbyId: Id<"lobbies">) => {
-  const pack = await packOf(player, lobbyId);
-  if (!pack) return false;
-  await player.as.mutation(api.draft.picks.pick, { cardId: pack.cards[0].id });
-  return true;
-};
 
 test("a draft needs two players and everyone ready", async () => {
   const backend = startBackend();
@@ -156,6 +132,7 @@ test("three rounds of picks finish the draft with a 45-card deck each", async ()
   while ((await status()) !== "complete") {
     for (const player of players) await pickFirst(player, lobbyId);
     await settle(backend);
+    await seen(lobbyId, players);
   }
 
   for (const player of players) {

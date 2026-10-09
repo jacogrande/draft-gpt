@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useAbsences } from "~/hooks/draft/useAbsences";
 import { usePacksHeld } from "~/hooks/draft/usePacks";
 import { LobbyView } from "~/hooks/lobby/useLobby";
 import { usePresentUserIds } from "~/hooks/lobby/usePresence";
@@ -11,6 +12,7 @@ const LobbyDetails = ({ lobby }: { lobby: LobbyView }) => {
   const [activeTab, setActiveTab] = useState<(typeof TABS)[number]>("players");
   const packsHeld = usePacksHeld(lobby.id);
   const present = usePresentUserIds(lobby.id);
+  const absences = useAbsences(lobby.id);
 
   return (
     <div className="flex flex-col gap-2 min-w-48">
@@ -36,6 +38,10 @@ const LobbyDetails = ({ lobby }: { lobby: LobbyView }) => {
               lobby={lobby}
               member={member}
               away={!present.has(member.userId)}
+              absence={
+                absences.find((absence) => absence.userId === member.userId) ??
+                null
+              }
               packCount={packsHeld[member.userId] ?? 0}
             />
           ))}

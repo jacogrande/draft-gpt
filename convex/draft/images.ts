@@ -5,6 +5,7 @@ const RATE_LIMITED = 429;
 const SERVER_ERROR = 500;
 const MAX_TRIES = 6;
 const DEFAULT_WAIT_SECONDS = 10;
+const REPLY_TIMEOUT_MS = 90_000;
 
 const decodeBase64 = (encoded: string): Uint8Array =>
   Uint8Array.from(atob(encoded), (character) => character.charCodeAt(0));
@@ -30,6 +31,7 @@ const request = (prompt: string) =>
       output_format: "jpeg",
       output_compression: 85,
     }),
+    signal: AbortSignal.timeout(REPLY_TIMEOUT_MS),
   });
 
 export const paintCard = async (prompt: string): Promise<Blob | null> => {

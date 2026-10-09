@@ -1,9 +1,9 @@
 import { v } from "convex/values";
-import { internal } from "../_generated/api";
 import { mutation } from "../_generated/server";
 import { reject } from "../errors";
 import { loadMembers, requireMember } from "../lobby/access";
 import { bySeat, startBlocker } from "../lobby/roster";
+import { scheduleGeneration } from "./scheduling";
 
 export const startDraft = mutation({
   args: { lobbyId: v.id("lobbies") },
@@ -17,9 +17,6 @@ export const startDraft = mutation({
       status: "generating",
       participantIds: bySeat(members).map((member) => member.userId),
     });
-    await ctx.scheduler.runAfter(0, internal.draft.generation.createSetting, {
-      lobbyId,
-      attempt: 1,
-    });
+    await scheduleGeneration(ctx, 0, lobbyId, undefined, 1);
   },
 });

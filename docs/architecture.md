@@ -27,8 +27,8 @@ The backend is grouped by domain. Each folder holds its tables (`tables.ts`), it
 | Domain | Owns | Pure rules | Convex functions |
 |---|---|---|---|
 | `convex/identity/` | Users and usernames | `username.ts` | `users.ts`, `viewer.ts` |
-| `convex/lobby/` | Lobbies, members, seats, readiness, worldbuilding chat, presence | `roster.ts` | `lobbies.ts`, `departure.ts`, `messages.ts`, `presence.ts`, `cleanup.ts`, `access.ts` |
-| `convex/draft/` | Settings, packs, cards, picks, rounds, generation | `seating.ts`, `passing.ts`, `parsing.ts`, `retry.ts`, `artPrompt.ts` | `start.ts`, `picks.ts`, `rounds.ts`, `generated.ts`, `failures.ts`, `generation.ts`, `settings.ts` |
+| `convex/lobby/` | Lobbies, members, seats, readiness, worldbuilding chat, presence | `roster.ts`, `away.ts` | `lobbies.ts`, `departure.ts`, `messages.ts`, `presence.ts`, `sightings.ts`, `cleanup.ts`, `access.ts` |
+| `convex/draft/` | Settings, packs, cards, picks, rounds, generation, absences | `seating.ts`, `passing.ts`, `absence.ts`, `parsing.ts`, `retry.ts`, `artPrompt.ts` | `start.ts`, `picks.ts`, `picking.ts`, `rounds.ts`, `absences.ts`, `absent.ts`, `autopilot.ts`, `returning.ts`, `generated.ts`, `scheduling.ts`, `failures.ts`, `generation.ts`, `settings.ts` |
 | `convex/deck/` | Decks | `zones.ts` | `decks.ts`, `drafted.ts` |
 
 `convex/card.ts` is the card face shared by draft and deck. `convex/errors.ts` lists every rejection code. `convex/draft/openai.ts` and `images.ts` are the only files that call outside services.
@@ -52,12 +52,13 @@ Convex tables:
 | Table | Holds |
 |---|---|
 | `users` | Convex Auth's user plus `username` |
-| `lobbies` | `name`, `hostId`, `status`, `round`, `participantIds`, `settingId`, `generationError` |
+| `lobbies` | `name`, `hostId`, `status`, `round`, `participantIds`, `settingId`, `settingJobId`, `generationError` |
 | `lobbyMembers` | One row per member: `seat`, `ready` |
 | `lobbyMessages` | Worldbuilding suggestions |
-| `lobbyPresence` | `lastSeenAt` per member, for display only |
+| `lobbyPresence` | `lastSeenAt` per member. Never changes the roster; during a draft it decides when a reconnect countdown starts |
 | `settings` | The generated world for a lobby |
-| `packs` | `round`, `order` (user ids), `position`, `holderId`, `cardCount`, `ready` |
+| `packs` | `round`, `order` (user ids), `position`, `holderId`, `cardCount`, `ready`, `jobId` (the latest generation attempt) |
+| `absences` | One row per participant who is away during a draft: `deadline` while the countdown runs, `remainingMs` while it is paused |
 | `cards` | Every generated card, with its pack and `pickedBy` |
 | `decks` | One per player per draft, with whole cards embedded in `cards` and `sideboard` |
 
@@ -77,7 +78,17 @@ A lobby's `status` moves `open` → `generating` → `drafting` → (`generating
 2. `generation.createSetting` sends the worldbuilding messages to the model, saves the setting, and deals round 1: one pack per participant, each with a passing order.
 3. `generation.createPack` runs once per pack, in parallel. It asks for twelve cards, paints art for each (four at a time, from a prompt built by `draft/artPrompt.ts`), and saves them. A card whose art fails is saved without it. When the last pack of the round is saved, each is topped up to fifteen from the setting's card pool and the lobby becomes `drafting`.
 4. `picks.current` gives each player only the pack at the front of their queue. `picks.pick` marks the card, passes the pack, and adds the card to the player's deck in one transaction. The pick that empties the round deals the next one, or completes the draft after round 3.
-5. A failed generation step retries twice with backoff. After the third failure the lobby shows the error and the host can retry.
+5. A failed generation step retries twice with backoff. After the third failure the lobby shows the error and the host can retry. A step that never reports back (an action killed at Convex's 10-minute limit) is treated as failed after 11 minutes, and calls to OpenAI time out before that limit.
+
+**A player who disconnects mid-draft.** Each round, the server watches every participant's `lastSeenAt`.
+
+1. A participant unseen for 60 seconds gets an `absences` row with a two-minute countdown, shown to everyone in the sidebar.
+2. The host can pause and resume the countdown, or skip it after confirming.
+3. When the countdown runs out or is skipped, the server picks a random card for that player from each pack that reaches them, so packs keep moving and the player still ends with a full deck.
+4. The player's next heartbeat deletes the row and they pick for themselves again. Leaving again starts a new countdown.
+5. Nothing is picked automatically while every participant is away, so an abandoned draft does not generate further rounds.
+
+A heartbeat is only sent while the tab is visible, so a player who switches to another tab for a minute counts as disconnected.
 
 **Decks.** A deck is created by the first pick of a draft. The deckbuilder moves cards between mainboard and sideboard and adds basic lands.
 
@@ -87,6 +98,6 @@ A lobby's `status` moves `open` → `generating` → `drafting` → (`generating
 
 - **Convex functions are the boundary.** Every mutation checks the caller and their membership or ownership. Page guards in the browser are for navigation only.
 - **Games are unprotected.** The play table writes to Firestore from the browser with no Firebase sign-in, so it depends on the Firestore rules being open, and each client holds the opponent's whole deck. Fixing this is step 3 of the roadmap.
-- **A draft cannot be left.** A participant who stops picking holds up the packs in their queue. Handling that is the rest of roadmap step 2.
+- **A draft cannot be left.** A participant stays in the draft to the end; if they go away, their picks are made at random after the reconnect countdown. If the host is the one away, nobody can pause or skip and the countdown simply runs out.
 - **Test sign-in exists in the code** and is enabled only by `AUTH_TEST_LOGIN` on the deployment. It must never be set in production.
-- **The card-design model and prompts are the 2024 originals** (`gpt-4o`), moved without change. Card art is current; see `docs/specs/card-art.md`.
+- **The card-design model and prompts are the 2024 originals** (`gpt-4o`), moved without change. Rebuilding card creation is step 6 of the roadmap. Card art is current; see `docs/specs/card-art.md`.

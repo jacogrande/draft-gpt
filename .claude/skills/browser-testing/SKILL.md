@@ -112,6 +112,16 @@ ab --session ana snapshot | grep -B1 away    # Ben, still on the roster, marked 
 ab --session ben open "$LOBBY"               # same seat, same ready state
 ```
 
+**Disconnect mid-draft.** With a draft running and Ana as host:
+
+```sh
+ab --session ben open about:blank
+ab --session ana wait 75000
+ab --session ana snapshot | grep -A4 '"Ben"'   # "waiting 1:4x", Pause, Skip
+```
+
+Pause holds the time and turns into Resume. Skip opens a dialog; "Skip the wait" makes the label "picking automatically", and each pack Ana passes comes straight back one card smaller. Reopening the lobby as Ben clears the label. Left alone, the countdown runs out two minutes after it appears.
+
 **Pick the first card**
 
 ```sh

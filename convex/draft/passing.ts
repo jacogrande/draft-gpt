@@ -1,7 +1,7 @@
 export const ROUND_COUNT = 3;
 export const PACK_SIZE = 15;
 
-type Passing<U> = {
+export type Passing<U> = {
   order: U[];
   position: number;
   cardCount: number;

@@ -15,6 +15,9 @@ export type RejectionCode =
   | "CARD_NOT_AVAILABLE"
   | "NOT_YOUR_PACK"
   | "NOTHING_TO_RETRY"
+  | "NOT_AWAY"
+  | "TIMER_NOT_RUNNING"
+  | "TIMER_NOT_PAUSED"
   | "DECK_NOT_FOUND"
   | "CARD_NOT_IN_DECK";
 

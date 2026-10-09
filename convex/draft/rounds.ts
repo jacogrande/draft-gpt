@@ -1,8 +1,9 @@
 import { pickFace } from "../card";
-import { internal } from "../_generated/api";
 import { Doc, Id } from "../_generated/dataModel";
 import { MutationCtx, QueryCtx } from "../_generated/server";
+import { watchParticipant } from "./absent";
 import { drawFromPool, topUpCount } from "./passing";
+import { scheduleGeneration } from "./scheduling";
 import { packOrders } from "./seating";
 
 const PACK_STAGGER_MS = 500;
@@ -36,11 +37,7 @@ export const dealRound = async (
       cardCount: 0,
       ready: false,
     });
-    await ctx.scheduler.runAfter(
-      index * PACK_STAGGER_MS,
-      internal.draft.generation.createPack,
-      { lobbyId: lobby._id, packId, attempt: 1 }
-    );
+    await scheduleGeneration(ctx, index * PACK_STAGGER_MS, lobby._id, packId, 1);
   }
 };
 
@@ -70,4 +67,7 @@ export const openRound = async (
     });
   }
   await ctx.db.patch(lobby._id, { status: "drafting" });
+  for (const userId of lobby.participantIds ?? []) {
+    await watchParticipant(ctx, lobby, userId, 0);
+  }
 };

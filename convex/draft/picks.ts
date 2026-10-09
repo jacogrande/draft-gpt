@@ -1,18 +1,13 @@
 import { v } from "convex/values";
 import { pickFace } from "../card";
 import { mutation, query } from "../_generated/server";
-import { addDraftedCard } from "../deck/drafted";
 import { reject } from "../errors";
 import { loadLobby, viewAsMember } from "../lobby/access";
 import { requireViewer } from "../identity/viewer";
-import {
-  currentPack,
-  packsHeld,
-  passPack,
-  ROUND_COUNT,
-  roundIsOver,
-} from "./passing";
-import { dealRound, roundPacks } from "./rounds";
+import { runAutopilot } from "./autopilot";
+import { currentPack, packsHeld } from "./passing";
+import { takeCard, unpickedCards } from "./picking";
+import { roundPacks } from "./rounds";
 
 export const pick = mutation({
   args: { cardId: v.id("cards") },
@@ -27,20 +22,8 @@ export const pick = mutation({
     const pack = currentPack(packs, userId);
     if (!pack || pack._id !== card.packId) return reject("NOT_YOUR_PACK");
 
-    const passed = passPack(pack);
-    await ctx.db.patch(cardId, { pickedBy: userId });
-    await ctx.db.patch(pack._id, passed);
-    await addDraftedCard(ctx, userId, lobby, card);
-
-    const afterPick = packs.map((dealt) =>
-      dealt._id === pack._id ? { ...dealt, ...passed } : dealt
-    );
-    if (!roundIsOver(afterPick)) return;
-    if (lobby.round >= ROUND_COUNT) {
-      await ctx.db.patch(lobby._id, { status: "complete" });
-    } else {
-      await dealRound(ctx, lobby, lobby.round + 1);
-    }
+    await takeCard(ctx, lobby, packs, pack, card, userId);
+    await runAutopilot(ctx, lobby._id);
   },
 });
 
@@ -54,15 +37,10 @@ export const current = query({
       view.userId
     );
     if (!pack) return null;
-    const cards = await ctx.db
-      .query("cards")
-      .withIndex("by_pack", (q) => q.eq("packId", pack._id))
-      .collect();
+    const cards = await unpickedCards(ctx, pack._id);
     return {
       packId: pack._id,
-      cards: cards
-        .filter((card) => card.pickedBy === null)
-        .map((card) => ({ id: card._id, ...pickFace(card) })),
+      cards: cards.map((card) => ({ id: card._id, ...pickFace(card) })),
     };
   },
 });
