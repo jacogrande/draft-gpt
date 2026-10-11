@@ -3,6 +3,7 @@ import { useMutation } from "convex/react";
 import React, { useEffect, useRef, useState } from "react";
 import Draggable from "react-draggable";
 import { GameToken } from "~/hooks/game/useGame";
+import { useToast } from "~/hooks/useToast";
 import TokenFace from "~/routes/games.$gameId/Components/TokenFace";
 
 type DraggableGameTokenProps = { token: GameToken; scale: number };
@@ -12,6 +13,7 @@ const HIDDEN = { isVisible: false, x: 0, y: 0 };
 const DraggableGameToken = ({ token, scale }: DraggableGameTokenProps) => {
   const setTapped = useMutation(api.game.tokens.setTapped);
   const remove = useMutation(api.game.tokens.remove);
+  const toast = useToast((state) => state.toast);
   const [contextMenu, setContextMenu] = useState(HIDDEN);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -22,8 +24,16 @@ const DraggableGameToken = ({ token, scale }: DraggableGameTokenProps) => {
   };
 
   const handleDelete = () => {
-    void remove({ tokenId: token.id });
+    remove({ tokenId: token.id }).catch(() =>
+      toast("Could not delete token", "error")
+    );
     setContextMenu(HIDDEN);
+  };
+
+  const handleDoubleClick = () => {
+    setTapped({ tokenId: token.id, tapped: !token.tapped }).catch(() =>
+      toast("Could not tap token", "error")
+    );
   };
 
   useEffect(() => {
@@ -42,9 +52,7 @@ const DraggableGameToken = ({ token, scale }: DraggableGameTokenProps) => {
       <Draggable>
         <div
           onContextMenu={handleContextMenu}
-          onDoubleClick={() =>
-            setTapped({ tokenId: token.id, tapped: !token.tapped })
-          }
+          onDoubleClick={handleDoubleClick}
         >
           <TokenFace token={token} scale={scale} />
         </div>

@@ -2,19 +2,38 @@ import { HeartIcon } from "@heroicons/react/16/solid";
 import { useEffect, useState } from "react";
 import { GamePlayer } from "~/hooks/game/useGame";
 import { useGameActions } from "~/hooks/game/useGameActions";
+import { useGlobalStore } from "~/hooks/useGlobalStore";
 
 type LifeTotalEditorProps = { player: GamePlayer; editable: boolean };
 
 const LifeTotalEditor = ({ player, editable }: LifeTotalEditorProps) => {
   const [lifeTotal, setLifeTotal] = useState<string>(String(player.life));
+  const [focused, setFocused] = useState(false);
   const { setLife } = useGameActions();
+  const setPauseCommands = useGlobalStore((state) => state.setPauseCommands);
 
-  useEffect(() => setLifeTotal(String(player.life)), [player.life]);
+  useEffect(() => {
+    if (!focused) setLifeTotal(String(player.life));
+  }, [player.life, focused]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setLifeTotal(e.target.value);
-    const life = Number(e.target.value);
-    if (e.target.value !== "" && Number.isInteger(life)) void setLife(life);
+  const handleFocus = () => {
+    setFocused(true);
+    setPauseCommands(true);
+  };
+
+  const handleBlur = () => {
+    setFocused(false);
+    setPauseCommands(false);
+    const life = Number(lifeTotal);
+    if (lifeTotal === "" || !Number.isInteger(life) || life === player.life) {
+      setLifeTotal(String(player.life));
+      return;
+    }
+    void setLife(life);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") e.currentTarget.blur();
   };
 
   if (!editable)
@@ -32,7 +51,10 @@ const LifeTotalEditor = ({ player, editable }: LifeTotalEditorProps) => {
         aria-label="Your life total"
         className="w-full py-4 text-center pl-3 rounded border flex items-center justify-center"
         value={lifeTotal}
-        onChange={handleChange}
+        onChange={(e) => setLifeTotal(e.target.value)}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
+        onKeyDown={handleKeyDown}
       />
     </div>
   );

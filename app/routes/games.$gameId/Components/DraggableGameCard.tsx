@@ -14,6 +14,8 @@ type DraggableGameCardProps = {
   childrenOverride?: React.ReactNode;
 };
 
+const ORIGIN = { x: 0, y: 0 };
+
 const DraggableGameCard = ({
   card,
   zone,
@@ -22,111 +24,82 @@ const DraggableGameCard = ({
   const [isDragging, setIsDragging] = useState(false);
   const { moveCards, tapCards } = useGameActions();
   const { battlefieldRef, deckRef, handRef, graveyardRef } = useZoneRefs();
-  const { selectedCards, setSelectedCards } = useGlobalStore();
+  const selectedCards = useGlobalStore((state) => state.selectedCards);
+  const setSelectedCards = useGlobalStore((state) => state.setSelectedCards);
 
-  const highlightZone = (ref: React.RefObject<HTMLDivElement>) => {
-    if (!ref.current) return;
+  type ZoneRef = React.RefObject<HTMLDivElement> | null;
+
+  const highlightZone = (ref: ZoneRef) => {
+    if (!ref?.current) return;
     ref.current.classList.remove("border-base-100");
     ref.current.classList.add("border-primary");
   };
 
-  const removeHighlight = (ref: React.RefObject<HTMLDivElement>) => {
-    if (!ref.current) return;
+  const removeHighlight = (ref: ZoneRef) => {
+    if (!ref?.current) return;
     ref.current.classList.add("border-base-100");
     ref.current.classList.remove("border-primary");
   };
 
-  const checkZone = (
-    ref: React.RefObject<HTMLDivElement>,
-    cardRect: DOMRect
-  ) => {
-    if (!ref.current) return;
+  const checkZone = (ref: ZoneRef, cardRect: DOMRect) => {
+    if (!ref?.current) return false;
     const rect = ref.current.getBoundingClientRect();
-    // check if the cardRect is within the ref's bounds
-    if (
-      rect.x <= cardRect.x + cardRect.width / 2 &&
-      rect.x + rect.width >= cardRect.x + cardRect.width / 2 &&
-      rect.y <= cardRect.y + cardRect.height / 2 &&
-      rect.y + rect.height >= cardRect.y + cardRect.height / 2
-    ) {
-      return true;
-    }
-    return false;
-  };
-
-  const onDrag: DraggableEventHandler = (_e, data) => {
-    if (!battlefieldRef || !deckRef || !handRef || !graveyardRef) return;
-    const { node } = data;
-    const cardRect = node.getBoundingClientRect();
-    const inBattlefield = checkZone(battlefieldRef, cardRect);
-    const inDeck = checkZone(deckRef, cardRect);
-    const inHand = checkZone(handRef, cardRect);
-    const inGraveyard = checkZone(graveyardRef, cardRect);
-    // highlight based on zone priority (hand -> deck -> battlefield)
-    if (inHand) {
-      highlightZone(handRef);
-      removeHighlight(battlefieldRef);
-      removeHighlight(deckRef);
-      removeHighlight(graveyardRef);
-    } else if (inDeck) {
-      highlightZone(deckRef);
-      removeHighlight(battlefieldRef);
-      removeHighlight(handRef);
-      removeHighlight(graveyardRef);
-    } else if (inGraveyard) {
-      highlightZone(graveyardRef);
-      removeHighlight(deckRef);
-      removeHighlight(handRef);
-      removeHighlight(battlefieldRef);
-    } else if (inBattlefield) {
-      highlightZone(battlefieldRef);
-      removeHighlight(deckRef);
-      removeHighlight(handRef);
-    } else {
-      removeHighlight(battlefieldRef);
-      removeHighlight(deckRef);
-      removeHighlight(handRef);
-      removeHighlight(graveyardRef);
-    }
-  };
-
-  const handleMoveCard = async (targetZone: Zone) => {
-    if (selectedCards.length === 0) return moveCards([card.id], targetZone);
-    await moveCards(
-      selectedCards.map((selected) => selected.id),
-      targetZone
+    const centerX = cardRect.x + cardRect.width / 2;
+    const centerY = cardRect.y + cardRect.height / 2;
+    return (
+      rect.x <= centerX &&
+      rect.x + rect.width >= centerX &&
+      rect.y <= centerY &&
+      rect.y + rect.height >= centerY
     );
-    setSelectedCards([]);
   };
 
-  const handleStop: DraggableEventHandler = (_e, data) => {
-    setIsDragging(false);
-    if (!battlefieldRef || !deckRef || !handRef || !graveyardRef) return;
-    const { node } = data;
-    const cardRect = node.getBoundingClientRect();
-    const inBattlefield = checkZone(battlefieldRef, cardRect);
-    const inDeck = checkZone(deckRef, cardRect);
-    const inHand = checkZone(handRef, cardRect);
-    const inGraveyard = checkZone(graveyardRef, cardRect);
-    // remove all highlights
+  const zoneUnder = (cardRect: DOMRect): Zone | null => {
+    if (checkZone(handRef, cardRect)) return "hand";
+    if (checkZone(deckRef, cardRect)) return "library";
+    if (checkZone(graveyardRef, cardRect)) return "graveyard";
+    if (checkZone(battlefieldRef, cardRect)) return "battlefield";
+    return null;
+  };
+
+  const refFor = (target: Zone) =>
+    ({
+      hand: handRef,
+      library: deckRef,
+      graveyard: graveyardRef,
+      battlefield: battlefieldRef,
+    }[target]);
+
+  const clearHighlights = () => {
     removeHighlight(battlefieldRef);
     removeHighlight(deckRef);
     removeHighlight(handRef);
     removeHighlight(graveyardRef);
-    // move card to the appropriate zone
-    if (inHand && zone !== "hand") {
-      handleMoveCard("hand");
-    } else if (inDeck && zone !== "library") {
-      handleMoveCard("library");
-    } else if (inGraveyard && zone !== "graveyard") {
-      handleMoveCard("graveyard");
-    } else if (inBattlefield && zone !== "battlefield") {
-      handleMoveCard("battlefield");
-    }
+  };
+
+  const onDrag: DraggableEventHandler = (_e, data) => {
+    const target = zoneUnder(data.node.getBoundingClientRect());
+    clearHighlights();
+    if (target) highlightZone(refFor(target));
+  };
+
+  const handleMoveCard = async (targetZone: Zone) => {
+    const dragged = selectedCards.some((selected) => selected.id === card.id);
+    const cardIds = dragged
+      ? selectedCards.map((selected) => selected.id)
+      : [card.id];
+    setSelectedCards([]);
+    await moveCards(cardIds, targetZone);
+  };
+
+  const handleStop: DraggableEventHandler = (_e, data) => {
+    setIsDragging(false);
+    const target = zoneUnder(data.node.getBoundingClientRect());
+    clearHighlights();
+    if (target && target !== zone) void handleMoveCard(target);
   };
 
   const handleStart: DraggableEventHandler = () => {
-    // if (data.deltaX === 0 && data.deltaY === 0) return;
     setIsDragging(true);
   };
 
@@ -136,7 +109,7 @@ const DraggableGameCard = ({
     <Draggable
       axis="both"
       handle=".handle"
-      defaultPosition={{ x: 0, y: 0 }}
+      position={ORIGIN}
       grid={[1, 1]}
       scale={1}
       onStop={handleStop}

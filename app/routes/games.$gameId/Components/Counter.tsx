@@ -6,18 +6,14 @@ import { api } from "@convex/_generated/api";
 import { useMutation } from "convex/react";
 import { GameCounter as CounterType } from "~/hooks/game/useGame";
 import { useGlobalStore } from "~/hooks/useGlobalStore";
+import { useToast } from "~/hooks/useToast";
+
+const HIDDEN = { isVisible: false, x: 0, y: 0 };
 
 const Counter = ({ counter }: { counter: CounterType }) => {
   const [isEditing, setIsEditing] = useState(false);
-
-  // Context menu state
-  const [contextMenu, setContextMenu] = useState({
-    isVisible: false,
-    x: 0,
-    y: 0,
-  });
-
-  // Position state so that we can show the counters in their last known position
+  const [draftValue, setDraftValue] = useState(counter.value);
+  const [contextMenu, setContextMenu] = useState(HIDDEN);
   const [position, setPosition] = useState(counter.position);
 
   const bgColor = colors[counter.color as keyof DefaultColors][500];
@@ -26,75 +22,76 @@ const Counter = ({ counter }: { counter: CounterType }) => {
   const move = useMutation(api.game.counters.move);
   const remove = useMutation(api.game.counters.remove);
   const setPauseCommands = useGlobalStore((state) => state.setPauseCommands);
+  const toast = useToast((state) => state.toast);
 
   const menuRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (!isEditing) setDraftValue(counter.value);
+  }, [counter.value, isEditing]);
+
+  useEffect(() => {
+    if (isEditing) inputRef.current?.focus();
+  }, [isEditing]);
 
   const handleDragStop: DraggableEventHandler = (_e, data) => {
     const { x, y } = data;
     setPosition({ x, y });
-    void move({ counterId: counter.id, position: { x, y } });
+    move({ counterId: counter.id, position: { x, y } }).catch(() =>
+      toast("Could not move counter", "error")
+    );
   };
 
   const handleContextMenu = (e: React.MouseEvent) => {
     e.preventDefault();
-    // Show the custom menu at the mouse location
-    setContextMenu({
-      isVisible: true,
-      x: e.clientX,
-      y: e.clientY,
-    });
+    setContextMenu({ isVisible: true, x: e.clientX, y: e.clientY });
   };
 
   const handleEdit = () => {
     setIsEditing(true);
-    // Close the context menu
-    setContextMenu({ ...contextMenu, isVisible: false });
+    setContextMenu(HIDDEN);
   };
 
   const handleDelete = () => {
-    void remove({ counterId: counter.id });
-
-    // Close the context menu
-    setContextMenu({ ...contextMenu, isVisible: false });
+    remove({ counterId: counter.id }).catch(() =>
+      toast("Could not delete counter", "error")
+    );
+    setContextMenu(HIDDEN);
   };
 
   const handleFocus = () => {
-    // Pause commands so user can type
     setPauseCommands(true);
   };
 
   const handleBlur = () => {
-    // Resume commands and exit editing mode
     setPauseCommands(false);
     setIsEditing(false);
+    if (draftValue !== counter.value) {
+      setValue({ counterId: counter.id, value: draftValue }).catch(() => {
+        setDraftValue(counter.value);
+        toast("Could not update counter", "error");
+      });
+    }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    void setValue({ counterId: counter.id, value: e.target.value });
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") e.currentTarget.blur();
   };
 
-  // Optionally, close context menu on click outside
   useEffect(() => {
+    if (!contextMenu.isVisible) return;
     const handleClickOutside = (e: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
-        setContextMenu({ ...contextMenu, isVisible: false });
+        setContextMenu(HIDDEN);
       }
     };
-
-    if (contextMenu.isVisible) {
-      document.addEventListener("mousedown", handleClickOutside);
-    } else {
-      document.removeEventListener("mousedown", handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [contextMenu]);
 
   return (
     <>
-      {/* The Counter itself */}
       <Draggable
         position={position}
         onStop={handleDragStop}
@@ -111,14 +108,16 @@ const Counter = ({ counter }: { counter: CounterType }) => {
         >
           {isEditing ? (
             <input
+              ref={inputRef}
               type="text"
-              value={counter.value}
+              aria-label="Counter value"
+              value={draftValue}
               maxLength={4}
               className="bg-transparent text-center w-full outline-none"
               onFocus={handleFocus}
               onBlur={handleBlur}
-              onChange={handleChange}
-              autoFocus
+              onChange={(e) => setDraftValue(e.target.value)}
+              onKeyDown={handleKeyDown}
             />
           ) : (
             <span>{counter.value}</span>
@@ -126,7 +125,6 @@ const Counter = ({ counter }: { counter: CounterType }) => {
         </div>
       </Draggable>
 
-      {/* The custom context menu. */}
       {contextMenu.isVisible && (
         <div
           ref={menuRef}

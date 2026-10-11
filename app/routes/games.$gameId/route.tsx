@@ -1,3 +1,4 @@
+import { useRouteError } from "@remix-run/react";
 import Page from "~/components/Page";
 import { requireAuth } from "~/components/RequireAuth";
 import { useGame, useGameId, viewerSeat } from "~/hooks/game/useGame";
@@ -57,6 +58,11 @@ const GameRoute = () => {
       {commandMessage}
     </div>
   );
+};
+
+export const ErrorBoundary = () => {
+  console.error(useRouteError());
+  return <GameNotice>Game not found.</GameNotice>;
 };
 
 export default requireAuth(GameRoute);

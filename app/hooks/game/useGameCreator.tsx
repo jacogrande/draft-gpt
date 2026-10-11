@@ -3,7 +3,6 @@ import { useNavigate } from "@remix-run/react";
 import { useMutation } from "convex/react";
 import { useState } from "react";
 import { useToast } from "~/hooks/useToast";
-import { randomGameName } from "~/util/randomGameName";
 
 const useGameCreator = () => {
   const create = useMutation(api.game.games.create);
@@ -14,7 +13,7 @@ const useGameCreator = () => {
   const handleGameCreation = async () => {
     setCreatingGame(true);
     try {
-      navigate(`/games/${await create({ code: randomGameName() })}`);
+      navigate(`/games/${await create({})}`);
     } catch {
       toast("Unable to create game", "error");
     } finally {
