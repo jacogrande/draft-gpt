@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 
 type ResponsiveGridProps = {
   itemWidth: number;
@@ -13,19 +13,17 @@ const ResponsiveGrid: React.FC<ResponsiveGridProps> = ({
   const [columns, setColumns] = useState(1);
   const [gap, setGap] = useState(0);
 
-  const updateLayout = () => {
-    if (containerRef.current) {
-      const containerWidth = containerRef.current.clientWidth;
-      const columnsThatFit = Math.floor(containerWidth / itemWidth) || 1;
-      const totalItemWidth = columnsThatFit * itemWidth;
-      const remainingSpace = containerWidth - totalItemWidth;
-      const gapBetweenItems =
-        columnsThatFit > 1 ? remainingSpace / (columnsThatFit - 1) : 0;
-
-      setColumns(columnsThatFit);
-      setGap(gapBetweenItems);
-    }
-  };
+  const updateLayout = useCallback(() => {
+    if (!containerRef.current) return;
+    const containerWidth = containerRef.current.clientWidth;
+    const columnsThatFit = Math.floor(containerWidth / itemWidth) || 1;
+    const totalItemWidth = columnsThatFit * itemWidth;
+    const remainingSpace = containerWidth - totalItemWidth;
+    const gapBetweenItems =
+      columnsThatFit > 1 ? remainingSpace / (columnsThatFit - 1) : 0;
+    setColumns(columnsThatFit);
+    setGap(gapBetweenItems);
+  }, [itemWidth]);
 
   useEffect(() => {
     updateLayout();
@@ -33,7 +31,7 @@ const ResponsiveGrid: React.FC<ResponsiveGridProps> = ({
     return () => {
       window.removeEventListener("resize", updateLayout);
     };
-  }, []);
+  }, [updateLayout]);
 
   return (
     <div

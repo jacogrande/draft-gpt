@@ -1,16 +1,23 @@
 import { useEffect } from "react";
 import { create } from "zustand";
-import { DaisyColor } from "~/util/types";
 
-/******** CONSTANTS AND TYPES ********/
-const TOAST_TIMEOUT = 5 * 1000; // 5 seconds
+const TOAST_TIMEOUT = 5 * 1000;
+
+export type ToastType = "info" | "success" | "warning" | "error";
+
+const ALERT_CLASSES: Record<ToastType, string> = {
+  info: "alert alert-info",
+  success: "alert alert-success",
+  warning: "alert alert-warning",
+  error: "alert alert-error",
+};
 
 type Toast = {
   message: string;
-  type?: DaisyColor;
+  type?: ToastType;
 };
 
-export type ToastFunction = (message: string, type?: DaisyColor) => void;
+export type ToastFunction = (message: string, type?: ToastType) => void;
 
 type ToastStore = {
   currentToast: Toast;
@@ -18,10 +25,9 @@ type ToastStore = {
   clearToast: () => void;
 };
 
-/******** IMPLEMENTATION ********/
 export const useToast = create<ToastStore>((set) => ({
   currentToast: { message: "" },
-  toast: (message: string, type?: DaisyColor) => {
+  toast: (message, type) => {
     set({ currentToast: { message, type } });
   },
   clearToast: () => {
@@ -29,25 +35,20 @@ export const useToast = create<ToastStore>((set) => ({
   },
 }));
 
-/**
- * Toast provider that displays toasts as they are set
- * must be added to the root of the app
- */
 export const ToastProvider = () => {
-  const { currentToast, clearToast } = useToast();
+  const currentToast = useToast((state) => state.currentToast);
+  const clearToast = useToast((state) => state.clearToast);
 
   useEffect(() => {
-    if (!currentToast) return;
-    const timer = setTimeout(() => {
-      clearToast();
-    }, TOAST_TIMEOUT);
+    if (!currentToast.message) return;
+    const timer = setTimeout(clearToast, TOAST_TIMEOUT);
     return () => clearTimeout(timer);
   }, [currentToast, clearToast]);
 
   if (!currentToast.message) return null;
   return (
     <div className="toast toast-end z-30">
-      <div className={`alert alert-${currentToast.type || "info"}`}>
+      <div className={ALERT_CLASSES[currentToast.type ?? "info"]}>
         <span>{currentToast.message}</span>
       </div>
     </div>

@@ -67,6 +67,7 @@ const Nav = () => {
         <button
           className="btn btn-primary w-full flex mt-4"
           onClick={handleGameCreation}
+          disabled={creatingGame}
         >
           <PlusCircleIcon className="h-5 w-5" />
           <span className="flex-1">

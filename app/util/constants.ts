@@ -1,6 +1,5 @@
 import { BasicLand, CardColor } from "~/util/types";
 
-export const DEFAULT_IMAGE_EXTENSION = "jpeg";
 export const GAME_SCALE = 0.45;
 
 export const BASICS: BasicLand[] = [
@@ -10,16 +9,6 @@ export const BASICS: BasicLand[] = [
   "swamp",
   "island",
 ];
-
-export const CARD_COLORS: Record<CardColor, string> = {
-  red: "bg-red-500/50",
-  white: "bg-stone-200/50",
-  blue: "bg-sky-500/50",
-  black: "bg-zinc-800/50",
-  green: "bg-green-500/50",
-  multi: "bg-amber-500",
-  colorless: "bg-slate-400/70",
-};
 
 export const SYMBOL_MAP: Record<string, BasicLand> = {
   r: "mountain",

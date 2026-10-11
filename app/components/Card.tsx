@@ -1,4 +1,3 @@
-import { useEffect, useRef } from "react";
 import ManaCost from "~/components/ManaCost";
 import { usePacksStore } from "~/hooks/draft/usePacks";
 import { useGlobalStore } from "~/hooks/useGlobalStore";
@@ -69,21 +68,10 @@ const Card = ({
   };
   const selectedCard = usePacksStore((state) => state.selectedCard);
   const setSelectedCard = usePacksStore((state) => state.setSelectedCard);
-  const { selectedCards, setSelectedCards, setPeekedCard, shiftKeyPressed } =
-    useGlobalStore();
-  const cardRef = useRef<HTMLButtonElement>(null);
-
-  useEffect(() => {
-    if (!cardRef.current || !card) return;
-    // add hover listener
-    const handleMouseEnter = () => {
-      setPeekedCard(card);
-    };
-    cardRef.current.addEventListener("mouseenter", handleMouseEnter);
-    return () => {
-      cardRef.current?.removeEventListener("mouseenter", handleMouseEnter);
-    };
-  }, [cardRef, card, setPeekedCard]);
+  const selectedCards = useGlobalStore((state) => state.selectedCards);
+  const setSelectedCards = useGlobalStore((state) => state.setSelectedCards);
+  const setPeekedCard = useGlobalStore((state) => state.setPeekedCard);
+  const shiftKeyPressed = useGlobalStore((state) => state.shiftKeyPressed);
 
   if (!card) return null;
   const getTypeLetterSpacing = () => {
@@ -148,9 +136,9 @@ const Card = ({
         padding: styles.padding,
         borderRadius: styles.borderRadius,
       }}
-      ref={cardRef}
       disabled={disabled}
       onClick={handleClick}
+      onMouseEnter={() => setPeekedCard(card)}
     >
       {/* NAME AND COST */}
       <div className="flex justify-between items-center bg-base-100 w-full rounded-md py-1 px-2 border border-black">

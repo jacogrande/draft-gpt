@@ -1,4 +1,5 @@
 import { GlobeAmericasIcon } from "@heroicons/react/16/solid";
+import { useRouteError } from "@remix-run/react";
 import Page from "~/components/Page";
 import { requireAuth } from "~/components/RequireAuth";
 import { useJoinLobby } from "~/hooks/lobby/useJoinLobby";
@@ -65,6 +66,11 @@ const Lobby = () => {
       </div>
     </Page>
   );
+};
+
+export const ErrorBoundary = () => {
+  console.error(useRouteError());
+  return <LobbyNotice>Lobby not found.</LobbyNotice>;
 };
 
 export default requireAuth(Lobby);
