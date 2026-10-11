@@ -1,6 +1,7 @@
 import { Doc, Id } from "../_generated/dataModel";
 import { MutationCtx, QueryCtx } from "../_generated/server";
 import { addDraftedCard } from "../deck/drafted";
+import { markComplete } from "../lobby/lifecycle";
 import { passPack, ROUND_COUNT, roundIsOver } from "./passing";
 import { dealRound } from "./rounds";
 
@@ -33,7 +34,7 @@ export const takeCard = async (
   );
   if (!roundIsOver(afterPick)) return;
   if (lobby.round >= ROUND_COUNT) {
-    await ctx.db.patch(lobby._id, { status: "complete" });
+    await markComplete(ctx, lobby._id);
   } else {
     await dealRound(ctx, lobby, lobby.round + 1);
   }

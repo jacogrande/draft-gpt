@@ -38,6 +38,7 @@ export const draftTables = {
     cardCount: v.number(),
     ready: v.boolean(),
     jobId: v.optional(v.id("_scheduled_functions")),
+    jobKey: v.optional(v.string()),
   }).index("by_lobby_round", ["lobbyId", "round"]),
 
   cards: defineTable({
@@ -45,6 +46,7 @@ export const draftTables = {
     lobbyId: v.id("lobbies"),
     packId: v.id("packs"),
     pickedBy: v.union(v.id("users"), v.null()),
+    imageId: v.optional(v.id("_storage")),
     ...cardFace,
   })
     .index("by_pack", ["packId"])

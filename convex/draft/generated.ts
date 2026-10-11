@@ -1,68 +1,156 @@
 import { v } from "convex/values";
 import { cardFace } from "../card";
-import { internalMutation, internalQuery } from "../_generated/server";
+import { Doc, Id } from "../_generated/dataModel";
+import {
+  internalMutation,
+  internalQuery,
+  MutationCtx,
+  QueryCtx,
+} from "../_generated/server";
+import { listIdeas } from "../lobby/ideas";
+import { attachSetting, isLive } from "../lobby/lifecycle";
 import { dealRound, openRound, roundPacks } from "./rounds";
 import { Setting, settingFields } from "./tables";
 
+export type BriefCard = {
+  id: Id<"cards">;
+  art_direction: string;
+  image_url: string | null;
+};
+
+export type PackBrief = { setting: Setting; cards: BriefCard[] };
+
+const briefCard = (card: Doc<"cards">): BriefCard => ({
+  id: card._id,
+  art_direction: card.art_direction,
+  image_url: card.image_url,
+});
+
+const settingFace = (setting: Doc<"settings">): Setting => ({
+  name: setting.name,
+  thesis: setting.thesis,
+  description: setting.description,
+  legendaryComponents: setting.legendaryComponents,
+  newMechanic: setting.newMechanic,
+  setArchetypes: setting.setArchetypes,
+});
+
+const cardsOf = (ctx: QueryCtx | MutationCtx, packId: Id<"packs">) =>
+  ctx.db
+    .query("cards")
+    .withIndex("by_pack", (q) => q.eq("packId", packId))
+    .collect();
+
+const ownedPack = async (
+  ctx: QueryCtx | MutationCtx,
+  packId: Id<"packs">,
+  key: string
+) => {
+  const pack = await ctx.db.get(packId);
+  const lobby = pack && (await ctx.db.get(pack.lobbyId));
+  if (!pack || pack.ready || pack.jobKey !== key) return null;
+  if (!isLive(lobby) || !lobby.settingId) return null;
+  return { pack, lobby, settingId: lobby.settingId };
+};
+
+const art = v.object({
+  cardId: v.id("cards"),
+  imageId: v.id("_storage"),
+  image_url: v.string(),
+});
+
 export const ideas = internalQuery({
-  args: { lobbyId: v.id("lobbies") },
-  handler: async (ctx, { lobbyId }): Promise<string[]> => {
-    const messages = await ctx.db
-      .query("lobbyMessages")
-      .withIndex("by_lobby", (q) => q.eq("lobbyId", lobbyId))
-      .collect();
-    return messages.map((message) => message.text);
+  args: { lobbyId: v.id("lobbies"), key: v.string() },
+  handler: async (ctx, { lobbyId, key }): Promise<string[] | null> => {
+    const lobby = await ctx.db.get(lobbyId);
+    if (!isLive(lobby) || lobby.settingId || lobby.settingKey !== key) {
+      return null;
+    }
+    return listIdeas(ctx, lobbyId);
   },
 });
 
-export const settingForPack = internalQuery({
-  args: { packId: v.id("packs") },
-  handler: async (ctx, { packId }): Promise<Setting | null> => {
-    const pack = await ctx.db.get(packId);
-    const lobby = pack && (await ctx.db.get(pack.lobbyId));
-    const setting = lobby?.settingId && (await ctx.db.get(lobby.settingId));
+export const packBrief = internalQuery({
+  args: { packId: v.id("packs"), key: v.string() },
+  handler: async (ctx, { packId, key }): Promise<PackBrief | null> => {
+    const owned = await ownedPack(ctx, packId, key);
+    const setting = owned && (await ctx.db.get(owned.settingId));
     if (!setting) return null;
-    return {
-      name: setting.name,
-      thesis: setting.thesis,
-      description: setting.description,
-      legendaryComponents: setting.legendaryComponents,
-      newMechanic: setting.newMechanic,
-      setArchetypes: setting.setArchetypes,
-    };
+    const cards = await cardsOf(ctx, packId);
+    return { setting: settingFace(setting), cards: cards.map(briefCard) };
   },
 });
 
 export const saveSetting = internalMutation({
-  args: { lobbyId: v.id("lobbies"), setting: v.object(settingFields) },
-  handler: async (ctx, { lobbyId, setting }) => {
+  args: {
+    lobbyId: v.id("lobbies"),
+    key: v.string(),
+    setting: v.object(settingFields),
+  },
+  handler: async (ctx, { lobbyId, key, setting }) => {
     const lobby = await ctx.db.get(lobbyId);
-    if (!lobby || lobby.settingId) return;
+    if (!isLive(lobby) || lobby.settingId || lobby.settingKey !== key) return;
     const settingId = await ctx.db.insert("settings", { lobbyId, ...setting });
-    await ctx.db.patch(lobbyId, { settingId });
+    await attachSetting(ctx, lobbyId, settingId);
     await dealRound(ctx, lobby, 1);
   },
 });
 
-export const savePack = internalMutation({
-  args: { packId: v.id("packs"), cards: v.array(v.object(cardFace)) },
-  handler: async (ctx, { packId, cards }) => {
-    const pack = await ctx.db.get(packId);
-    const lobby = pack && (await ctx.db.get(pack.lobbyId));
-    if (!pack || pack.ready || !lobby?.settingId) return;
+export const saveDesign = internalMutation({
+  args: {
+    packId: v.id("packs"),
+    key: v.string(),
+    cards: v.array(v.object(cardFace)),
+  },
+  handler: async (ctx, { packId, key, cards }): Promise<BriefCard[] | null> => {
+    const owned = await ownedPack(ctx, packId, key);
+    if (!owned) return null;
+    const existing = await cardsOf(ctx, packId);
+    if (existing.length > 0) return existing.map(briefCard);
+    const saved: BriefCard[] = [];
     for (const card of cards) {
-      await ctx.db.insert("cards", {
-        settingId: lobby.settingId,
-        lobbyId: lobby._id,
+      const id = await ctx.db.insert("cards", {
+        settingId: owned.settingId,
+        lobbyId: owned.lobby._id,
         packId,
         pickedBy: null,
         ...card,
       });
+      saved.push({ id, art_direction: card.art_direction, image_url: null });
     }
+    return saved;
+  },
+});
+
+export const saveArt = internalMutation({
+  args: { packId: v.id("packs"), key: v.string(), art: v.array(art) },
+  handler: async (ctx, { packId, key, art }) => {
+    const owned = await ownedPack(ctx, packId, key);
+    for (const piece of art) {
+      const card = owned && (await ctx.db.get(piece.cardId));
+      if (card && card.packId === packId && card.image_url === null) {
+        await ctx.db.patch(piece.cardId, {
+          imageId: piece.imageId,
+          image_url: piece.image_url,
+        });
+      } else {
+        await ctx.storage.delete(piece.imageId);
+      }
+    }
+  },
+});
+
+export const finishPack = internalMutation({
+  args: { packId: v.id("packs"), key: v.string() },
+  handler: async (ctx, { packId, key }) => {
+    const owned = await ownedPack(ctx, packId, key);
+    if (!owned) return;
+    const cards = await cardsOf(ctx, packId);
+    if (cards.length === 0) return;
     await ctx.db.patch(packId, { cardCount: cards.length, ready: true });
-    const packs = await roundPacks(ctx, lobby._id, pack.round);
+    const packs = await roundPacks(ctx, owned.lobby._id, owned.pack.round);
     if (packs.every((dealt) => dealt.ready)) {
-      await openRound(ctx, lobby, lobby.settingId, packs);
+      await openRound(ctx, owned.lobby, owned.settingId, packs);
     }
   },
 });

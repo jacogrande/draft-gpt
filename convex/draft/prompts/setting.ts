@@ -118,7 +118,6 @@ export const SETTING_JSON_SCHEMA = {
     required: [
       "name",
       "thesis",
-      "setIcon",
       "description",
       "legendaryComponents",
       "newMechanic",

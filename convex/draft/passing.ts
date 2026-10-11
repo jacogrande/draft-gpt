@@ -1,5 +1,7 @@
 export const ROUND_COUNT = 3;
 export const PACK_SIZE = 15;
+export const DESIGNED_PER_PACK = 12;
+export const MIN_DESIGNED = 6;
 
 export type Passing<U> = {
   order: U[];
@@ -43,6 +45,9 @@ export const packsHeld = <U extends string>(
   }
   return counts;
 };
+
+export const trimPack = <C>(cards: C[]): C[] | null =>
+  cards.length < MIN_DESIGNED ? null : cards.slice(0, DESIGNED_PER_PACK);
 
 export const topUpCount = (cardCount: number): number =>
   Math.max(0, PACK_SIZE - cardCount);

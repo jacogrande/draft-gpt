@@ -1,12 +1,13 @@
 import { pickFace } from "../card";
 import { Doc, Id } from "../_generated/dataModel";
 import { MutationCtx, QueryCtx } from "../_generated/server";
+import { markDrafting, markGenerating } from "../lobby/lifecycle";
 import { watchParticipant } from "./absent";
 import { drawFromPool, topUpCount } from "./passing";
 import { scheduleGeneration } from "./scheduling";
 import { packOrders } from "./seating";
 
-const PACK_STAGGER_MS = 500;
+export const PACK_STAGGER_MS = 1000;
 
 export const roundPacks = (
   ctx: QueryCtx | MutationCtx,
@@ -25,7 +26,7 @@ export const dealRound = async (
   lobby: Doc<"lobbies">,
   round: number
 ) => {
-  await ctx.db.patch(lobby._id, { status: "generating", round });
+  await markGenerating(ctx, lobby._id, round);
   const orders = packOrders(lobby.participantIds ?? [], round);
   for (const [index, order] of orders.entries()) {
     const packId = await ctx.db.insert("packs", {
@@ -66,7 +67,7 @@ export const openRound = async (
       cardCount: pack.cardCount + extras.length,
     });
   }
-  await ctx.db.patch(lobby._id, { status: "drafting" });
+  await markDrafting(ctx, lobby._id);
   for (const userId of lobby.participantIds ?? []) {
     await watchParticipant(ctx, lobby, userId, 0);
   }
