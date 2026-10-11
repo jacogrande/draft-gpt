@@ -83,6 +83,24 @@ test("basic lands are added to the mainboard and discarded when sideboarded", as
   expect(deck.sideboard).toEqual([]);
 });
 
+test("basic lands are capped at forty a call and the deck at one hundred and fifty", async () => {
+  const backend = startBackend();
+  const owner = await signIn(backend, "Ana");
+  const deckId = await draftedDeck(backend, owner);
+  const size = async () =>
+    (await owner.as.query(api.deck.decks.get, { deckId }))!.cards.length;
+  const add = (count: number) =>
+    owner.as.mutation(api.deck.decks.addBasics, {
+      deckId,
+      lands: Array.from({ length: count }, () => "forest" as const),
+    });
+
+  await add(100);
+  expect(await size()).toBe(42);
+  for (let round = 0; round < 4; round++) await add(40);
+  expect(await size()).toBe(150);
+});
+
 test("a player can only see and change their own decks", async () => {
   const backend = startBackend();
   const owner = await signIn(backend, "Ana");
@@ -92,6 +110,9 @@ test("a player can only see and change their own decks", async () => {
   expect(await owner.as.query(api.deck.decks.list, {})).toHaveLength(1);
   expect(await stranger.as.query(api.deck.decks.list, {})).toEqual([]);
   expect(await stranger.as.query(api.deck.decks.get, { deckId })).toBeNull();
+  expect(
+    await owner.as.query(api.deck.decks.get, { deckId: "not-an-id" })
+  ).toBeNull();
   await expect(
     stranger.as.mutation(api.deck.decks.moveToSideboard, {
       deckId,
