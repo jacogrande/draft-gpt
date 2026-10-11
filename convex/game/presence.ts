@@ -19,9 +19,11 @@ export const heartbeat = mutation({
 });
 
 export const list = query({
-  args: { gameId: v.id("games") },
-  handler: async (ctx, { gameId }) => {
-    if (!(await viewAsPlayer(ctx, gameId))) return [];
+  args: { gameId: v.string() },
+  handler: async (ctx, args) => {
+    const view = await viewAsPlayer(ctx, args.gameId);
+    if (!view) return [];
+    const { gameId } = view;
     const rows = await ctx.db
       .query("gamePresence")
       .withIndex("by_game", (q) => q.eq("gameId", gameId))

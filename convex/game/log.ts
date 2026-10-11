@@ -16,9 +16,11 @@ export const record = async (
 };
 
 export const recent = query({
-  args: { gameId: v.id("games") },
-  handler: async (ctx, { gameId }) => {
-    if (!(await viewAsPlayer(ctx, gameId))) return [];
+  args: { gameId: v.string() },
+  handler: async (ctx, args) => {
+    const view = await viewAsPlayer(ctx, args.gameId);
+    if (!view) return [];
+    const { gameId } = view;
     const entries = await ctx.db
       .query("gameLog")
       .withIndex("by_game", (q) => q.eq("gameId", gameId))

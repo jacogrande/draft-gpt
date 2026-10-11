@@ -17,11 +17,19 @@ export const shuffled = <C>(cards: C[], random: () => number): C[] => {
   return deck;
 };
 
-export const dealIn = <C extends Piece>(
+export const dealIn = <C extends { name: string }>(
+  seat: number,
   cards: C[],
   random: () => number
-): Side<C> => ({
-  library: shuffled(cards, random),
+): Side<C & Piece> => ({
+  library: shuffled(
+    cards.map((card, index) => ({
+      ...card,
+      id: `${seat}-${index}`,
+      tapped: false,
+    })),
+    random
+  ),
   hand: [],
   battlefield: [],
   graveyard: [],
@@ -84,7 +92,8 @@ export const draw = <C extends Piece>(
   side: Side<C>,
   amount: number
 ): { side: Side<C>; drawn: number } => {
-  const drawn = Math.max(0, Math.min(Math.floor(amount), side.library.length));
+  const wanted = Number.isFinite(amount) ? Math.floor(amount) : 0;
+  const drawn = Math.max(0, Math.min(wanted, side.library.length));
   return {
     side: {
       ...side,
@@ -94,6 +103,9 @@ export const draw = <C extends Piece>(
     drawn,
   };
 };
+
+export const describeDraw = (drawn: number): string[] =>
+  drawn === 0 ? [] : [`drew ${drawn} ${drawn === 1 ? "card" : "cards"}`];
 
 export const shuffleLibrary = <C extends Piece>(
   side: Side<C>,
@@ -107,3 +119,8 @@ export const sideSeenBy = <C extends Piece>(side: Side<C>, isOwner: boolean) => 
   battlefield: side.battlefield,
   graveyard: side.graveyard,
 });
+
+export const sideShownTo = <C extends Piece>(
+  side: Side<C> | null,
+  viewer: { isPlayer: boolean; isOwner: boolean }
+) => (side && viewer.isPlayer ? sideSeenBy(side, viewer.isOwner) : null);

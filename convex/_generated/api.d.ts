@@ -64,6 +64,8 @@ import type * as lobby_access from "../lobby/access.js";
 import type * as lobby_away from "../lobby/away.js";
 import type * as lobby_cleanup from "../lobby/cleanup.js";
 import type * as lobby_departure from "../lobby/departure.js";
+import type * as lobby_ideas from "../lobby/ideas.js";
+import type * as lobby_lifecycle from "../lobby/lifecycle.js";
 import type * as lobby_lobbies from "../lobby/lobbies.js";
 import type * as lobby_messages from "../lobby/messages.js";
 import type * as lobby_presence from "../lobby/presence.js";
@@ -134,6 +136,8 @@ declare const fullApi: ApiFromModules<{
   "lobby/away": typeof lobby_away;
   "lobby/cleanup": typeof lobby_cleanup;
   "lobby/departure": typeof lobby_departure;
+  "lobby/ideas": typeof lobby_ideas;
+  "lobby/lifecycle": typeof lobby_lifecycle;
   "lobby/lobbies": typeof lobby_lobbies;
   "lobby/messages": typeof lobby_messages;
   "lobby/presence": typeof lobby_presence;

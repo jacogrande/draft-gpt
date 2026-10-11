@@ -15,4 +15,10 @@ crons.daily(
   internal.game.cleanup.closeAbandoned
 );
 
+crons.daily(
+  "purge closed games",
+  { hourUTC: 10, minuteUTC: 0 },
+  internal.game.cleanup.purgeClosed
+);
+
 export default crons;

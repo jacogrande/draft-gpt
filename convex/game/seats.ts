@@ -1,8 +1,17 @@
+import { RejectionCode } from "../errors";
+
 export const SEATS = 2;
 export const STARTING_LIFE = 20;
 
+const CODE_ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+const CODE_LENGTH = 4;
 const CODE = /^[A-Z0-9]{4}$/;
-const GAME_LIFETIME = 7 * 24 * 60 * 60 * 1000;
+
+const HOUR = 60 * 60 * 1000;
+const DAY = 24 * HOUR;
+const OPEN_LIFETIME = DAY;
+const PLAYING_LIFETIME = 7 * DAY;
+const CLOSED_RETENTION = 7 * DAY;
 
 export type GameStatus = "open" | "playing" | "closed";
 
@@ -18,14 +27,26 @@ export const parseCode = (raw: string): string | null => {
   return CODE.test(code) ? code : null;
 };
 
+const generateCode = (random: () => number): string =>
+  Array.from(
+    { length: CODE_LENGTH },
+    () => CODE_ALPHABET[Math.floor(random() * CODE_ALPHABET.length)]
+  ).join("");
+
+export const freshCode = (liveCodes: string[], random: () => number): string => {
+  let code = generateCode(random);
+  while (liveCodes.includes(code)) code = generateCode(random);
+  return code;
+};
+
 export const decideSeat = <U>(
   status: GameStatus,
   players: Seated<U>[],
   userId: U
 ): SeatDecision => {
+  if (status === "closed") return { kind: "refused", reason: "closed" };
   const existing = players.find((player) => player.userId === userId);
   if (existing) return { kind: "existing", seat: existing.seat };
-  if (status === "closed") return { kind: "refused", reason: "closed" };
   const taken = players.map((player) => player.seat);
   const seat = [...Array(SEATS).keys()].find((free) => !taken.includes(free));
   if (status !== "open" || seat === undefined)
@@ -33,10 +54,28 @@ export const decideSeat = <U>(
   return { kind: "seated", seat };
 };
 
+export const closesWhenEmpty = (remaining: unknown[]): boolean =>
+  remaining.length === 0;
+
 export const everyoneHasADeck = (players: { ready: boolean }[]): boolean =>
   players.length === SEATS && players.every((player) => player.ready);
 
+export const playRefusal = (status: GameStatus): RejectionCode | null => {
+  if (status === "closed") return "GAME_CLOSED";
+  return status === "playing" ? null : "GAME_NOT_STARTED";
+};
+
 export const isAbandoned = (
-  game: { status: GameStatus; createdAt: number },
+  game: { status: GameStatus; lastActiveAt: number },
   now: number
-): boolean => game.status !== "closed" && now - game.createdAt > GAME_LIFETIME;
+): boolean => {
+  const idle = now - game.lastActiveAt;
+  if (game.status === "open") return idle > OPEN_LIFETIME;
+  if (game.status === "playing") return idle > PLAYING_LIFETIME;
+  return false;
+};
+
+export const isPurgeable = (
+  game: { status: GameStatus; closedAt: number },
+  now: number
+): boolean => game.status === "closed" && now - game.closedAt > CLOSED_RETENTION;

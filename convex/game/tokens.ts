@@ -2,7 +2,6 @@ import { v } from "convex/values";
 import { Id } from "../_generated/dataModel";
 import { mutation, MutationCtx } from "../_generated/server";
 import { reject } from "../errors";
-import { requireViewer } from "../identity/viewer";
 import { requireSide } from "./access";
 import { parseTokenName } from "./extras";
 import { record } from "./log";
@@ -10,9 +9,9 @@ import { record } from "./log";
 const stat = v.union(v.number(), v.null());
 
 const requireOwnToken = async (ctx: MutationCtx, tokenId: Id<"gameTokens">) => {
-  const userId = await requireViewer(ctx);
-  const token = await ctx.db.get(tokenId);
-  if (!token || token.ownerId !== userId) return reject("PIECE_NOT_FOUND");
+  const token = (await ctx.db.get(tokenId)) ?? reject("PIECE_NOT_FOUND");
+  const { userId } = await requireSide(ctx, token.gameId);
+  if (token.ownerId !== userId) return reject("PIECE_NOT_FOUND");
   return token;
 };
 

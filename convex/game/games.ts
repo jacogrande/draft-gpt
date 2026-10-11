@@ -1,25 +1,62 @@
 import { v } from "convex/values";
-import { mutation, query } from "../_generated/server";
+import { Id } from "../_generated/dataModel";
+import { mutation, MutationCtx, query } from "../_generated/server";
 import { reject } from "../errors";
 import { displayName } from "../identity/username";
 import { findViewer, requireViewer } from "../identity/viewer";
-import { loadPlayers, requirePlayer, viewAsPlayer } from "./access";
-import { decideSeat, parseCode, STARTING_LIFE } from "./seats";
-import { sideSeenBy } from "./table";
+import {
+  loadPlayers,
+  normalizeGameId,
+  requirePlayer,
+  viewAsPlayer,
+} from "./access";
+import { record } from "./log";
+import {
+  closesWhenEmpty,
+  decideSeat,
+  freshCode,
+  parseCode,
+  STARTING_LIFE,
+} from "./seats";
+import { sideShownTo } from "./table";
+
+const LIVE_STATUSES = ["open", "playing"] as const;
+
+const liveCodes = async (ctx: MutationCtx) => {
+  const codes: string[] = [];
+  for (const status of LIVE_STATUSES) {
+    const games = await ctx.db
+      .query("games")
+      .withIndex("by_status", (q) => q.eq("status", status))
+      .collect();
+    codes.push(...games.map((game) => game.code));
+  }
+  return codes;
+};
+
+const seat = async (
+  ctx: MutationCtx,
+  gameId: Id<"games">,
+  userId: Id<"users">,
+  seat: number
+) => {
+  await ctx.db.insert("gamePlayers", {
+    gameId,
+    userId,
+    seat,
+    life: STARTING_LIFE,
+    side: null,
+  });
+  await record(ctx, gameId, userId, ["joined"]);
+};
 
 export const create = mutation({
-  args: { code: v.string() },
-  handler: async (ctx, args) => {
+  args: {},
+  handler: async (ctx) => {
     const userId = await requireViewer(ctx);
-    const code = parseCode(args.code) ?? reject("INVALID_GAME_CODE");
+    const code = freshCode(await liveCodes(ctx), Math.random);
     const gameId = await ctx.db.insert("games", { code, status: "open" });
-    await ctx.db.insert("gamePlayers", {
-      gameId,
-      userId,
-      seat: 0,
-      life: STARTING_LIFE,
-      side: null,
-    });
+    await seat(ctx, gameId, userId, 0);
     return gameId;
   },
 });
@@ -35,13 +72,7 @@ export const join = mutation({
       userId
     );
     if (decision.kind === "seated") {
-      await ctx.db.insert("gamePlayers", {
-        gameId,
-        userId,
-        seat: decision.seat,
-        life: STARTING_LIFE,
-        side: null,
-      });
+      await seat(ctx, gameId, userId, decision.seat);
     }
     return decision;
   },
@@ -50,10 +81,11 @@ export const join = mutation({
 export const leave = mutation({
   args: { gameId: v.id("games") },
   handler: async (ctx, { gameId }) => {
-    const { game, player } = await requirePlayer(ctx, gameId);
+    const { userId, game, player } = await requirePlayer(ctx, gameId);
     if (game.status !== "open") reject("GAME_NOT_OPEN");
     await ctx.db.delete(player._id);
-    if ((await loadPlayers(ctx, gameId)).length === 0) {
+    await record(ctx, gameId, userId, ["left"]);
+    if (closesWhenEmpty(await loadPlayers(ctx, gameId))) {
       await ctx.db.patch(gameId, { status: "closed", closedAt: Date.now() });
     }
   },
@@ -74,9 +106,10 @@ export const findByCode = query({
 });
 
 export const get = query({
-  args: { gameId: v.id("games") },
-  handler: async (ctx, { gameId }) => {
-    const viewerId = await findViewer(ctx);
+  args: { gameId: v.string() },
+  handler: async (ctx, args) => {
+    const gameId = normalizeGameId(ctx, args.gameId);
+    const viewerId = gameId && (await findViewer(ctx));
     const game = viewerId && (await ctx.db.get(gameId));
     if (!game) return null;
     const seats = await loadPlayers(ctx, gameId);
@@ -90,10 +123,10 @@ export const get = query({
           seat: seat.seat,
           life: seat.life,
           ready: seat.side !== null,
-          side:
-            seat.side && isPlayer
-              ? sideSeenBy(seat.side, seat.userId === viewerId)
-              : null,
+          side: sideShownTo(seat.side, {
+            isPlayer,
+            isOwner: seat.userId === viewerId,
+          }),
         }))
     );
     return { id: game._id, code: game.code, status: game.status, viewerId, players };
@@ -101,9 +134,11 @@ export const get = query({
 });
 
 export const extras = query({
-  args: { gameId: v.id("games") },
-  handler: async (ctx, { gameId }) => {
-    if (!(await viewAsPlayer(ctx, gameId))) return { tokens: [], counters: [] };
+  args: { gameId: v.string() },
+  handler: async (ctx, args) => {
+    const view = await viewAsPlayer(ctx, args.gameId);
+    if (!view) return { tokens: [], counters: [] };
+    const { gameId } = view;
     const tokens = await ctx.db
       .query("gameTokens")
       .withIndex("by_game", (q) => q.eq("gameId", gameId))

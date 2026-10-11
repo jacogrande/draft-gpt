@@ -1,10 +1,11 @@
 import { v } from "convex/values";
 import { mutation } from "../_generated/server";
 import { reject } from "../errors";
-import { requirePlayer, requireSide } from "./access";
+import { requireSide } from "./access";
 import { parseLife } from "./extras";
 import { record } from "./log";
 import {
+  describeDraw,
   describeMove,
   draw as drawFrom,
   moveCards as move,
@@ -62,8 +63,7 @@ export const draw = mutation({
     const { userId, player, side } = await requireSide(ctx, gameId);
     const result = drawFrom(side, amount);
     await ctx.db.patch(player._id, { side: result.side });
-    const cards = result.drawn === 1 ? "card" : "cards";
-    await record(ctx, gameId, userId, [`drew ${result.drawn} ${cards}`]);
+    await record(ctx, gameId, userId, describeDraw(result.drawn));
   },
 });
 
@@ -79,9 +79,9 @@ export const shuffle = mutation({
 export const setLife = mutation({
   args: { gameId: v.id("games"), life: v.number() },
   handler: async (ctx, { gameId, life }) => {
-    const { player } = await requirePlayer(ctx, gameId);
-    await ctx.db.patch(player._id, {
-      life: parseLife(life) ?? reject("INVALID_LIFE_TOTAL"),
-    });
+    const { userId, player } = await requireSide(ctx, gameId);
+    const total = parseLife(life) ?? reject("INVALID_LIFE_TOTAL");
+    await ctx.db.patch(player._id, { life: total });
+    await record(ctx, gameId, userId, [`set life to ${total}`]);
   },
 });
