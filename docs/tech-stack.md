@@ -60,7 +60,7 @@ In `.env.local` for the client build:
 ## Deliberate absences
 
 - **No application server.** Convex is the backend; the app is static files.
-- **No Firebase SDK.** Firebase is only the static host. The Firestore database in project `draft-gpt-81aaa` is no longer used.
+- **No Firebase SDK.** Firebase is only the static host. The Firestore database in project `draft-gpt-81aaa` was exported to `gs://draft-gpt-81aaa.appspot.com/firestore-backup-2026-10-11` and deleted on 2026-10-11; the export holds the pre-rewrite users, decks, and games should any need importing.
 - **No OpenAI SDK.** Two `fetch` calls are simpler to replace in tests than a client library.
 - **No component tests.** Behaviour is tested through the backend's public functions and in a real browser.
 

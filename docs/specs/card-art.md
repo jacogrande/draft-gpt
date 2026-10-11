@@ -1,6 +1,6 @@
 # Card art on OpenAI's image API
 
-Status: implemented on `convex-rewrite`, not yet deployed to production
+Status: deployed; retry and time budget revised 2026-10-11
 Date: 2026-10-08
 
 ## Decision
@@ -100,7 +100,7 @@ A real two-player round on 2026-10-08 took 110 seconds from Start to packs on sc
 ## Limits
 
 - **Rate limits will bite at larger tables.** OpenAI's lowest tier allows 20 images a minute. An eight-player round is 96 images, so it cannot finish in under about five minutes at that tier, against a ten-minute limit on a Convex action. The response headers did not reveal this account's tier.
-- **How the code copes.** Each pack paints four images at a time. A request that is rate limited or hits a server error waits for the `retry-after` the API gives (ten seconds if none) and tries up to six times. An image that still fails, or fails for any other reason, leaves that card without art; the draft is never blocked on art.
+- **How the code copes.** A pack's cards are saved as soon as the design call returns, before any painting, so a failure during art never repeats the design call. Each pack then paints four images at a time, saving each batch as it lands. A request that is rate limited or hits a server error waits for the `retry-after` the API gives (ten seconds if none, never more than thirty) and tries up to six times; a timeout or malformed reply counts as one of those tries and is logged. Painting stops at a nine-minute budget per pack. An image that still fails, or runs out of time, leaves that card without art; the draft is never blocked on art. Every stored image keeps its storage id on the card, and art stored by a superseded attempt is deleted.
 - **Content filtering is on its default.** A request the filter refuses comes back as an error and that card has no art. The API has a `moderation: "low"` setting that was accepted in a test but is not used.
 
 ## Not done

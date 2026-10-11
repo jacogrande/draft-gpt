@@ -164,7 +164,7 @@ Other stable selectors: `[data-library-count]` on each library, `input[aria-labe
 
 ```sh
 curl -s http://127.0.0.1:4010/__fail/on      # every AI call now returns 500
-# start a draft; after three attempts the lobby shows "Generation failed" and the host gets Retry
+# start a draft; after four attempts (about twenty seconds) the lobby shows the error and the host gets Retry
 curl -s http://127.0.0.1:4010/__fail/off
 ```
 

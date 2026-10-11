@@ -10,14 +10,17 @@ A game is a two-player table found by a four-character code. It lives in Convex 
 
 ## Rules
 
-- **Seats.** `join` is idempotent. A player who refreshes or closes the tab returns to the same seat, deck, life total, and board. A third player is refused by the server, including by direct URL.
+- **Codes.** The server gives each new game a four-character code of letters and digits, drawn again until no open or playing game has it. Finding a game by code skips closed games and prefers the newest.
+- **Seats.** `join` is idempotent. A player who refreshes or closes the tab returns to the same seat, deck, life total, and board. A third player is refused by the server, including by direct URL. A closed game refuses everyone, former players included.
 - **Leaving.** A player can leave until the game starts. The last player to leave closes the game. Nobody can leave a game in progress.
 - **Starting.** Each player chooses one of their own decks by id. The server copies its mainboard, shuffles it, and the game becomes `playing` when both have chosen.
 - **One table, two views.** Both players read the same rows. The server sends each player their own hand, both battlefields and graveyards, and only the size of the opponent's hand and of both libraries.
 - **Own pieces only.** A player can move, tap, and draw their own cards, set their own life total, and change their own tokens and counters. A request that names the other player's card does nothing.
-- **Zones.** A card moved to the library goes on top. A card that leaves the battlefield untaps.
-- **Log.** The server writes the log in the same transaction as the action. A moved card is named only if it started or ended on the battlefield or in the graveyard; otherwise it is "a card".
-- **Cleanup.** A daily cron closes games older than seven days. Finding a game by code skips closed games and prefers the newest.
+- **Only while playing.** Cards, life, tokens, and counters can be changed only while the game is `playing`. A closed game is read-only; the server refuses with `GAME_CLOSED`.
+- **Zones.** A card moved to the library goes on top. A card that leaves the battlefield untaps. A draw of nothing, or of a nonsense amount, draws no cards and is not logged.
+- **Log.** The server writes the log in the same transaction as the action, for every action: joining, leaving, choosing a deck, moving, tapping, drawing, shuffling, life totals, tokens, and counters. A moved card is named only if it started or ended on the battlefield or in the graveyard; otherwise it is "a card".
+- **Cleanup.** A game is idle from the last time a player was seen in it (its creation, if nobody has been). A daily cron closes open games idle for a day and playing games idle for a week, and a second one deletes games closed for a week along with their seats, log, tokens, counters, and presence.
+- **Malformed ids.** A query given something that is not a game or deck id returns nothing rather than failing.
 
 ## Not covered
 

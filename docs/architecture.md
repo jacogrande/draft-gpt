@@ -81,9 +81,9 @@ A lobby's `status` moves `open` → `generating` → `drafting` → (`generating
 
 1. `startDraft` requires two or more members, all ready. It freezes `participantIds` in seat order and schedules setting generation.
 2. `generation.createSetting` sends the worldbuilding messages to the model, saves the setting, and deals round 1: one pack per participant, each with a passing order.
-3. `generation.createPack` runs once per pack, in parallel. It asks for twelve cards, paints art for each (four at a time, from a prompt built by `draft/artPrompt.ts`), and saves them. A card whose art fails is saved without it. When the last pack of the round is saved, each is topped up to fifteen from the setting's card pool and the lobby becomes `drafting`.
+3. `generation.createPack` runs once per pack, a second apart. It asks for twelve cards and saves them at once, without art, so a later failure never repeats the design call. It then paints art four cards at a time from a prompt built by `draft/artPrompt.ts`, saving each batch as it lands, within a nine-minute budget. A card whose art fails or runs out of time is kept without it. When the last pack of the round is finished, each is topped up to fifteen from the setting's card pool and the lobby becomes `drafting`.
 4. `picks.current` gives each player only the pack at the front of their queue. `picks.pick` marks the card, passes the pack, and adds the card to the player's deck in one transaction. The pick that empties the round deals the next one, or completes the draft after round 3.
-5. A failed generation step retries twice with backoff. After the third failure the lobby shows the error and the host can retry. A step that never reports back (an action killed at Convex's 10-minute limit) is treated as failed after 11 minutes, and calls to OpenAI time out before that limit.
+5. Every generation step runs under a random key stored on its pack (or on the lobby for the setting). A step whose key no longer matches, because the host retried or a newer attempt took over, is ignored, and any art it stored is deleted. A failed step retries three times with doubling backoff from two seconds, waiting at least as long as a `retry-after` header asks, capped at a minute. After the fourth failure the lobby shows the first error and the host can retry; the retry skips packs whose attempt is still running. A step that never reports back (an action killed at Convex's 10-minute limit) is treated as failed after 11 minutes, and calls to OpenAI time out before that limit. A closed lobby ignores every late step.
 
 **A player who disconnects mid-draft.** Each round, the server watches every participant's `lastSeenAt`.
 
@@ -102,8 +102,8 @@ A heartbeat is only sent while the tab is visible, so a player who switches to a
 ## Trust boundaries and known gaps
 
 - **Convex functions are the boundary.** Every mutation checks the caller and their membership or ownership. Page guards in the browser are for navigation only.
-- **The old Firestore database is unused but still open.** Nothing reads or writes it any more, and its deployed rules allow anyone to. Lock or delete it in the Firebase console; Firebase Hosting does not depend on it.
+- **A lobby shows outsiders only its name and status.** `lobbies.get` sends the roster and any generation error to members alone; every other lobby, draft and game query returns nothing to a non-member, and malformed ids return nothing rather than throwing.
 - **Token and counter placement is per screen.** Token positions are not stored and counter positions are in the owner's screen coordinates. Step 4 of the roadmap.
 - **A draft cannot be left.** A participant stays in the draft to the end; if they go away, their picks are made at random after the reconnect countdown. If the host is the one away, nobody can pause or skip and the countdown simply runs out.
-- **Test sign-in exists in the code** and is enabled only by `AUTH_TEST_LOGIN` on the deployment. It must never be set in production.
+- **Test sign-in exists in the code** and is enabled only when `AUTH_TEST_LOGIN` is set and the deployment URL is localhost. `scripts/deploy.sh` refuses to deploy while the variable is set on production.
 - **The card-design model and prompts are the 2024 originals** (`gpt-4o`), moved without change. Rebuilding card creation is step 6 of the roadmap. Card art is current; see `docs/specs/card-art.md`.

@@ -23,7 +23,9 @@ Friends draft a Magic-style card set that an LLM invents for them on the spot, b
 - **Keep files small and comments rare.** One concept per file. Use names, not comments, to explain.
 - **Outside services are called only from `convex/draft/openai.ts` and `images.ts`,** and their replies go through `draft/parsing.ts` before being stored.
 - **The app does not enforce game rules.** No turns, no legality checks. Read `docs/product-vision.md` before adding one.
-- **Never set `AUTH_TEST_LOGIN` on a production deployment.**
+- **Never set `AUTH_TEST_LOGIN` on a production deployment.** `convex/auth.ts` only honours it on a localhost deployment and `scripts/deploy.sh` refuses to deploy while it is set, but do not rely on either.
+- **Measure staleness from presence, not creation time.** Cleanup crons close a lobby or game only after nobody has been seen for its lifetime.
+- **Every scheduled generation step carries a key.** A step whose key no longer matches its pack or lobby must do nothing; check it before writing.
 
 ## Where to look
 

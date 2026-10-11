@@ -1,6 +1,6 @@
 # Convex rewrite: auth, lobbies, and the draft server
 
-Status: implemented on branch `convex-rewrite`, not yet deployed (see section 12)
+Status: deployed to production on 2026-10-08 (see section 12 for what is left)
 Date: 2026-10-08
 Builds on: `draft-lobby-refactor.md` (the analysis in its sections 1 to 3 still stands; this document replaces its section 5)
 
@@ -299,7 +299,7 @@ Built on the `convex-rewrite` branch. Nothing is committed or deployed.
 
 ### Left to do before this can replace production
 
-Done on 2026-10-08: the Convex production deployment exists with its auth keys and `SITE_URL`, and the static site is live on Firebase Hosting (see `docs/tech-stack.md`, Deployments). The deployed Firestore rules were read and allow all reads and writes unconditionally, so the game table will work without Firebase sign-in; that also leaves the whole Firestore database open to anyone.
+Done on 2026-10-08: the Convex production deployment exists with its auth keys and `SITE_URL`, and the static site is live on Firebase Hosting (see `docs/tech-stack.md`, Deployments). Done on 2026-10-11: the old Firestore database, whose rules allowed anyone to read and write, was exported to the project's storage bucket and deleted (see `docs/tech-stack.md`).
 
 Still to do:
 
