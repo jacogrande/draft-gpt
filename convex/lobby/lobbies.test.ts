@@ -189,3 +189,62 @@ test("members cannot leave or be removed once the draft has started", async () =
     await latecomer.as.mutation(api.lobby.lobbies.join, { lobbyId })
   ).toEqual({ kind: "refused", reason: "in-progress" });
 });
+
+test("a signed-in outsider sees a lobby's name and status but not its roster", async () => {
+  const backend = startBackend();
+  const { lobbyId } = await openLobby(backend, ["Ana", "Ben"]);
+  const outsider = await signIn(backend, "Zed");
+
+  const lobby = await outsider.as.query(api.lobby.lobbies.get, { lobbyId });
+
+  expect(lobby).toMatchObject({ name: "tattered-kithkin", status: "open" });
+  expect(lobby?.members).toEqual([]);
+  expect(
+    await outsider.as.query(api.lobby.lobbies.get, { lobbyId: "not-an-id" })
+  ).toBeNull();
+});
+
+test("a lobby stops taking worldbuilding messages after two hundred", async () => {
+  const backend = startBackend();
+  const { lobbyId, players } = await openLobby(backend, ["Ana"]);
+  const post = (text: string) =>
+    players[0].as.mutation(api.lobby.messages.post, { lobbyId, text });
+
+  for (let count = 0; count < 200; count++) await post(`idea ${count}`);
+
+  await expect(post("one more")).rejects.toThrow(rejection("TOO_MANY_MESSAGES"));
+});
+
+test("a member can leave a lobby that was closed", async () => {
+  vi.useFakeTimers();
+  vi.setSystemTime(new Date("2026-01-01T00:00:00Z"));
+  const backend = startBackend();
+  const { lobbyId, players } = await openLobby(backend, ["Ana", "Ben"]);
+  vi.setSystemTime(new Date("2026-01-03T00:00:00Z"));
+  await backend.mutation(internal.lobby.cleanup.closeAbandoned, {});
+
+  await players[1].as.mutation(api.lobby.lobbies.leave, { lobbyId });
+
+  const lobby = await players[0].as.query(api.lobby.lobbies.get, { lobbyId });
+  expect(lobby?.status).toBe("closed");
+  expect(lobby?.members.map((member) => member.username)).toEqual(["Ana"]);
+});
+
+test("a lobby counts as abandoned only after nobody has been seen for a day", async () => {
+  vi.useFakeTimers();
+  vi.setSystemTime(new Date("2026-01-01T00:00:00Z"));
+  const backend = startBackend();
+  const { lobbyId, players } = await openLobby(backend, ["Ana"]);
+  const status = async () =>
+    (await players[0].as.query(api.lobby.lobbies.get, { lobbyId }))?.status;
+
+  vi.setSystemTime(new Date("2026-01-01T23:00:00Z"));
+  await players[0].as.mutation(api.lobby.presence.heartbeat, { lobbyId });
+  vi.setSystemTime(new Date("2026-01-02T22:00:00Z"));
+  await backend.mutation(internal.lobby.cleanup.closeAbandoned, {});
+  expect(await status()).toBe("open");
+
+  vi.setSystemTime(new Date("2026-01-03T00:00:00Z"));
+  await backend.mutation(internal.lobby.cleanup.closeAbandoned, {});
+  expect(await status()).toBe("closed");
+});
