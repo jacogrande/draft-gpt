@@ -1,5 +1,5 @@
 import { internalMutation } from "../_generated/server";
-import { isAbandoned } from "./roster";
+import { isAbandoned, lastActivity } from "./roster";
 
 const LIVE_STATUSES = ["open", "generating", "drafting"] as const;
 
@@ -13,11 +13,15 @@ export const closeAbandoned = internalMutation({
         .withIndex("by_status", (q) => q.eq("status", status))
         .collect();
       for (const lobby of lobbies) {
-        const abandoned = isAbandoned(
-          { status, createdAt: lobby._creationTime },
-          now
+        const sightings = await ctx.db
+          .query("lobbyPresence")
+          .withIndex("by_lobby", (q) => q.eq("lobbyId", lobby._id))
+          .collect();
+        const lastActiveAt = lastActivity(
+          lobby._creationTime,
+          sightings.map((sighting) => sighting.lastSeenAt)
         );
-        if (abandoned) {
+        if (isAbandoned({ status, lastActiveAt }, now)) {
           await ctx.db.patch(lobby._id, { status: "closed", closedAt: now });
         }
       }

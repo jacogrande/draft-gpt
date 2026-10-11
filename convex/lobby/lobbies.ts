@@ -14,8 +14,10 @@ import { removeMembership } from "./departure";
 import {
   bySeat,
   decideJoin,
+  leaveBlocker,
   MAX_LOBBY_NAME_LENGTH,
   parseText,
+  rosterBlocker,
 } from "./roster";
 
 export const create = mutation({
@@ -64,7 +66,8 @@ export const leave = mutation({
   args: { lobbyId: v.id("lobbies") },
   handler: async (ctx, { lobbyId }) => {
     const { lobby, membership } = await requireMember(ctx, lobbyId);
-    if (lobby.status !== "open") reject("LOBBY_NOT_OPEN");
+    const blocker = leaveBlocker(lobby.status);
+    if (blocker) reject(blocker);
     await removeMembership(ctx, lobby, membership);
   },
 });
@@ -73,7 +76,8 @@ export const removeMember = mutation({
   args: { lobbyId: v.id("lobbies"), userId: v.id("users") },
   handler: async (ctx, { lobbyId, userId }) => {
     const { lobby } = await requireHost(ctx, lobbyId);
-    if (lobby.status !== "open") reject("LOBBY_NOT_OPEN");
+    const blocker = rosterBlocker(lobby.status);
+    if (blocker) reject(blocker);
     const membership =
       (await findMembership(ctx, lobbyId, userId)) ?? reject("NOT_A_MEMBER");
     await removeMembership(ctx, lobby, membership);
@@ -84,19 +88,31 @@ export const setReady = mutation({
   args: { lobbyId: v.id("lobbies"), ready: v.boolean() },
   handler: async (ctx, { lobbyId, ready }) => {
     const { lobby, membership } = await requireMember(ctx, lobbyId);
-    if (lobby.status !== "open") reject("LOBBY_NOT_OPEN");
+    const blocker = rosterBlocker(lobby.status);
+    if (blocker) reject(blocker);
     await ctx.db.patch(membership._id, { ready });
   },
 });
 
 export const get = query({
-  args: { lobbyId: v.id("lobbies") },
-  handler: async (ctx, { lobbyId }) => {
+  args: { lobbyId: v.string() },
+  handler: async (ctx, args) => {
     const viewerId = await findViewer(ctx);
-    const lobby = viewerId && (await ctx.db.get(lobbyId));
+    const lobbyId = ctx.db.normalizeId("lobbies", args.lobbyId);
+    const lobby = viewerId && lobbyId && (await ctx.db.get(lobbyId));
     if (!lobby) return null;
+    const outline = {
+      id: lobby._id,
+      name: lobby.name,
+      hostId: lobby.hostId,
+      status: lobby.status,
+      round: lobby.round,
+      viewerId,
+    };
+    const membership = await findMembership(ctx, lobby._id, viewerId);
+    if (!membership) return { ...outline, generationError: null, members: [] };
     const members = await Promise.all(
-      bySeat(await loadMembers(ctx, lobbyId)).map(async (member) => {
+      bySeat(await loadMembers(ctx, lobby._id)).map(async (member) => {
         const user = await ctx.db.get(member.userId);
         return {
           userId: member.userId,
@@ -107,14 +123,9 @@ export const get = query({
       })
     );
     return {
-      id: lobby._id,
-      name: lobby.name,
-      hostId: lobby.hostId,
-      status: lobby.status,
-      round: lobby.round,
+      ...outline,
       generationError: lobby.generationError ?? null,
       members,
-      viewerId,
     };
   },
 });

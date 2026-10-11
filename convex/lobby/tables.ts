@@ -18,6 +18,7 @@ export const lobbyTables = {
     participantIds: v.optional(v.array(v.id("users"))),
     settingId: v.optional(v.id("settings")),
     settingJobId: v.optional(v.id("_scheduled_functions")),
+    settingKey: v.optional(v.string()),
     generationError: v.optional(v.string()),
     closedAt: v.optional(v.number()),
   }).index("by_status", ["status"]),

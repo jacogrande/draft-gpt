@@ -2,6 +2,9 @@ export const MAX_SEATS = 8;
 export const MIN_DRAFTERS = 2;
 export const MAX_LOBBY_NAME_LENGTH = 48;
 export const MAX_MESSAGE_LENGTH = 500;
+export const MAX_MESSAGES_PER_LOBBY = 200;
+export const MAX_IDEAS = 40;
+export const MAX_IDEA_CHARACTERS = 6000;
 
 const HOUR = 60 * 60 * 1000;
 const OPEN_LOBBY_LIFETIME = 24 * HOUR;
@@ -42,6 +45,12 @@ export const decideJoin = <U>(
   return { kind: "seated", seat };
 };
 
+export const rosterBlocker = (status: LobbyStatus): "LOBBY_NOT_OPEN" | null =>
+  status === "open" ? null : "LOBBY_NOT_OPEN";
+
+export const leaveBlocker = (status: LobbyStatus): "LOBBY_NOT_OPEN" | null =>
+  status === "generating" || status === "drafting" ? "LOBBY_NOT_OPEN" : null;
+
 export const bySeat = <M extends { seat: number }>(members: M[]): M[] =>
   [...members].sort((a, b) => a.seat - b.seat);
 
@@ -57,18 +66,33 @@ export const startBlocker = (
   return null;
 };
 
+export const lastActivity = (createdAt: number, seenAt: number[]): number =>
+  Math.max(createdAt, ...seenAt);
+
 export const isAbandoned = (
-  lobby: { status: LobbyStatus; createdAt: number },
+  lobby: { status: LobbyStatus; lastActiveAt: number },
   now: number
 ): boolean => {
-  const age = now - lobby.createdAt;
-  if (lobby.status === "open") return age > OPEN_LOBBY_LIFETIME;
+  const idle = now - lobby.lastActiveAt;
+  if (lobby.status === "open") return idle > OPEN_LOBBY_LIFETIME;
   if (lobby.status === "generating" || lobby.status === "drafting")
-    return age > DRAFT_LIFETIME;
+    return idle > DRAFT_LIFETIME;
   return false;
 };
 
 export const parseText = (raw: string, maxLength: number): string | null => {
   const text = raw.trim();
   return text.length >= 1 && text.length <= maxLength ? text : null;
+};
+
+export const selectIdeas = (texts: string[]): string[] => {
+  const chosen: string[] = [];
+  let characters = 0;
+  for (const text of [...texts].reverse()) {
+    if (chosen.length >= MAX_IDEAS) break;
+    if (characters + text.length > MAX_IDEA_CHARACTERS) break;
+    chosen.unshift(text);
+    characters += text.length;
+  }
+  return chosen;
 };
