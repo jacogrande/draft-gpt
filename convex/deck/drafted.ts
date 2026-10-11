@@ -14,7 +14,7 @@ export const addDraftedCard = async (
     .withIndex("by_user_lobby", (q) =>
       q.eq("userId", userId).eq("lobbyId", lobby._id)
     )
-    .unique();
+    .first();
   if (deck) {
     await ctx.db.patch(deck._id, { cards: [...deck.cards, drafted] });
     return;

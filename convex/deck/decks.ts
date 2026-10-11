@@ -4,7 +4,7 @@ import { mutation, MutationCtx, query } from "../_generated/server";
 import { reject } from "../errors";
 import { findViewer, requireViewer } from "../identity/viewer";
 import { findOwnDeck } from "./owned";
-import { basicLand, toMainboard, toSideboard } from "./zones";
+import { toMainboard, toSideboard, withBasics } from "./zones";
 
 const landType = v.union(
   v.literal("plains"),
@@ -42,9 +42,10 @@ export const list = query({
 });
 
 export const get = query({
-  args: { deckId: v.id("decks") },
-  handler: async (ctx, { deckId }) => {
-    const userId = await findViewer(ctx);
+  args: { deckId: v.string() },
+  handler: async (ctx, args) => {
+    const deckId = ctx.db.normalizeId("decks", args.deckId);
+    const userId = deckId && (await findViewer(ctx));
     const deck = userId && (await findOwnDeck(ctx, userId, deckId));
     return deck ? present(deck) : null;
   },
@@ -60,7 +61,7 @@ export const forLobby = query({
       .withIndex("by_user_lobby", (q) =>
         q.eq("userId", userId).eq("lobbyId", lobbyId)
       )
-      .unique();
+      .first();
     return deck ? present(deck) : null;
   },
 });
@@ -87,7 +88,8 @@ export const addBasics = mutation({
   args: { deckId: v.id("decks"), lands: v.array(landType) },
   handler: async (ctx, { deckId, lands }) => {
     const deck = await requireOwnDeck(ctx, deckId);
-    const basics = lands.map((land) => basicLand(land, crypto.randomUUID()));
-    await ctx.db.patch(deckId, { cards: [...deck.cards, ...basics] });
+    await ctx.db.patch(deckId, {
+      cards: withBasics(deck.cards, lands, () => crypto.randomUUID()),
+    });
   },
 });

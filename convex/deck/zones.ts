@@ -9,6 +9,9 @@ export const BASIC_LANDS = [
   "island",
 ] as const;
 
+export const MAX_BASICS_PER_CALL = 40;
+export const MAX_DECK_SIZE = 150;
+
 export type BasicLand = (typeof BASIC_LANDS)[number];
 
 type Zones = { cards: DeckCard[]; sideboard: DeckCard[] };
@@ -51,3 +54,13 @@ export const basicLand = (land: BasicLand, id: string): DeckCard => ({
   set: "",
   legendary: false,
 });
+
+export const withBasics = (
+  cards: DeckCard[],
+  lands: BasicLand[],
+  newId: () => string
+): DeckCard[] => {
+  const room = Math.min(MAX_BASICS_PER_CALL, MAX_DECK_SIZE - cards.length);
+  const added = lands.slice(0, Math.max(0, room));
+  return [...cards, ...added.map((land) => basicLand(land, newId()))];
+};
