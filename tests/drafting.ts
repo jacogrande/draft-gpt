@@ -12,7 +12,7 @@ import {
 const STEP_MS = 250;
 const STEPS_PER_SECOND = 1000 / STEP_MS;
 const HEARTBEAT_STEPS = 20 * STEPS_PER_SECOND;
-const GENERATION_SECONDS = 20;
+const GENERATION_SECONDS = 30;
 
 export const seen = async (lobbyId: Id<"lobbies">, players: Player[]) => {
   for (const player of players) {

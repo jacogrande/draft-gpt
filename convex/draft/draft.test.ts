@@ -9,13 +9,14 @@ import {
 import {
   lobbyOf,
   packOf,
+  pass,
   pickFirst,
   seen,
   settle,
   startedDraft,
 } from "../../tests/drafting";
 import { fakeOutsideWorld } from "../../tests/outsideWorld";
-import { api } from "../_generated/api";
+import { api, internal } from "../_generated/api";
 
 let world: ReturnType<typeof fakeOutsideWorld>;
 
@@ -58,6 +59,7 @@ test("starting generates a setting from the players' ideas and deals everyone a 
   await settle(backend);
 
   expect(world.settingPrompts[0]).toContain("an ocean of glass");
+  expect(world.settingPrompts[0]).toContain("<ideas>");
   expect(await lobbyOf(ana, lobbyId)).toMatchObject({
     status: "drafting",
     round: 1,
@@ -195,4 +197,85 @@ test("a round that failed to generate is retried from where it stopped", async (
     const deck = await player.as.query(api.deck.decks.forLobby, { lobbyId });
     expect(deck?.cards).toHaveLength(15);
   }
+});
+
+test("a rate-limited request waits as long as OpenAI asks before trying again", async () => {
+  const backend = startBackend();
+  const { lobbyId, players } = await openLobby(backend, ["Ana", "Ben"]);
+  const [ana] = players;
+  await readyEveryone(lobbyId, players);
+  world.rateLimitNextSeconds = 8;
+
+  await ana.as.mutation(api.draft.start.startDraft, { lobbyId });
+  await pass(backend, 6);
+  expect(world.settingPrompts).toHaveLength(1);
+  expect((await lobbyOf(ana, lobbyId))?.generationError).toBeNull();
+
+  await settle(backend);
+  expect(world.settingPrompts).toHaveLength(2);
+  expect((await lobbyOf(ana, lobbyId))?.status).toBe("drafting");
+});
+
+test("cards are kept when their art cannot be painted", async () => {
+  const backend = startBackend();
+  const { lobbyId, players } = await openLobby(backend, ["Ana", "Ben"]);
+  const [ana] = players;
+  await readyEveryone(lobbyId, players);
+  world.artIsDown = true;
+
+  await ana.as.mutation(api.draft.start.startDraft, { lobbyId });
+  await settle(backend);
+
+  expect((await lobbyOf(ana, lobbyId))?.status).toBe("drafting");
+  expect(world.packRequests).toBe(2);
+  const pack = await packOf(ana, lobbyId);
+  expect(pack?.cards).toHaveLength(15);
+  expect(pack?.cards.every((card) => card.image_url === null)).toBe(true);
+});
+
+test("a pack with too few cards is designed again, and the host can retry after the last failure", async () => {
+  const backend = startBackend();
+  const { lobbyId, players } = await openLobby(backend, ["Ana", "Ben"]);
+  const [ana] = players;
+  await readyEveryone(lobbyId, players);
+  world.packSize = 3;
+
+  await ana.as.mutation(api.draft.start.startDraft, { lobbyId });
+  await settle(backend);
+
+  expect(await lobbyOf(ana, lobbyId)).toMatchObject({
+    status: "generating",
+    generationError: "The pack came back with too few cards",
+  });
+  expect(world.packRequests).toBe(8);
+
+  world.packSize = 12;
+  await ana.as.mutation(api.draft.failures.retryGeneration, { lobbyId });
+  await settle(backend);
+  expect((await lobbyOf(ana, lobbyId))?.status).toBe("drafting");
+  expect(world.artPrompts).toHaveLength(24);
+});
+
+test("a generation step from a superseded attempt is ignored", async () => {
+  const backend = startBackend();
+  const { lobbyId, players } = await openLobby(backend, ["Ana", "Ben"]);
+  const [ana] = players;
+  await readyEveryone(lobbyId, players);
+  world.openaiIsDown = true;
+  await ana.as.mutation(api.draft.start.startDraft, { lobbyId });
+  await settle(backend);
+  expect((await lobbyOf(ana, lobbyId))?.generationError).toBeTruthy();
+
+  world.openaiIsDown = false;
+  await ana.as.mutation(api.draft.failures.retryGeneration, { lobbyId });
+  await backend.mutation(internal.draft.failures.record, {
+    lobbyId,
+    attempt: 4,
+    key: "an-old-attempt",
+    message: "stale failure",
+  });
+
+  expect((await lobbyOf(ana, lobbyId))?.generationError).toBeNull();
+  await settle(backend);
+  expect((await lobbyOf(ana, lobbyId))?.status).toBe("drafting");
 });
