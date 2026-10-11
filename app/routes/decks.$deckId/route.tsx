@@ -1,15 +1,22 @@
-import { Link, useParams } from "@remix-run/react";
+import { Link, useParams, useRouteError } from "@remix-run/react";
 import Heading from "~/components/Heading";
 import Page from "~/components/Page";
 import { requireAuth } from "~/components/RequireAuth";
 import useDeck from "~/hooks/useDeck";
+import DeckNotice from "~/routes/decks.$deckId/DeckNotice";
 import Mainboard from "~/routes/decks.$deckId/Mainboard";
 import Sideboard from "~/routes/decks.$deckId/Sideboard";
 
 const Deck = () => {
   const deckId = useParams().deckId as string;
   const { deck } = useDeck(deckId);
-  if (!deck) return null;
+  if (deck === undefined)
+    return (
+      <Page>
+        <span className="loading loading-dots loading-lg"></span>
+      </Page>
+    );
+  if (deck === null) return <DeckNotice>Deck not found.</DeckNotice>;
   return (
     <Page>
       <header className="w-full flex items-center justify-start">
@@ -28,6 +35,11 @@ const Deck = () => {
       </div>
     </Page>
   );
+};
+
+export const ErrorBoundary = () => {
+  console.error(useRouteError());
+  return <DeckNotice>Deck not found.</DeckNotice>;
 };
 
 export default requireAuth(Deck);

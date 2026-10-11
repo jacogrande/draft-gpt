@@ -10,7 +10,7 @@ import { BASICS } from "~/util/constants";
 import { getCMC } from "~/util/getCMC";
 
 const Sideboard = () => {
-  const { deck } = useDeckStore();
+  const deck = useDeckStore((state) => state.deck);
   const peekedCard = useGlobalStore((state) => state.peekedCard);
   const containerRef = useRef<HTMLDivElement>(null);
   const trueRef = useRef<HTMLDivElement>(null);
@@ -21,9 +21,9 @@ const Sideboard = () => {
 
   const sortedSideboard = useMemo(() => {
     if (!deck || !deck.sideboard) return null;
-    return deck.sideboard.sort(
+    return [...deck.sideboard].sort(
       (a, b) => getCMC(a.mana_cost) - getCMC(b.mana_cost)
-    ); // sort by mana cost
+    );
   }, [deck]);
 
   useEffect(() => {

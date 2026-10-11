@@ -7,18 +7,22 @@ import { useDeckEditorStore } from "~/routes/decks.$deckId/store";
 import { deckIdOf, useDeckStore } from "~/hooks/useDeck";
 import { useState } from "react";
 import { useGlobalStore } from "~/hooks/useGlobalStore";
+import { useToast } from "~/hooks/useToast";
+
+const ORIGIN = { x: 0, y: 0 };
+const SCALE = 0.65;
 
 const DraggableCard = ({ card }: { card: CardType }) => {
   const [isDragging, setIsDragging] = useState(false);
   const sideboardRect = useDeckEditorStore((state) => state.sideboardRect);
   const sideboardRef = useDeckEditorStore((state) => state.sideboardRef);
   const deck = useDeckStore((state) => state.deck);
-  const { selectedCards } = useGlobalStore();
+  const selectedCards = useGlobalStore((state) => state.selectedCards);
+  const toast = useToast((state) => state.toast);
   const moveToSideboard = useMutation(api.deck.decks.moveToSideboard);
 
   const isCardInSideboard = (rect: DOMRect) => {
     if (!sideboardRect) return false;
-    // check if the card is in the sideboard
     return (
       rect.x >= sideboardRect.x &&
       rect.x <= sideboardRect.x + sideboardRect.width &&
@@ -49,22 +53,24 @@ const DraggableCard = ({ card }: { card: CardType }) => {
   };
 
   const onStop: DraggableEventHandler = (_e, data) => {
-    if (!deck) return;
     setIsDragging(false);
+    removeHighlight();
+    if (!deck) return;
     const { node } = data;
     const rect = node.getBoundingClientRect();
     if (!sideboardRect) return;
     if (!isCardInSideboard(rect)) return;
     if (selectedCards.length > 0) return;
-    void moveToSideboard({ deckId: deckIdOf(deck), cardId: card.id });
+    moveToSideboard({ deckId: deckIdOf(deck), cardId: card.id }).catch(() =>
+      toast("Could not move card to the sideboard", "error")
+    );
   };
 
-  const SCALE = 0.65;
   return (
     <Draggable
       axis="both"
       handle=".handle"
-      defaultPosition={{ x: 0, y: 0 }}
+      position={ORIGIN}
       grid={[10, 10]}
       scale={1}
       onStop={onStop}

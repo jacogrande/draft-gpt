@@ -13,7 +13,12 @@ const Decks = () => {
   const decks = useQuery(api.deck.decks.list);
 
   if (deckId) return <Outlet />;
-  if (!decks) return null;
+  if (decks === undefined)
+    return (
+      <Page>
+        <span className="loading loading-dots loading-lg"></span>
+      </Page>
+    );
   if (!decks.length)
     return (
       <Page>
