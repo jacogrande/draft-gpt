@@ -1,6 +1,7 @@
 import { expect, test } from "vitest";
 import { rejection, startBackend } from "../../tests/backend";
 import {
+  closeGame,
   logOf,
   openGame,
   sideOf,
@@ -34,6 +35,8 @@ test("both players see the same table, with the other's hand and library as coun
 test("drawing takes cards from the top of the library and stops when it is empty", async () => {
   const { gameId, ana } = await startedGame();
 
+  await ana.as.mutation(api.game.play.draw, { gameId, amount: 7 });
+  await ana.as.mutation(api.game.play.draw, { gameId, amount: Infinity });
   await ana.as.mutation(api.game.play.draw, { gameId, amount: 7 });
   await ana.as.mutation(api.game.play.draw, { gameId, amount: 7 });
 
@@ -125,6 +128,7 @@ test("life totals are each player's own to change", async () => {
 
   const table = await tableOf(ben, gameId);
   expect(table.players.map((player) => player.life)).toEqual([17, 20]);
+  expect(await logOf(ben, gameId)).toEqual(["set life to 17"]);
   await expect(
     ana.as.mutation(api.game.play.setLife, { gameId, life: 1.5 })
   ).rejects.toThrow(rejection("INVALID_LIFE_TOTAL"));
@@ -179,6 +183,64 @@ test("tokens and counters appear for both players and only their owner can chang
   await ana.as.mutation(api.game.tokens.remove, { tokenId: tokens[0].id });
   await ana.as.mutation(api.game.counters.remove, { counterId: counters[0].id });
   expect(await extras(ana)).toEqual({ tokens: [], counters: [] });
+  expect(await logOf(ben, gameId)).toEqual([
+    "created a Shard token",
+    "created a counter",
+    "tapped Shard token",
+    "set a counter to 3",
+    "moved a counter",
+    "removed a Shard token",
+    "removed a counter",
+  ]);
+});
+
+test("a closed game is read only", async () => {
+  const { backend, gameId, ana } = await startedGame();
+  await ana.as.mutation(api.game.tokens.create, {
+    gameId,
+    name: "Shard",
+    power: 1,
+    toughness: 1,
+  });
+  await ana.as.mutation(api.game.counters.create, {
+    gameId,
+    position: { x: 0, y: 0 },
+  });
+  const { tokens, counters } = await ana.as.query(api.game.games.extras, {
+    gameId,
+  });
+  await closeGame(backend, gameId);
+  const closed = (call: Promise<unknown>) =>
+    expect(call).rejects.toThrow(rejection("GAME_CLOSED"));
+  const tokenId = tokens[0].id;
+  const counterId = counters[0].id;
+
+  await closed(ana.as.mutation(api.game.play.draw, { gameId, amount: 1 }));
+  await closed(ana.as.mutation(api.game.play.shuffle, { gameId }));
+  await closed(ana.as.mutation(api.game.play.untapAll, { gameId }));
+  await closed(ana.as.mutation(api.game.play.tapCards, { gameId, cardIds: [] }));
+  await closed(
+    ana.as.mutation(api.game.play.moveCards, { gameId, cardIds: [], to: "hand" })
+  );
+  await closed(ana.as.mutation(api.game.play.setLife, { gameId, life: 1 }));
+  await closed(
+    ana.as.mutation(api.game.tokens.create, {
+      gameId,
+      name: "Shard",
+      power: 1,
+      toughness: 1,
+    })
+  );
+  await closed(ana.as.mutation(api.game.tokens.setTapped, { tokenId, tapped: true }));
+  await closed(ana.as.mutation(api.game.tokens.remove, { tokenId }));
+  await closed(
+    ana.as.mutation(api.game.counters.create, { gameId, position: { x: 0, y: 0 } })
+  );
+  await closed(ana.as.mutation(api.game.counters.setValue, { counterId, value: "1" }));
+  await closed(
+    ana.as.mutation(api.game.counters.move, { counterId, position: { x: 1, y: 1 } })
+  );
+  await closed(ana.as.mutation(api.game.counters.remove, { counterId }));
 });
 
 test("the table cannot be used before both decks are chosen", async () => {
@@ -186,5 +248,8 @@ test("the table cannot be used before both decks are chosen", async () => {
 
   await expect(
     players[0].as.mutation(api.game.play.draw, { gameId, amount: 1 })
+  ).rejects.toThrow(rejection("GAME_NOT_STARTED"));
+  await expect(
+    players[0].as.mutation(api.game.play.setLife, { gameId, life: 1 })
   ).rejects.toThrow(rejection("GAME_NOT_STARTED"));
 });

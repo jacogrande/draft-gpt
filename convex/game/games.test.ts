@@ -1,7 +1,15 @@
 import { afterEach, beforeEach, expect, test, vi } from "vitest";
 import { rejection, signIn, startBackend } from "../../tests/backend";
-import { deckFor, openGame, startedGame, tableOf } from "../../tests/tabletop";
+import {
+  closeGame,
+  deckFor,
+  openGame,
+  startedGame,
+  startGame,
+  tableOf,
+} from "../../tests/tabletop";
 import { api, internal } from "../_generated/api";
+import { freshCode } from "./seats";
 
 beforeEach(() => {
   vi.useFakeTimers();
@@ -11,7 +19,28 @@ afterEach(() => {
   vi.useRealTimers();
 });
 
-const DAY = 24 * 60 * 60 * 1000;
+const HOUR = 60 * 60 * 1000;
+const DAY = 24 * HOUR;
+
+test("the server gives each game a four-character code that finds it", async () => {
+  const backend = startBackend();
+  const { gameId, players } = await openGame(backend, ["Ana"]);
+  const other = await players[0].as.mutation(api.game.games.create, {});
+
+  const { code } = await tableOf(players[0], gameId);
+  expect(code).toMatch(/^[A-Z0-9]{4}$/);
+  expect((await tableOf(players[0], other)).code).not.toBe(code);
+  expect(
+    await players[0].as.query(api.game.games.findByCode, {
+      code: code.toLowerCase(),
+    })
+  ).toBe(gameId);
+});
+
+test("a fresh code is drawn again while a live game already has it", () => {
+  const rolls = [0, 0, 0, 0, 0.99, 0.99, 0.99, 0.99];
+  expect(freshCode(["AAAA"], () => rolls.shift()!)).toBe("9999");
+});
 
 test("a game seats two players at twenty life and refuses a third", async () => {
   const backend = startBackend();
@@ -61,6 +90,9 @@ test("the game starts when both players have chosen a deck", async () => {
   expect((await tableOf(ben, gameId)).players[0].ready).toBe(true);
   await choose(ben);
   expect(await tableOf(ana, gameId)).toMatchObject({ status: "playing" });
+  expect(
+    (await ana.as.query(api.game.log.recent, { gameId })).map((e) => e.message)
+  ).toEqual(["joined", "joined", "chose tattered-kithkin", "chose tattered-kithkin"]);
 });
 
 test("a player cannot bring someone else's deck", async () => {
@@ -78,7 +110,8 @@ test("a player can leave before the game starts, and the last one out closes it"
   const backend = startBackend();
   const { gameId, players } = await openGame(backend, ["Ana", "Ben"]);
   const [ana, ben] = players;
-  const find = () => ana.as.query(api.game.games.findByCode, { code: "ab12" });
+  const { code } = await tableOf(ana, gameId);
+  const find = () => ana.as.query(api.game.games.findByCode, { code });
 
   await ben.as.mutation(api.game.games.leave, { gameId });
   expect((await tableOf(ana, gameId)).players).toHaveLength(1);
@@ -87,6 +120,16 @@ test("a player can leave before the game starts, and the last one out closes it"
   await ana.as.mutation(api.game.games.leave, { gameId });
   expect(await find()).toBeNull();
   expect(await ben.as.mutation(api.game.games.join, { gameId })).toEqual({
+    kind: "refused",
+    reason: "closed",
+  });
+});
+
+test("a former player cannot rejoin a closed game", async () => {
+  const { backend, gameId, ana } = await startedGame();
+  await closeGame(backend, gameId);
+
+  expect(await ana.as.mutation(api.game.games.join, { gameId })).toEqual({
     kind: "refused",
     reason: "closed",
   });
@@ -103,28 +146,131 @@ test("nobody can leave once the game has started", async () => {
 test("an outsider sees who is seated but none of the table", async () => {
   const { backend, gameId } = await startedGame();
   const outsider = await signIn(backend, "Zed");
+  const refused = (call: Promise<unknown>) =>
+    expect(call).rejects.toThrow(rejection("NOT_A_PLAYER"));
 
   const table = await tableOf(outsider, gameId);
   expect(table.players.map((player) => player.side)).toEqual([null, null]);
   expect(await outsider.as.query(api.game.log.recent, { gameId })).toEqual([]);
-  await expect(
-    outsider.as.mutation(api.game.play.draw, { gameId, amount: 1 })
-  ).rejects.toThrow(rejection("NOT_A_PLAYER"));
+  expect(await outsider.as.query(api.game.presence.list, { gameId })).toEqual([]);
+  expect(await outsider.as.query(api.game.games.extras, { gameId })).toEqual({
+    tokens: [],
+    counters: [],
+  });
+  await refused(outsider.as.mutation(api.game.play.draw, { gameId, amount: 1 }));
+  await refused(outsider.as.mutation(api.game.play.setLife, { gameId, life: 1 }));
+  await refused(
+    outsider.as.mutation(api.game.tokens.create, {
+      gameId,
+      name: "Shard",
+      power: 1,
+      toughness: 1,
+    })
+  );
+  await refused(
+    outsider.as.mutation(api.game.counters.create, {
+      gameId,
+      position: { x: 0, y: 0 },
+    })
+  );
+  await refused(
+    outsider.as.mutation(api.game.setup.chooseDeck, {
+      gameId,
+      deckId: await deckFor(backend, outsider),
+    })
+  );
 });
 
-test("a game is found by its code for a week and then closes", async () => {
+test("a signed-out viewer or a malformed id gets nothing", async () => {
+  const { backend, gameId, ana } = await startedGame();
+
+  expect(await backend.query(api.game.games.get, { gameId })).toBeNull();
+  expect(
+    await ana.as.query(api.game.games.get, { gameId: "not-an-id" })
+  ).toBeNull();
+  expect(
+    await ana.as.query(api.game.log.recent, { gameId: "not-an-id" })
+  ).toEqual([]);
+  expect(
+    await ana.as.query(api.game.presence.list, { gameId: "not-an-id" })
+  ).toEqual([]);
+});
+
+test("an open game closes after a day without anyone around", async () => {
   const backend = startBackend();
   const { gameId, players } = await openGame(backend, ["Ana"]);
-  const find = () =>
-    players[0].as.query(api.game.games.findByCode, { code: "AB12" });
+  const status = async () => (await tableOf(players[0], gameId)).status;
+
+  vi.advanceTimersByTime(23 * HOUR);
+  await players[0].as.mutation(api.game.presence.heartbeat, { gameId });
+  vi.advanceTimersByTime(2 * HOUR);
+  await backend.mutation(internal.game.cleanup.closeAbandoned, {});
+  expect(await status()).toBe("open");
+
+  vi.advanceTimersByTime(DAY);
+  await backend.mutation(internal.game.cleanup.closeAbandoned, {});
+  expect(await status()).toBe("closed");
+});
+
+test("a game in play lasts a week after it was last seen", async () => {
+  const backend = startBackend();
+  const stale = await startGame(backend, ["Ana", "Ben"]);
+  const active = await startGame(backend, ["Cy", "Di"]);
+  const status = async (game: typeof stale) =>
+    (await tableOf(game.players[0], game.gameId)).status;
 
   vi.advanceTimersByTime(6 * DAY);
-  await backend.mutation(internal.game.cleanup.closeAbandoned, {});
-  expect(await find()).toBe(gameId);
-
+  await active.players[1].as.mutation(api.game.presence.heartbeat, {
+    gameId: active.gameId,
+  });
   vi.advanceTimersByTime(2 * DAY);
   await backend.mutation(internal.game.cleanup.closeAbandoned, {});
-  expect(await find()).toBeNull();
+
+  expect(await status(stale)).toBe("closed");
+  expect(await status(active)).toBe("playing");
+});
+
+test("a game closed for a week is purged with everything on its table", async () => {
+  const { backend, gameId, ana } = await startedGame();
+  await ana.as.mutation(api.game.tokens.create, {
+    gameId,
+    name: "Shard",
+    power: 1,
+    toughness: 1,
+  });
+  await ana.as.mutation(api.game.counters.create, {
+    gameId,
+    position: { x: 0, y: 0 },
+  });
+  await ana.as.mutation(api.game.presence.heartbeat, { gameId });
+  await closeGame(backend, gameId);
+  const rowCounts = () =>
+    backend.run(async (ctx) => ({
+      games: (await ctx.db.query("games").collect()).length,
+      players: (await ctx.db.query("gamePlayers").collect()).length,
+      log: (await ctx.db.query("gameLog").collect()).length,
+      tokens: (await ctx.db.query("gameTokens").collect()).length,
+      counters: (await ctx.db.query("gameCounters").collect()).length,
+      presence: (await ctx.db.query("gamePresence").collect()).length,
+    }));
+
+  vi.advanceTimersByTime(6 * DAY);
+  const recent = await startGame(backend, ["Cy", "Di"]);
+  await closeGame(backend, recent.gameId);
+  await backend.mutation(internal.game.cleanup.purgeClosed, {});
+  expect((await rowCounts()).games).toBe(2);
+
+  vi.advanceTimersByTime(2 * DAY);
+  await backend.mutation(internal.game.cleanup.purgeClosed, {});
+  expect(await rowCounts()).toEqual({
+    games: 1,
+    players: 2,
+    log: 4,
+    tokens: 0,
+    counters: 0,
+    presence: 0,
+  });
+  expect(await backend.run((ctx) => ctx.db.get(gameId))).toBeNull();
 });
 
 test("a heartbeat records when a player was last seen without changing the seats", async () => {
