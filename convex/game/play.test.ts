@@ -61,7 +61,10 @@ test("tapping turns a card on the battlefield and untap straightens all of them"
 
   await ana.as.mutation(api.game.play.tapCards, { gameId, cardIds });
   expect(await tapped()).toEqual([true, true]);
-  await ana.as.mutation(api.game.play.tapCards, { gameId, cardIds: [cardIds[0]] });
+  await ana.as.mutation(api.game.play.tapCards, {
+    gameId,
+    cardIds: [cardIds[0]],
+  });
   expect(await tapped()).toEqual([false, true]);
   await ana.as.mutation(api.game.play.untapAll, { gameId });
   expect(await tapped()).toEqual([false, false]);
@@ -72,7 +75,11 @@ test("a card that leaves the battlefield untaps, and one put on the library goes
   await ana.as.mutation(api.game.play.draw, { gameId, amount: 1 });
   const [card] = (await sideOf(ana, gameId)).hand!;
   const move = (to: "battlefield" | "library") =>
-    ana.as.mutation(api.game.play.moveCards, { gameId, cardIds: [card.id], to });
+    ana.as.mutation(api.game.play.moveCards, {
+      gameId,
+      cardIds: [card.id],
+      to,
+    });
 
   await move("battlefield");
   await ana.as.mutation(api.game.play.tapCards, { gameId, cardIds: [card.id] });
@@ -147,11 +154,13 @@ test("tokens and counters appear for both players and only their owner can chang
   });
   await ana.as.mutation(api.game.counters.create, {
     gameId,
-    position: { x: 40, y: 60 },
+    position: { x: 0.4, y: 0.6 },
   });
   const { tokens, counters } = await extras(ben);
   expect(tokens).toMatchObject([{ name: "Shard", power: 1, tapped: false }]);
-  expect(counters).toMatchObject([{ value: "0", position: { x: 40, y: 60 } }]);
+  expect(counters).toMatchObject([
+    { value: "0", position: { x: 0.4, y: 0.6 } },
+  ]);
 
   await expect(
     ben.as.mutation(api.game.tokens.remove, { tokenId: tokens[0].id })
@@ -173,15 +182,17 @@ test("tokens and counters appear for both players and only their owner can chang
   });
   await ana.as.mutation(api.game.counters.move, {
     counterId: counters[0].id,
-    position: { x: 5, y: 6 },
+    position: { x: 0.5, y: 0.6 },
   });
   expect(await extras(ben)).toMatchObject({
     tokens: [{ tapped: true }],
-    counters: [{ value: "3", position: { x: 5, y: 6 } }],
+    counters: [{ value: "3", position: { x: 0.5, y: 0.6 } }],
   });
 
   await ana.as.mutation(api.game.tokens.remove, { tokenId: tokens[0].id });
-  await ana.as.mutation(api.game.counters.remove, { counterId: counters[0].id });
+  await ana.as.mutation(api.game.counters.remove, {
+    counterId: counters[0].id,
+  });
   expect(await extras(ana)).toEqual({ tokens: [], counters: [] });
   expect(await logOf(ben, gameId)).toEqual([
     "created a Shard token",
@@ -218,9 +229,15 @@ test("a closed game is read only", async () => {
   await closed(ana.as.mutation(api.game.play.draw, { gameId, amount: 1 }));
   await closed(ana.as.mutation(api.game.play.shuffle, { gameId }));
   await closed(ana.as.mutation(api.game.play.untapAll, { gameId }));
-  await closed(ana.as.mutation(api.game.play.tapCards, { gameId, cardIds: [] }));
   await closed(
-    ana.as.mutation(api.game.play.moveCards, { gameId, cardIds: [], to: "hand" })
+    ana.as.mutation(api.game.play.tapCards, { gameId, cardIds: [] })
+  );
+  await closed(
+    ana.as.mutation(api.game.play.moveCards, {
+      gameId,
+      cardIds: [],
+      to: "hand",
+    })
   );
   await closed(ana.as.mutation(api.game.play.setLife, { gameId, life: 1 }));
   await closed(
@@ -231,14 +248,24 @@ test("a closed game is read only", async () => {
       toughness: 1,
     })
   );
-  await closed(ana.as.mutation(api.game.tokens.setTapped, { tokenId, tapped: true }));
+  await closed(
+    ana.as.mutation(api.game.tokens.setTapped, { tokenId, tapped: true })
+  );
   await closed(ana.as.mutation(api.game.tokens.remove, { tokenId }));
   await closed(
-    ana.as.mutation(api.game.counters.create, { gameId, position: { x: 0, y: 0 } })
+    ana.as.mutation(api.game.counters.create, {
+      gameId,
+      position: { x: 0, y: 0 },
+    })
   );
-  await closed(ana.as.mutation(api.game.counters.setValue, { counterId, value: "1" }));
   await closed(
-    ana.as.mutation(api.game.counters.move, { counterId, position: { x: 1, y: 1 } })
+    ana.as.mutation(api.game.counters.setValue, { counterId, value: "1" })
+  );
+  await closed(
+    ana.as.mutation(api.game.counters.move, {
+      counterId,
+      position: { x: 1, y: 1 },
+    })
   );
   await closed(ana.as.mutation(api.game.counters.remove, { counterId }));
 });

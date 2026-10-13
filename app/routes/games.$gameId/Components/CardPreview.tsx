@@ -6,6 +6,7 @@ const CardPreview = () => {
   const peekedCard = useGlobalStore((state) => state.peekedCard);
   return (
     <div
+      className="shrink-0"
       style={{
         width: 250 * PREVIEW_SCALE,
         height: 350 * PREVIEW_SCALE,

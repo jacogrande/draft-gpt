@@ -29,7 +29,7 @@ The backend is grouped by domain. Each folder holds its tables (`tables.ts`), it
 | `convex/lobby/` | Lobbies, members, seats, readiness, worldbuilding chat, presence | `roster.ts`, `away.ts` | `lobbies.ts`, `departure.ts`, `messages.ts`, `presence.ts`, `sightings.ts`, `cleanup.ts`, `access.ts` |
 | `convex/draft/` | Settings, packs, cards, picks, rounds, generation, absences | `seating.ts`, `passing.ts`, `absence.ts`, `parsing.ts`, `retry.ts`, `artPrompt.ts` | `start.ts`, `picks.ts`, `picking.ts`, `rounds.ts`, `absences.ts`, `absent.ts`, `autopilot.ts`, `returning.ts`, `generated.ts`, `scheduling.ts`, `failures.ts`, `generation.ts`, `settings.ts` |
 | `convex/deck/` | Decks | `zones.ts` | `decks.ts`, `drafted.ts`, `owned.ts` |
-| `convex/game/` | Games, seats, each player's zones, life, tokens, counters, the log, presence | `seats.ts`, `table.ts`, `extras.ts` | `games.ts`, `setup.ts`, `play.ts`, `tokens.ts`, `counters.ts`, `log.ts`, `presence.ts`, `cleanup.ts`, `access.ts` |
+| `convex/game/` | Games, seats, each player's zones, life, tokens, counters, the log, presence | `seats.ts`, `table.ts`, `extras.ts`, `placement.ts` | `games.ts`, `setup.ts`, `play.ts`, `tokens.ts`, `counters.ts`, `log.ts`, `presence.ts`, `cleanup.ts`, `access.ts` |
 
 `convex/card.ts` is the card face shared by draft and deck. `convex/errors.ts` lists every rejection code. `convex/draft/openai.ts` and `images.ts` are the only files that call outside services.
 
@@ -103,7 +103,7 @@ A heartbeat is only sent while the tab is visible, so a player who switches to a
 
 - **Convex functions are the boundary.** Every mutation checks the caller and their membership or ownership. Page guards in the browser are for navigation only.
 - **A lobby shows outsiders only its name and status.** `lobbies.get` sends the roster and any generation error to members alone; every other lobby, draft and game query returns nothing to a non-member, and malformed ids return nothing rather than throwing.
-- **Token and counter placement is per screen.** Token positions are not stored and counter positions are in the owner's screen coordinates. Step 4 of the roadmap.
+- **Table placement is shared.** Tokens and counters use bounded battlefield-relative positions, mirrored for the opponent and rescaled for each viewport. Cards stay in automatic rows. Legacy placement and UI behavior are described in [game-lobbies.md](specs/game-lobbies.md#table-view).
 - **A draft cannot be left.** A participant stays in the draft to the end; if they go away, their picks are made at random after the reconnect countdown. If the host is the one away, nobody can pause or skip and the countdown simply runs out.
 - **Test sign-in exists in the code** and is enabled only when `AUTH_TEST_LOGIN` is set and the deployment URL is localhost. `scripts/deploy.sh` refuses to deploy while the variable is set on production.
 - **The card-design model and prompts are the 2024 originals** (`gpt-4o`), moved without change. Rebuilding card creation is step 6 of the roadmap. Card art is current; see `docs/specs/card-art.md`.

@@ -10,6 +10,7 @@ const isDigit = (key: string) => /^\d$/.test(key);
 
 const isTypingTarget = (target: EventTarget | null) => {
   if (!(target instanceof HTMLElement)) return false;
+  if (target.closest("[role=menu]")) return true;
   if (target.isContentEditable) return true;
   return ["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName);
 };

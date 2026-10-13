@@ -1,3 +1,5 @@
+import { fromPixels } from "@convex/game/placement";
+import { useToast } from "~/hooks/useToast";
 import { useState } from "react";
 import { GiToken } from "react-icons/gi";
 import { GrStatusPlaceholderSmall } from "react-icons/gr";
@@ -15,10 +17,24 @@ const useContextMenu = () => {
   const [isContextMenuVisible, setIsContextMenuVisible] = useState(false);
   const [showTokenModal, setShowTokenModal] = useState(false);
   const gameId = useGameId();
+  const toast = useToast((state) => state.toast);
+  const [placement, setPlacement] = useState({ x: 0.5, y: 0.5 });
   const createCounter = useMutation(api.game.counters.create);
 
-  const handleContextMenu = (event: React.MouseEvent<HTMLDivElement>) => {
-    event.preventDefault(); // Prevent the default context menu from appearing
+  const handleContextMenu = (event: React.MouseEvent<HTMLElement>) => {
+    event.preventDefault();
+    const area = event.currentTarget
+      .closest("[data-field]")
+      ?.querySelector("[data-piece-area]")
+      ?.getBoundingClientRect();
+    if (area)
+      setPlacement(
+        fromPixels(
+          { x: event.clientX - area.x, y: event.clientY - area.y },
+          area,
+          { width: 32, height: 32 }
+        )
+      );
     setContextMenuPosition({ x: event.clientX, y: event.clientY });
     setIsContextMenuVisible(true);
   };
@@ -43,8 +59,11 @@ const useContextMenu = () => {
   ];
 
   const handleCounterCreation = async () => {
-    const position = contextMenuPosition || { x: 0, y: 0 };
-    await createCounter({ gameId, position });
+    try {
+      await createCounter({ gameId, position: placement });
+    } catch {
+      toast("Could not create counter", "error");
+    }
   };
 
   const component = (
@@ -57,6 +76,7 @@ const useContextMenu = () => {
         onClose={handleCloseContextMenu}
       />
       <TokenModal
+        position={placement}
         showTokenModal={showTokenModal}
         setShowTokenModal={setShowTokenModal}
       />

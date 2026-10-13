@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+import { useGlobalStore } from "~/hooks/useGlobalStore";
 import { useRouteError } from "@remix-run/react";
 import Page from "~/components/Page";
 import { requireAuth } from "~/components/RequireAuth";
@@ -20,6 +22,16 @@ const REFUSALS = {
 const GameRoute = () => {
   const gameId = useGameId();
   const game = useGame();
+  useEffect(() => {
+    const reset = () =>
+      useGlobalStore.setState({
+        selectedCards: [],
+        peekedCard: null,
+        pauseCommands: false,
+      });
+    reset();
+    return reset;
+  }, [gameId]);
   const admission = useJoinGame(gameId);
   const seat = game ? viewerSeat(game) : null;
   useGameHeartbeat(gameId, Boolean(seat));
@@ -39,10 +51,10 @@ const GameRoute = () => {
     return <GameNotice>{REFUSALS.closed}</GameNotice>;
   if (!seat) return <GameNotice>You are no longer in this game.</GameNotice>;
   return (
-    <div className="flex flex-col h-screen items-center justify-center p-4">
-      <div className="flex gap-4 flex-1 w-full h-full">
+    <div className="flex flex-col h-screen overflow-hidden p-3">
+      <div className="flex gap-3 flex-1 min-h-0 w-full">
         <GameDetails game={game} />
-        <div className="flex flex-1 flex-col gap-2">
+        <div className="flex flex-1 min-w-0 min-h-0 flex-col gap-2">
           {game.status === "playing" ? (
             <>
               <GameScreen game={game} />

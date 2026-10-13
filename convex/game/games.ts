@@ -129,7 +129,13 @@ export const get = query({
           }),
         }))
     );
-    return { id: game._id, code: game.code, status: game.status, viewerId, players };
+    return {
+      id: game._id,
+      code: game.code,
+      status: game.status,
+      viewerId,
+      players,
+    };
   },
 });
 
@@ -155,6 +161,7 @@ export const extras = query({
         power: token.power,
         toughness: token.toughness,
         tapped: token.tapped,
+        position: token.position,
       })),
       counters: counters.map((counter) => ({
         id: counter._id,
@@ -162,6 +169,7 @@ export const extras = query({
         value: counter.value,
         color: counter.color,
         position: counter.position,
+        positionSpace: counter.positionSpace,
       })),
     };
   },

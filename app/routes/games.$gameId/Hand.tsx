@@ -13,11 +13,15 @@ const Hand = ({ cards }: { cards: GameCard[] }) => {
 
   return (
     <div
-      className="flex gap-2 w-full border border-base-100 min-h-36"
+      data-hand
+      aria-label="Your hand"
+      className="flex gap-3 w-full min-w-0 shrink-0 overflow-x-auto border border-base-300 rounded-lg h-48 p-3"
       ref={handRef}
     >
       {cards.map((card) => (
-        <DraggableGameCard key={card.id} card={card} zone="hand" />
+        <div key={card.id} className="shrink-0">
+          <DraggableGameCard card={card} zone="hand" />
+        </div>
       ))}
     </div>
   );

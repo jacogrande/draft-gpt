@@ -1,5 +1,5 @@
-import { useState } from "react";
-import Draggable, { DraggableEventHandler } from "react-draggable";
+import { useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import Card from "~/components/Card";
 import type { Zone } from "@convex/game/table";
 import { GameCard } from "~/hooks/game/useGame";
@@ -8,121 +8,121 @@ import { useZoneRefs } from "~/hooks/game/useZoneRefs";
 import { useGlobalStore } from "~/hooks/useGlobalStore";
 import { GAME_SCALE } from "~/util/constants";
 
-type DraggableGameCardProps = {
-  card: GameCard;
-  zone: Zone;
-  childrenOverride?: React.ReactNode;
-};
-
-const ORIGIN = { x: 0, y: 0 };
-
 const DraggableGameCard = ({
   card,
   zone,
   childrenOverride,
-}: DraggableGameCardProps) => {
-  const [isDragging, setIsDragging] = useState(false);
+}: {
+  card: GameCard;
+  zone: Zone;
+  childrenOverride?: React.ReactNode;
+}) => {
+  const [pointer, setPointer] = useState<{ x: number; y: number } | null>(null);
+  const start = useRef<{ x: number; y: number } | null>(null);
+  const dragged = useRef(false);
   const { moveCards, tapCards } = useGameActions();
   const { battlefieldRef, deckRef, handRef, graveyardRef } = useZoneRefs();
-  const selectedCards = useGlobalStore((state) => state.selectedCards);
-  const setSelectedCards = useGlobalStore((state) => state.setSelectedCards);
-
-  type ZoneRef = React.RefObject<HTMLDivElement> | null;
-
-  const highlightZone = (ref: ZoneRef) => {
-    if (!ref?.current) return;
-    ref.current.classList.remove("border-base-100");
-    ref.current.classList.add("border-primary");
+  const selected = useGlobalStore((state) => state.selectedCards);
+  const select = useGlobalStore((state) => state.setSelectedCards);
+  const refs = {
+    hand: handRef,
+    library: deckRef,
+    graveyard: graveyardRef,
+    battlefield: battlefieldRef,
   };
-
-  const removeHighlight = (ref: ZoneRef) => {
-    if (!ref?.current) return;
-    ref.current.classList.add("border-base-100");
-    ref.current.classList.remove("border-primary");
-  };
-
-  const checkZone = (ref: ZoneRef, cardRect: DOMRect) => {
-    if (!ref?.current) return false;
-    const rect = ref.current.getBoundingClientRect();
-    const centerX = cardRect.x + cardRect.width / 2;
-    const centerY = cardRect.y + cardRect.height / 2;
-    return (
-      rect.x <= centerX &&
-      rect.x + rect.width >= centerX &&
-      rect.y <= centerY &&
-      rect.y + rect.height >= centerY
+  const clear = () =>
+    Object.values(refs).forEach((ref) =>
+      ref?.current?.classList.remove("ring-2", "ring-primary")
     );
-  };
-
-  const zoneUnder = (cardRect: DOMRect): Zone | null => {
-    if (checkZone(handRef, cardRect)) return "hand";
-    if (checkZone(deckRef, cardRect)) return "library";
-    if (checkZone(graveyardRef, cardRect)) return "graveyard";
-    if (checkZone(battlefieldRef, cardRect)) return "battlefield";
+  const targetAt = (x: number, y: number): Zone | null => {
+    const element = document.elementFromPoint(x, y);
+    for (const target of [
+      "hand",
+      "library",
+      "graveyard",
+      "battlefield",
+    ] as const) {
+      if (element && refs[target]?.current?.contains(element)) return target;
+    }
     return null;
   };
-
-  const refFor = (target: Zone) =>
-    ({
-      hand: handRef,
-      library: deckRef,
-      graveyard: graveyardRef,
-      battlefield: battlefieldRef,
-    }[target]);
-
-  const clearHighlights = () => {
-    removeHighlight(battlefieldRef);
-    removeHighlight(deckRef);
-    removeHighlight(handRef);
-    removeHighlight(graveyardRef);
-  };
-
-  const onDrag: DraggableEventHandler = (_e, data) => {
-    const target = zoneUnder(data.node.getBoundingClientRect());
-    clearHighlights();
-    if (target) highlightZone(refFor(target));
-  };
-
-  const handleMoveCard = async (targetZone: Zone) => {
-    const dragged = selectedCards.some((selected) => selected.id === card.id);
-    const cardIds = dragged
-      ? selectedCards.map((selected) => selected.id)
-      : [card.id];
-    setSelectedCards([]);
-    await moveCards(cardIds, targetZone);
-  };
-
-  const handleStop: DraggableEventHandler = (_e, data) => {
-    setIsDragging(false);
-    const target = zoneUnder(data.node.getBoundingClientRect());
-    clearHighlights();
-    if (target && target !== zone) void handleMoveCard(target);
-  };
-
-  const handleStart: DraggableEventHandler = () => {
-    setIsDragging(true);
-  };
-
-  const handleDoubleClick = () => tapCards([card.id]);
-
+  const ids = selected.some((item) => item.id === card.id)
+    ? selected.map((item) => item.id)
+    : [card.id];
   return (
-    <Draggable
-      axis="both"
-      handle=".handle"
-      position={ORIGIN}
-      grid={[1, 1]}
-      scale={1}
-      onStop={handleStop}
-      onDrag={onDrag}
-      onStart={handleStart}
-    >
-      <div onDoubleClick={handleDoubleClick}>
-        <div className={`transition-transform ${isDragging && "-rotate-12"}`}>
-          {childrenOverride || <Card card={card} scale={GAME_SCALE} />}
-        </div>
+    <>
+      <div
+        className="touch-none select-none"
+        style={{ opacity: pointer ? 0.35 : 1 }}
+        onPointerDown={(event) => {
+          if (event.button !== 0) return;
+          (event.target as HTMLElement).setPointerCapture(event.pointerId);
+          start.current = { x: event.clientX, y: event.clientY };
+          dragged.current = false;
+        }}
+        onPointerMove={(event) => {
+          if (!start.current) return;
+          if (
+            !dragged.current &&
+            Math.abs(event.clientX - start.current.x) +
+              Math.abs(event.clientY - start.current.y) <
+              5
+          )
+            return;
+          event.currentTarget.setPointerCapture(event.pointerId);
+          dragged.current = true;
+          setPointer({ x: event.clientX, y: event.clientY });
+          clear();
+          const target = targetAt(event.clientX, event.clientY);
+          if (target)
+            refs[target]?.current?.classList.add("ring-2", "ring-primary");
+        }}
+        onPointerCancel={() => {
+          start.current = null;
+          setPointer(null);
+          clear();
+        }}
+        onPointerUp={(event) => {
+          start.current = null;
+          setPointer(null);
+          clear();
+          if (event.currentTarget.hasPointerCapture(event.pointerId))
+            event.currentTarget.releasePointerCapture(event.pointerId);
+          if (!dragged.current) return;
+          const target = targetAt(event.clientX, event.clientY);
+          if (target && target !== zone) {
+            select([]);
+            void moveCards(ids, target);
+          }
+        }}
+        onClickCapture={(event) => {
+          if (dragged.current) {
+            event.stopPropagation();
+            dragged.current = false;
+          }
+        }}
+        onDoubleClick={() => {
+          if (zone === "battlefield") void tapCards([card.id]);
+        }}
+      >
+        {childrenOverride ?? <Card card={card} scale={GAME_SCALE} />}
       </div>
-    </Draggable>
+      {pointer &&
+        createPortal(
+          <div
+            className="fixed z-[200] pointer-events-none -rotate-6"
+            style={{ left: pointer.x - 55, top: pointer.y - 75 }}
+          >
+            <Card card={card} scale={GAME_SCALE} readOnly />
+            {ids.length > 1 && (
+              <span className="badge badge-primary absolute -top-2 -right-2">
+                {ids.length} cards
+              </span>
+            )}
+          </div>,
+          document.body
+        )}
+    </>
   );
 };
-
 export default DraggableGameCard;

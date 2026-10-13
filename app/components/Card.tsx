@@ -8,6 +8,7 @@ import { Card as CardType } from "~/util/types";
 type CardProps = {
   card?: CardType;
   disabled?: boolean;
+  readOnly?: boolean;
   scale?: number;
   showPickHighlight?: boolean;
 };
@@ -36,6 +37,7 @@ export const CARD_WIDTH_SCALED = DEFAULTS.WIDTH * DEFAULTS.SCALE;
 const Card = ({
   card,
   disabled,
+  readOnly,
   scale = DEFAULTS.SCALE,
   showPickHighlight,
 }: CardProps) => {
@@ -81,6 +83,7 @@ const Card = ({
   };
 
   const handleClick = () => {
+    if (readOnly) return;
     // check if shift key is currently pressed
     if (!shiftKeyPressed) {
       setSelectedCard(card);
@@ -108,12 +111,12 @@ const Card = ({
     );
     const cardIsSelectedInDraft =
       showPickHighlight && card.id === selectedCard?.id;
-    if (cardIsSelected || cardIsSelectedInDraft) {
+    if ((!readOnly && cardIsSelected) || cardIsSelectedInDraft) {
       classes.push("ring-2 ring-primary ring-offset-2");
     }
 
     // mute other cards when some are selected
-    if (selectedCards.length > 0 && !cardIsSelected) {
+    if (!readOnly && selectedCards.length > 0 && !cardIsSelected) {
       classes.push("opacity-50");
     }
 
@@ -139,6 +142,7 @@ const Card = ({
       disabled={disabled}
       onClick={handleClick}
       onMouseEnter={() => setPeekedCard(card)}
+      onFocus={() => setPeekedCard(card)}
     >
       {/* NAME AND COST */}
       <div className="flex justify-between items-center bg-base-100 w-full rounded-md py-1 px-2 border border-black">

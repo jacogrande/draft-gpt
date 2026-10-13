@@ -1,106 +1,60 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useGameActions } from "~/hooks/game/useGameActions";
+import CustomContextMenu from "./CustomContextMenu";
 
-type DeckDisplayProps = {
+const DeckDisplay = ({
+  count,
+  scale = 1,
+  own = false,
+}: {
   count: number;
   scale?: number;
   own?: boolean;
-};
-
-const DeckDisplay = ({ count, scale = 1, own = false }: DeckDisplayProps) => {
+}) => {
   const { shuffle, draw } = useGameActions();
-  const [isHovered, setIsHovered] = useState(false);
-  const isPlayerDeck = own;
-
-  const styles = useMemo(
-    () => ({
-      width: 250 * scale,
-      height: 350 * scale,
-      boxShadow: `-${7 * scale}px ${7 * scale}px 0px rgba(0, 0, 0, 1), ${
-        -14 * scale
-      }px ${14 * scale}px 0px rgba(0, 0, 0, 1), -${21 * scale}px ${
-        21 * scale
-      }px 0px rgba(0, 0, 0, 1)`,
-    }),
-    [scale]
-  );
-  const textStyles = useMemo(
-    () => ({
-      fontSize: 32 * scale,
-      lineHeight: 14 * scale,
-    }),
-    [scale]
-  );
-
-  const handleShuffle = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    (e.target as HTMLButtonElement).blur();
-    await shuffle();
-  };
-
-  const handleDrawCard =
-    (amount: number) => async (e: React.MouseEvent<HTMLButtonElement>) => {
-      (e.target as HTMLButtonElement).blur();
-      await draw(amount);
-    };
-
-  const drawOne = handleDrawCard(1);
-  const drawSeven = handleDrawCard(7);
-
+  const [menu, setMenu] = useState<{ x: number; y: number } | null>(null);
   return (
-    <div className="dropdown dropdown-top dropdown-end">
-      <div
-        style={styles}
-        role="button"
-        tabIndex={0}
-        className="relative rounded-md ml-4 bg-black"
+    <>
+      <button
+        aria-label={`${own ? "Your" : "Opponent"} library: ${count} cards`}
+        aria-disabled={!own}
         data-library-count={count}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
+        className="relative rounded-md bg-black border border-base-content/30 shrink-0"
+        style={{ width: 250 * scale, height: 350 * scale }}
+        onClick={(event) => {
+          if (!own) return;
+          const rect = event.currentTarget.getBoundingClientRect();
+          setMenu({ x: rect.left, y: rect.bottom });
+        }}
+        onContextMenu={(event) => {
+          if (!own) return;
+          event.preventDefault();
+          event.stopPropagation();
+          setMenu({ x: event.clientX, y: event.clientY });
+        }}
       >
         <img
           src="/textures/back.jpg"
-          alt="card back"
-          className={`rounded ${!isPlayerDeck && "rotate-180"}`}
+          alt=""
+          draggable={false}
+          className={`rounded ${own ? "" : "rotate-180"}`}
         />
-        <div
-          className={`absolute top-0 flex items-center justify-center left-0 w-full h-full bg-black transition-opacity rounded-md ${
-            isHovered ? "opacity-70" : "opacity-0"
-          }`}
-        >
-          <p className="text-white font-bold" style={textStyles}>
-            {count}
-          </p>
-        </div>
-
-        {isPlayerDeck && (
-          <ul className="dropdown-content flex flex-col shadow bg-base-100 rounded-md z-10 min-w-36 prose">
-            <li className="flex-1 w-full m-0 p-0">
-              <button
-                className="btn btn-ghost btn-sm w-full"
-                onClick={handleShuffle}
-              >
-                Shuffle
-              </button>
-            </li>
-            <li className="flex-1 w-full m-0 p-0">
-              <button className="btn btn-ghost btn-sm w-full" onClick={drawOne}>
-                Draw Card
-              </button>
-            </li>
-
-            <li className="flex-1 w-full m-0 p-0">
-              <button
-                className="btn btn-ghost btn-sm w-full"
-                onClick={drawSeven}
-              >
-                Draw Hand
-              </button>
-            </li>
-          </ul>
-        )}
-      </div>
-    </div>
+        <span className="absolute bottom-1 left-1 right-1 rounded bg-black/80 text-white text-xs">
+          Library · {count}
+        </span>
+      </button>
+      <CustomContextMenu
+        x={menu?.x ?? 0}
+        y={menu?.y ?? 0}
+        isVisible={menu !== null}
+        onClose={() => setMenu(null)}
+        menuItems={[
+          { label: "Draw card", action: () => void draw(1) },
+          { label: "Draw seven", action: () => void draw(7) },
+          { label: "Shuffle", action: () => void shuffle() },
+        ]}
+      />
+    </>
   );
 };
-
 export default DeckDisplay;

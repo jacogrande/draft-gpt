@@ -31,6 +31,7 @@ export type RejectionCode =
   | "INVALID_LIFE_TOTAL"
   | "INVALID_TOKEN"
   | "INVALID_COUNTER"
+  | "INVALID_POSITION"
   | "PIECE_NOT_FOUND";
 
 export function reject(code: RejectionCode): never {

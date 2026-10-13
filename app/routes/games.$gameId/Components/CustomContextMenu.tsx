@@ -1,12 +1,11 @@
-import React, { useEffect } from "react";
-
+import { ReactNode, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 export type ContextMenuItem = {
   label: string;
-  icon?: React.ReactNode;
+  icon?: ReactNode;
   action: () => void;
 };
-
-type CustomContextMenuProps = {
+type Props = {
   x: number;
   y: number;
   isVisible: boolean;
@@ -14,40 +13,47 @@ type CustomContextMenuProps = {
   onClose: () => void;
 };
 
-const CustomContextMenu: React.FC<CustomContextMenuProps> = ({
-  x,
-  y,
-  isVisible,
-  menuItems,
-  onClose,
-}) => {
+const CustomContextMenu = ({ x, y, isVisible, menuItems, onClose }: Props) => {
+  const ref = useRef<HTMLUListElement>(null);
+  const [point, setPoint] = useState({ x, y });
+  useLayoutEffect(() => {
+    if (!isVisible || !ref.current) return;
+    const rect = ref.current.getBoundingClientRect();
+    setPoint({
+      x: Math.max(8, Math.min(x, window.innerWidth - rect.width - 8)),
+      y: Math.max(8, Math.min(y, window.innerHeight - rect.height - 8)),
+    });
+    ref.current.querySelector("button")?.focus();
+  }, [x, y, isVisible]);
   useEffect(() => {
-    const handleClickOutside = () => {
-      onClose();
+    if (!isVisible) return;
+    const outside = (event: MouseEvent) => {
+      if (!ref.current?.contains(event.target as Node)) onClose();
     };
-
-    if (isVisible) {
-      document.addEventListener("click", handleClickOutside);
-    } else {
-      document.removeEventListener("click", handleClickOutside);
-    }
-
+    const key = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose();
+    };
+    document.addEventListener("mousedown", outside);
+    document.addEventListener("keydown", key);
+    window.addEventListener("resize", onClose);
     return () => {
-      document.removeEventListener("click", handleClickOutside);
+      document.removeEventListener("mousedown", outside);
+      document.removeEventListener("keydown", key);
+      window.removeEventListener("resize", onClose);
     };
   }, [isVisible, onClose]);
-
   if (!isVisible) return null;
-
-  return (
+  return createPortal(
     <ul
-      className="fixed bg-white border rounded-md gap-0 border-gray-300 shadow-md z-50"
-      style={{ top: y, left: x }}
+      role="menu"
+      ref={ref}
+      className="fixed z-[100] menu rounded-box bg-base-100 text-base-content border border-base-300 shadow-lg"
+      style={{ left: point.x, top: point.y }}
+      onContextMenu={(event) => event.preventDefault()}
     >
-      {menuItems.map((item, index) => (
-        <li key={index}>
+      {menuItems.map((item) => (
+        <li key={item.label}>
           <button
-            className="px-4 py-2 hover:bg-gray-100 cursor-pointer w-full flex items-center gap-2"
             onClick={() => {
               item.action();
               onClose();
@@ -58,8 +64,8 @@ const CustomContextMenu: React.FC<CustomContextMenuProps> = ({
           </button>
         </li>
       ))}
-    </ul>
+    </ul>,
+    document.body
   );
 };
-
 export default CustomContextMenu;

@@ -59,6 +59,7 @@ export const gameTables = {
     power: v.union(v.number(), v.null()),
     toughness: v.union(v.number(), v.null()),
     tapped: v.boolean(),
+    position: v.optional(v.object({ x: v.number(), y: v.number() })),
   }).index("by_game", ["gameId"]),
 
   gameCounters: defineTable({
@@ -67,6 +68,7 @@ export const gameTables = {
     value: v.string(),
     color: v.string(),
     position: v.object({ x: v.number(), y: v.number() }),
+    positionSpace: v.optional(v.literal("battlefield")),
   }).index("by_game", ["gameId"]),
 
   gameLog: defineTable({

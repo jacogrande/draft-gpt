@@ -1,83 +1,85 @@
 import { api } from "@convex/_generated/api";
+import { Position, Size } from "@convex/game/placement";
 import { useMutation } from "convex/react";
-import React, { useEffect, useRef, useState } from "react";
-import Draggable from "react-draggable";
+import { useState } from "react";
 import { GameToken } from "~/hooks/game/useGame";
 import { useToast } from "~/hooks/useToast";
-import TokenFace from "~/routes/games.$gameId/Components/TokenFace";
+import { GAME_SCALE } from "~/util/constants";
+import CustomContextMenu from "./CustomContextMenu";
+import PositionedPiece from "./PositionedPiece";
+import TokenFace from "./TokenFace";
 
-type DraggableGameTokenProps = { token: GameToken; scale: number };
-
-const HIDDEN = { isVisible: false, x: 0, y: 0 };
-
-const DraggableGameToken = ({ token, scale }: DraggableGameTokenProps) => {
+const DraggableGameToken = ({
+  token,
+  area,
+  position,
+  opponent,
+}: {
+  token: GameToken;
+  area: Size;
+  position: Position;
+  opponent: boolean;
+}) => {
   const setTapped = useMutation(api.game.tokens.setTapped);
   const remove = useMutation(api.game.tokens.remove);
+  const move = useMutation(api.game.tokens.move);
   const toast = useToast((state) => state.toast);
-  const [contextMenu, setContextMenu] = useState(HIDDEN);
-  const menuRef = useRef<HTMLDivElement>(null);
-
-  const handleContextMenu = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setContextMenu({ isVisible: true, x: e.clientX, y: e.clientY });
-  };
-
-  const handleDelete = () => {
-    remove({ tokenId: token.id }).catch(() =>
-      toast("Could not delete token", "error")
-    );
-    setContextMenu(HIDDEN);
-  };
-
-  const handleDoubleClick = () => {
-    setTapped({ tokenId: token.id, tapped: !token.tapped }).catch(() =>
-      toast("Could not tap token", "error")
-    );
-  };
-
-  useEffect(() => {
-    if (!contextMenu.isVisible) return;
-    const handleClickOutside = (e: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
-        setContextMenu(HIDDEN);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [contextMenu]);
-
+  const [menu, setMenu] = useState<Position | null>(null);
+  const act = (operation: Promise<unknown>) =>
+    operation.catch(() => toast("Could not update token", "error"));
   return (
-    <>
-      <Draggable>
-        <div
-          onContextMenu={handleContextMenu}
-          onDoubleClick={handleDoubleClick}
-        >
-          <TokenFace token={token} scale={scale} />
-        </div>
-      </Draggable>
-
-      {contextMenu.isVisible && (
-        <div
-          ref={menuRef}
-          className="fixed z-50 bg-white border border-gray-300 rounded shadow p-2"
-          style={{ top: contextMenu.y, left: contextMenu.x }}
-        >
-          <ul className="flex flex-col">
-            <li>
-              <button
-                className="px-4 py-2 hover:bg-gray-100 cursor-pointer w-full flex items-center gap-2"
-                onClick={handleDelete}
-              >
-                Delete
-              </button>
-            </li>
-          </ul>
-        </div>
-      )}
-    </>
+    <PositionedPiece
+      label="token"
+      position={position}
+      area={area}
+      size={{ width: 170, height: 170 }}
+      opponent={opponent}
+      onMove={
+        opponent
+          ? undefined
+          : (position) => move({ tokenId: token.id, position })
+      }
+    >
+      <div
+        className={opponent ? "rotate-180" : ""}
+        onDoubleClick={
+          opponent
+            ? undefined
+            : () =>
+                void act(
+                  setTapped({ tokenId: token.id, tapped: !token.tapped })
+                )
+        }
+        onContextMenu={
+          opponent
+            ? undefined
+            : (event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                setMenu({ x: event.clientX, y: event.clientY });
+              }
+        }
+      >
+        <TokenFace token={token} scale={GAME_SCALE} />
+      </div>
+      <CustomContextMenu
+        x={menu?.x ?? 0}
+        y={menu?.y ?? 0}
+        isVisible={menu !== null}
+        onClose={() => setMenu(null)}
+        menuItems={[
+          {
+            label: token.tapped ? "Untap token" : "Tap token",
+            action: () =>
+              void act(setTapped({ tokenId: token.id, tapped: !token.tapped })),
+          },
+          {
+            label: "Delete token",
+            action: () => void act(remove({ tokenId: token.id })),
+          },
+        ]}
+      />
+    </PositionedPiece>
   );
 };
-
 export default DraggableGameToken;

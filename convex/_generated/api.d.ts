@@ -48,6 +48,7 @@ import type * as game_counters from "../game/counters.js";
 import type * as game_extras from "../game/extras.js";
 import type * as game_games from "../game/games.js";
 import type * as game_log from "../game/log.js";
+import type * as game_placement from "../game/placement.js";
 import type * as game_play from "../game/play.js";
 import type * as game_presence from "../game/presence.js";
 import type * as game_seats from "../game/seats.js";
@@ -120,6 +121,7 @@ declare const fullApi: ApiFromModules<{
   "game/extras": typeof game_extras;
   "game/games": typeof game_games;
   "game/log": typeof game_log;
+  "game/placement": typeof game_placement;
   "game/play": typeof game_play;
   "game/presence": typeof game_presence;
   "game/seats": typeof game_seats;

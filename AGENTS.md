@@ -45,4 +45,5 @@ Friends draft a Magic-style card set that an LLM invents for them on the spot, b
 ## Working here
 
 - A change that makes one of these docs false updates the doc in the same commit.
+- Roadmap reviews check current code and commits before calling a feature unbuilt; distinguish pushed changes from production validation.
 - Add a line to this file when an agent makes a mistake the line would have prevented. Keep it under about 100 lines.

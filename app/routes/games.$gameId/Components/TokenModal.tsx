@@ -1,10 +1,13 @@
 import { api } from "@convex/_generated/api";
 import { useMutation } from "convex/react";
-import { useState } from "react";
+import { Position } from "@convex/game/placement";
+import { useToast } from "~/hooks/useToast";
+import { useEffect, useState } from "react";
 import { useGameId } from "~/hooks/game/useGame";
 import { useGlobalStore } from "~/hooks/useGlobalStore";
 
 type TokenModalProps = {
+  position: Position;
   showTokenModal: boolean;
   setShowTokenModal: (showTokenModal: boolean) => void;
 };
@@ -15,34 +18,52 @@ const EMPTY_FORM: TokenFormData = { name: "", power: "", toughness: "" };
 
 const stat = (typed: string) => (typed === "" ? null : Number(typed));
 
-const TokenModal = ({ showTokenModal, setShowTokenModal }: TokenModalProps) => {
+const TokenModal = ({
+  position,
+  showTokenModal,
+  setShowTokenModal,
+}: TokenModalProps) => {
   const [formData, setFormData] = useState<TokenFormData>(EMPTY_FORM);
   const setPauseCommands = useGlobalStore((state) => state.setPauseCommands);
   const gameId = useGameId();
+  const toast = useToast((state) => state.toast);
+  const [saving, setSaving] = useState(false);
+  useEffect(() => {
+    if (!showTokenModal) return;
+    setPauseCommands(true);
+    const escape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setShowTokenModal(false);
+    };
+    document.addEventListener("keydown", escape);
+    return () => {
+      setPauseCommands(false);
+      document.removeEventListener("keydown", escape);
+    };
+  }, [showTokenModal, setPauseCommands, setShowTokenModal]);
   const createToken = useMutation(api.game.tokens.create);
 
   const submitTokenForm = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    await createToken({
-      gameId,
-      name: formData.name,
-      power: stat(formData.power),
-      toughness: stat(formData.toughness),
-    });
-    setFormData(EMPTY_FORM);
-    closeModal();
+    setSaving(true);
+    try {
+      await createToken({
+        position,
+        gameId,
+        name: formData.name,
+        power: stat(formData.power),
+        toughness: stat(formData.toughness),
+      });
+      setFormData(EMPTY_FORM);
+      closeModal();
+    } catch {
+      toast("Could not create token", "error");
+    } finally {
+      setSaving(false);
+    }
   };
 
   const closeModal = () => {
     setShowTokenModal(false);
-  };
-
-  const handleFormFocus = () => {
-    setPauseCommands(true);
-  };
-
-  const handleFormBlur = () => {
-    setPauseCommands(false);
   };
 
   const handleChange =
@@ -69,27 +90,26 @@ const TokenModal = ({ showTokenModal, setShowTokenModal }: TokenModalProps) => {
         <form
           className="modal-box flex flex-col gap-4"
           onSubmit={submitTokenForm}
-          onFocus={handleFormFocus}
-          onBlur={handleFormBlur}
         >
           <h3 className="font-bold text-lg">Create Token</h3>
           <input
             className="input input-bordered"
             type="text"
             placeholder="Token Name"
+            maxLength={40}
             value={formData.name}
             onChange={handleChange("name")}
           />
           <div className="flex gap-4 w-full">
             <input
-              className="input input-bordered flex-1"
+              className="input input-bordered flex-1 min-w-0"
               type="number"
               placeholder="Power?"
               value={formData.power}
               onChange={handleChange("power")}
             />
             <input
-              className="input input-bordered flex-1"
+              className="input input-bordered flex-1 min-w-0"
               type="number"
               placeholder="Toughness?"
               value={formData.toughness}
@@ -100,7 +120,7 @@ const TokenModal = ({ showTokenModal, setShowTokenModal }: TokenModalProps) => {
             <button
               type="submit"
               className="btn btn-primary"
-              disabled={disabled}
+              disabled={disabled || saving}
             >
               Create
             </button>

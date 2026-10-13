@@ -11,7 +11,13 @@ import CardPreview from "~/routes/games.$gameId/Components/CardPreview";
 import InteractionLog from "~/routes/games.$gameId/InteractionLog";
 import LifeTotalEditor from "~/routes/games.$gameId/LifeTotalEditor";
 
-const PlayerName = ({ player, away }: { player: GamePlayer; away: boolean }) => (
+const PlayerName = ({
+  player,
+  away,
+}: {
+  player: GamePlayer;
+  away: boolean;
+}) => (
   <span className="flex items-center gap-2" data-away={away}>
     <span className={away ? "opacity-50" : ""}>{player.username}</span>
     {away && <span className="text-xs italic opacity-50">away</span>}
@@ -54,9 +60,9 @@ const GameDetails = ({ game }: { game: GameView }) => {
   );
 
   const gameStatus = (
-    <div className="flex flex-col gap-8 flex-1">
+    <div className="flex flex-col gap-4 flex-1 min-h-0">
       <CardPreview />
-      <ul className="flex flex-col gap-8">
+      <ul className="flex flex-col gap-3">
         {game.players.map((player) => (
           <li key={player.userId} className="flex flex-col gap-2">
             <Subheading>
@@ -74,8 +80,8 @@ const GameDetails = ({ game }: { game: GameView }) => {
   );
 
   return (
-    <div className="flex flex-col gap-4 h-full w-[264px] rounded-lg p-4">
-      <h1 className="text-2xl font-bold text-primary mb-8 flex items-center gap-2">
+    <div className="flex flex-col gap-3 h-full w-[250px] shrink-0 overflow-y-auto rounded-lg p-2">
+      <h1 className="text-2xl font-bold text-primary mb-2 flex items-center gap-2">
         {game.code}
         <div className="tooltip" data-tip="Copy Game ID">
           <button onClick={onCopy} aria-label="Copy Game ID">

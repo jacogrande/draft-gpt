@@ -24,7 +24,21 @@ A game is a two-player table found by a four-character code. It lives in Convex 
 
 ## Not covered
 
-Still no turns, phases, or legality checks (`product-vision.md`). Token positions are not stored, and counter positions are in the owner's screen coordinates; both belong to step 4.
+Still no turns, phases, or legality checks (`product-vision.md`). Free card placement, card attachments, and rules enforcement are outside the table view.
+
+## Table view
+
+Implemented locally on 2026-10-12 (roadmap step 4).
+
+Both fields use the same component. Cards are arranged automatically in land and spell rows. The opponent's rows reverse their order and their card faces rotate across the table. Tapped cards reserve enough space for their rotated face. Hands and rows scroll horizontally inside the page; the table and sidebar scroll vertically when needed.
+
+Tokens and counters occupy a shared area within their owner's battlefield. Positions are fractions from 0 to 1 of the available travel in each axis, accounting for the piece's size. `game/placement.ts` clamps finite positions, converts between fractions and pixels, and mirrors both axes for the opponent. A resize observer measures each viewer's own area. Moving a piece commits once at release and writes a log entry; failed saves revert to the server position and show a toast. Incoming changes update other sessions without a refresh.
+
+Tokens have an optional `position`. Older tokens without one receive deterministic starting positions. Counters retain their `position` field and add `positionSpace: "battlefield"`; older viewport coordinates cannot be recovered across unknown screen sizes, so those counters receive deterministic starting positions until moved. No destructive data migration is needed.
+
+Both players can open either graveyard and preview its cards. Only the owner gets drag and movement controls. The opponent's cards cannot be selected for the viewer's keyboard commands. Hands and library orders retain the server's existing privacy boundary.
+
+Card drags use a floating preview above scroll containers. The pointer chooses a destination, with hand, library, and graveyard checked before the broader battlefield. A selected group moves together; a same-zone or invalid drop returns to the automatic layout. Library and context menus render above the table, fit inside the viewport, and use the active theme.
 
 ## Acceptance
 

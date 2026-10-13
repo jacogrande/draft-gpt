@@ -4,6 +4,7 @@ import { mutation, MutationCtx } from "../_generated/server";
 import { reject } from "../errors";
 import { requireSide } from "./access";
 import { COUNTER_COLORS, parseCounterValue } from "./extras";
+import { parsePosition } from "./placement";
 import { record } from "./log";
 
 const position = v.object({ x: v.number(), y: v.number() });
@@ -29,7 +30,8 @@ export const create = mutation({
       ownerId: userId,
       value: "0",
       color,
-      position,
+      position: parsePosition(position) ?? reject("INVALID_POSITION"),
+      positionSpace: "battlefield",
     });
     await record(ctx, gameId, userId, ["created a counter"]);
   },
@@ -51,7 +53,10 @@ export const move = mutation({
   args: { counterId: v.id("gameCounters"), position },
   handler: async (ctx, { counterId, position }) => {
     const counter = await requireOwnCounter(ctx, counterId);
-    await ctx.db.patch(counterId, { position });
+    await ctx.db.patch(counterId, {
+      position: parsePosition(position) ?? reject("INVALID_POSITION"),
+      positionSpace: "battlefield",
+    });
     await record(ctx, counter.gameId, counter.ownerId, ["moved a counter"]);
   },
 });
