@@ -7,9 +7,9 @@ There are bugs, bad features, outdated api calls, old llm model invocations, etc
 
 ## Current position (2026-10-12)
 
-Steps 1 and 3 are complete; step 4 is implemented and verified locally. Step 2 needs a full real production draft to close its acceptance check. Step 5 has delivered deckbuilder improvements, recorded below. Step 6's card-design rebuild has not started, although card art has already been upgraded separately.
+Steps 1 and 3 are complete; step 4 is implemented and verified locally. Step 2 needs a full real production draft to close its acceptance check. Step 5 is also implemented and verified locally, with the final gaps fixed after an acceptance review. Step 6's card-design rebuild has not started, although card art has already been upgraded separately.
 
-The earlier work was checked through `19bc8b6`, confirmed on remote `main`; step 4 is now implemented in the working tree. Pushed code does not by itself establish what is deployed to production.
+Step 4 was committed and pushed as `5eab01e`. The step 5 completion work follows it. Pushed code does not by itself establish what is deployed to production.
 
 ## Step 1: Draft Lobbies
 
@@ -60,17 +60,17 @@ Backend integration coverage verifies ownership, shared placement, bounds, inval
 
 ## Step 5: The deckbuilder
 
-Status: improvements implemented and pushed; broader visual polish has no defined remaining acceptance scope.
+Status: implemented and verified locally (2026-10-12); not yet deployed. See [deckbuilder.md](deckbuilder.md) for behavior and acceptance.
 
-Already available: mainboard/sideboard editing, grouping by mana value, individual basic-land controls, and automatic Add Lands using the deck's mana requirements. Auto-add lands is not an unbuilt roadmap item.
+The earlier migration and October 11 fixes delivered persistent editing, Add Lands, loading/not-found states, basic-land limits, and drag snapback. The completion audit found remaining correctness and usability gaps, now fixed:
 
-Delivered during the refactor:
+- Automatic lands are calculated transactionally from the current mainboard. Repeated or concurrent calls fill only the missing slots up to 17, account for existing basics and nonbasic land counts, and ignore sideboard costs.
+- Braced, hybrid, multi-digit, and variable costs parse consistently for land suggestions and mana-value grouping. Decks without colored costs get manual-land guidance instead of a crash.
+- Stacks and List views include counts, land/spell totals, previews, clear mana-value headings, and explicit move/remove controls.
+- Independent mainboard/sidebar scrolling keeps a large deck usable. Dragging uses the current pointer target after scrolling or resizing; the preview no longer accidentally accepts sideboard drops.
+- Rejected moves show an error and preserve the saved cards. Individual land controls respect the existing storage cap.
 
-- Convex-backed deck reads and transactional edits, plus the fix that prevents Add Lands from duplicating a deck that already has enough lands (`048352c`).
-- Loading and not-found states, and sideboard drag snapback (`e9ab90d`, 2026-10-11).
-- Malformed-id handling, basic-land limits, safe duplicate handling, and integration tests (`76cbfb8`, `e6a75e7`, 2026-10-11).
-
-The original request for "better views" and "good feel good vibes" did not define a completion check. Specify any further deckbuilder work after step 4's table review rather than treating the delivered features as pending or declaring an unspecified redesign complete.
+Browser acceptance covered editing out and back, refresh persistence, basic removal and exact auto-fill, manual additions, both views and themes, scrolling/resizing, invalid drops, rejection recovery, and an outsider's not-found screen. Integration tests cover land allocation, repeated/concurrent calls, ownership, and storage limits. This closes the original step 5 scope; additional deckbuilder features need their own requirements.
 
 ## Step 6: Card creation
 

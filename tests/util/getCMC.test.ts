@@ -16,3 +16,10 @@ test("returns correct CMC for complex mana costs", () => {
   expect(getCMC("2BU")).toBe(4);
   expect(getCMC("XR")).toBe(1);
 });
+
+test("groups multi-digit, braced, hybrid and variable costs correctly", () => {
+  expect(getCMC("12U")).toBe(13);
+  expect(getCMC("{2}{W}{U}")).toBe(4);
+  expect(getCMC("{X}{W/U}{2/B}{G/P}")).toBe(4);
+  expect(getCMC("{C}{S}")).toBe(2);
+});

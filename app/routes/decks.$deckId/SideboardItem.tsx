@@ -1,39 +1,23 @@
-import { api } from "@convex/_generated/api";
-import { useMutation } from "convex/react";
 import ManaCost from "~/components/ManaCost";
-import { deckIdOf, useDeckStore } from "~/hooks/useDeck";
 import { useGlobalStore } from "~/hooks/useGlobalStore";
 import { Card } from "~/util/types";
+import { useDeckEdits } from "./useDeckEdits";
 
 const SideboardItem = ({ card }: { card: Card }) => {
-  const moveToMainboard = useMutation(api.deck.decks.moveToMainboard);
-  const { deck } = useDeckStore();
-  const setPeekedCard = useGlobalStore((state) => state.setPeekedCard);
-
-  const handleMouseOver = () => {
-    setPeekedCard(card);
-  };
-
-  const returnToMainboard = async () => {
-    if (!card || !deck) return;
-    await moveToMainboard({ deckId: deckIdOf(deck), cardId: card.id });
-  };
-
+  const { toMainboard } = useDeckEdits();
+  const peek = useGlobalStore((state) => state.setPeekedCard);
   return (
-    <button className="flex" onClick={returnToMainboard}>
-      <li
-        onMouseOver={handleMouseOver}
-        onFocus={handleMouseOver}
-        key={card.id}
-        className="flex items-center flex-1 justify-between rounded-lg tracking-tight border px-2 py-1 text-sm"
-      >
-        <p>{card.name}</p>
-        <div className="text-2xs">
-          <ManaCost manaCost={card.mana_cost} />
-        </div>
-      </li>
+    <button
+      className="flex items-center justify-between gap-2 rounded border border-base-300 p-2 text-sm text-left hover:bg-base-200 w-full"
+      title="Return to mainboard"
+      aria-label={`Return ${card.name} to mainboard`}
+      onMouseEnter={() => peek(card)}
+      onFocus={() => peek(card)}
+      onClick={() => void toMainboard(card.id)}
+    >
+      <span>{card.name}</span>
+      <ManaCost manaCost={card.mana_cost} />
     </button>
   );
 };
-
 export default SideboardItem;

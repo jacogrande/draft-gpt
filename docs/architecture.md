@@ -28,7 +28,7 @@ The backend is grouped by domain. Each folder holds its tables (`tables.ts`), it
 | `convex/identity/` | Users and usernames | `username.ts` | `users.ts`, `viewer.ts` |
 | `convex/lobby/` | Lobbies, members, seats, readiness, worldbuilding chat, presence | `roster.ts`, `away.ts` | `lobbies.ts`, `departure.ts`, `messages.ts`, `presence.ts`, `sightings.ts`, `cleanup.ts`, `access.ts` |
 | `convex/draft/` | Settings, packs, cards, picks, rounds, generation, absences | `seating.ts`, `passing.ts`, `absence.ts`, `parsing.ts`, `retry.ts`, `artPrompt.ts` | `start.ts`, `picks.ts`, `picking.ts`, `rounds.ts`, `absences.ts`, `absent.ts`, `autopilot.ts`, `returning.ts`, `generated.ts`, `scheduling.ts`, `failures.ts`, `generation.ts`, `settings.ts` |
-| `convex/deck/` | Decks | `zones.ts` | `decks.ts`, `drafted.ts`, `owned.ts` |
+| `convex/deck/` | Decks | `zones.ts`, `manaBase.ts` | `decks.ts`, `drafted.ts`, `owned.ts` |
 | `convex/game/` | Games, seats, each player's zones, life, tokens, counters, the log, presence | `seats.ts`, `table.ts`, `extras.ts`, `placement.ts` | `games.ts`, `setup.ts`, `play.ts`, `tokens.ts`, `counters.ts`, `log.ts`, `presence.ts`, `cleanup.ts`, `access.ts` |
 
 `convex/card.ts` is the card face shared by draft and deck. `convex/errors.ts` lists every rejection code. `convex/draft/openai.ts` and `images.ts` are the only files that call outside services.
@@ -95,7 +95,7 @@ A lobby's `status` moves `open` → `generating` → `drafting` → (`generating
 
 A heartbeat is only sent while the tab is visible, so a player who switches to another tab for a minute counts as disconnected.
 
-**Decks.** A deck is created by the first pick of a draft. The deckbuilder moves cards between mainboard and sideboard and adds basic lands.
+**Decks.** A deck is created by the first pick of a draft. The deckbuilder provides stacks and list views, moves cards between mainboard and sideboard, and adds basic lands individually or with a transactional top-up to 17 lands. See [deckbuilder.md](specs/deckbuilder.md) for allocation and interaction details.
 
 **Play.** Creating a game seats its creator; the other player joins by code or URL, and `join` is idempotent like a lobby's. Each player chooses a deck, the server shuffles a copy of its mainboard into their library, and the game starts when both have chosen. Every table action is one mutation that rewrites the acting player's own `gamePlayers` row and writes the log, so two players acting at once never overwrite each other. `games.get` sends each viewer their own hand and only counts for the opponent's hand and both libraries. Details are in `docs/specs/game-lobbies.md`.
 

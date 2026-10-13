@@ -13,6 +13,7 @@ import type * as card from "../card.js";
 import type * as crons from "../crons.js";
 import type * as deck_decks from "../deck/decks.js";
 import type * as deck_drafted from "../deck/drafted.js";
+import type * as deck_manaBase from "../deck/manaBase.js";
 import type * as deck_owned from "../deck/owned.js";
 import type * as deck_tables from "../deck/tables.js";
 import type * as deck_zones from "../deck/zones.js";
@@ -73,6 +74,7 @@ import type * as lobby_presence from "../lobby/presence.js";
 import type * as lobby_roster from "../lobby/roster.js";
 import type * as lobby_sightings from "../lobby/sightings.js";
 import type * as lobby_tables from "../lobby/tables.js";
+import type * as mana from "../mana.js";
 
 import type {
   ApiFromModules,
@@ -86,6 +88,7 @@ declare const fullApi: ApiFromModules<{
   crons: typeof crons;
   "deck/decks": typeof deck_decks;
   "deck/drafted": typeof deck_drafted;
+  "deck/manaBase": typeof deck_manaBase;
   "deck/owned": typeof deck_owned;
   "deck/tables": typeof deck_tables;
   "deck/zones": typeof deck_zones;
@@ -146,6 +149,7 @@ declare const fullApi: ApiFromModules<{
   "lobby/roster": typeof lobby_roster;
   "lobby/sightings": typeof lobby_sightings;
   "lobby/tables": typeof lobby_tables;
+  mana: typeof mana;
 }>;
 
 /**

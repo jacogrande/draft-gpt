@@ -70,7 +70,11 @@ const DeckRow = ({ deck }: { deck: Deck }) => {
       <td>{new Date(deck.createdAt).toLocaleString()}</td>
       <td>
         <div className="tooltip" data-tip="Edit">
-          <Link to={`/decks/${deck.id}`} className="link link-primary">
+          <Link
+            to={`/decks/${deck.id}`}
+            aria-label={`Edit ${deck.name}`}
+            className="link link-primary"
+          >
             <PencilSquareIcon className="h-5 w-5" />
           </Link>
         </div>

@@ -3,6 +3,7 @@ import { Doc, Id } from "../_generated/dataModel";
 import { mutation, MutationCtx, query } from "../_generated/server";
 import { reject } from "../errors";
 import { findViewer, requireViewer } from "../identity/viewer";
+import { planBasics } from "./manaBase";
 import { findOwnDeck } from "./owned";
 import { toMainboard, toSideboard, withBasics } from "./zones";
 
@@ -91,5 +92,17 @@ export const addBasics = mutation({
     await ctx.db.patch(deckId, {
       cards: withBasics(deck.cards, lands, () => crypto.randomUUID()),
     });
+  },
+});
+
+export const autoAddBasics = mutation({
+  args: { deckId: v.id("decks") },
+  handler: async (ctx, { deckId }) => {
+    const deck = await requireOwnDeck(ctx, deckId);
+    const plan = planBasics(deck.cards);
+    await ctx.db.patch(deckId, {
+      cards: withBasics(deck.cards, plan.lands, () => crypto.randomUUID()),
+    });
+    return { added: plan.lands.length, reason: plan.reason };
   },
 });

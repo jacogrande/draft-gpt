@@ -38,6 +38,7 @@ Friends draft a Magic-style card set that an LLM invents for them on the spot, b
 - The Convex rewrite, its engineering rules, and what is left to deploy it: `docs/specs/convex-rewrite.md`
 - Why lobbies were rebuilt: `docs/specs/draft-lobby-refactor.md`
 - How the play table's seats, views, and log behave: `docs/specs/game-lobbies.md`
+- Deck editing, views, and automatic lands: `docs/specs/deckbuilder.md`
 - Planned work: `docs/roadmap.md`
 - How to write and maintain these docs: `docs/documentation-guide.md`
 - Design history: `.notes/`. A journal that predates the rewrite; where it disagrees with `docs/` or the code, it is out of date.

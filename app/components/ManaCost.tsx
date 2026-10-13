@@ -1,3 +1,4 @@
+import { manaSymbols } from "@convex/mana";
 import { SYMBOL_MAP } from "~/util/constants";
 
 interface ManaCostProps {
@@ -6,16 +7,6 @@ interface ManaCostProps {
 }
 
 const SIZE = { iconDiameter: 14, fontSize: 10, lineHeight: 14 };
-
-const tokenize = (manaCost: string): string[] => {
-  const tokens: string[] = [];
-  const pattern = /\{([^}]*)\}|./g;
-  for (const match of manaCost.matchAll(pattern)) {
-    const token = (match[1] ?? match[0]).trim();
-    if (token !== "") tokens.push(token);
-  }
-  return tokens;
-};
 
 const isGeneric = (token: string) => /^\d+$/.test(token) || token === "X";
 
@@ -51,7 +42,7 @@ const ManaCost = ({ manaCost, scale = 1 }: ManaCostProps) => {
 
   return (
     <div className="flex items-center gap-1">
-      {tokenize(manaCost).map((token, i) =>
+      {manaSymbols(manaCost).map((token, i) =>
         isGeneric(token) ? (
           <Badge key={token + i} value={token} />
         ) : (

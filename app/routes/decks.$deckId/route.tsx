@@ -1,5 +1,6 @@
 import { Link, useParams, useRouteError } from "@remix-run/react";
-import Heading from "~/components/Heading";
+import { useEffect } from "react";
+import { useGlobalStore } from "~/hooks/useGlobalStore";
 import Page from "~/components/Page";
 import { requireAuth } from "~/components/RequireAuth";
 import useDeck from "~/hooks/useDeck";
@@ -10,6 +11,12 @@ import Sideboard from "~/routes/decks.$deckId/Sideboard";
 const Deck = () => {
   const deckId = useParams().deckId as string;
   const { deck } = useDeck(deckId);
+  useEffect(() => {
+    const reset = () =>
+      useGlobalStore.setState({ selectedCards: [], peekedCard: null });
+    reset();
+    return reset;
+  }, [deckId]);
   if (deck === undefined)
     return (
       <Page>
@@ -18,22 +25,21 @@ const Deck = () => {
     );
   if (deck === null) return <DeckNotice>Deck not found.</DeckNotice>;
   return (
-    <Page>
-      <header className="w-full flex items-center justify-start">
-        <Link
-          to="/"
-          className="text-xl font-bold text-primary flex items-center gap-2 flex-1"
-        >
-          draftGPT
+    <div className="h-screen overflow-hidden p-4 flex flex-col gap-4">
+      <header className="flex items-center justify-between gap-4">
+        <Link to="/decks" className="link link-primary text-sm">
+          ← Your decks
         </Link>
-        <Heading className="flex-1 text-center">Edit Deck</Heading>
-        <div className="flex-1"></div>
+        <h1 className="text-xl font-bold truncate">{deck.name}</h1>
+        <Link to="/" className="link link-primary text-sm">
+          Home
+        </Link>
       </header>
-      <div className="flex w-full gap-8 justify-between flex-1 h-full relative">
+      <div className="flex gap-5 flex-1 min-h-0 min-w-0">
         <Sideboard />
         <Mainboard />
       </div>
-    </Page>
+    </div>
   );
 };
 

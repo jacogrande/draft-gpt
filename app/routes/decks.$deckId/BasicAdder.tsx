@@ -1,3 +1,4 @@
+import { MAX_DECK_SIZE } from "@convex/deck/zones";
 import { api } from "@convex/_generated/api";
 import { PlusIcon } from "@heroicons/react/16/solid";
 import { useMutation } from "convex/react";
@@ -23,6 +24,12 @@ const BasicAdder = ({ type }: { type: BasicLand }) => {
     <button
       className="btn btn-xs flex items-center justify-start"
       onClick={handleClick}
+      disabled={!deck || deck.cards.length >= MAX_DECK_SIZE}
+      title={
+        deck && deck.cards.length >= MAX_DECK_SIZE
+          ? "Remove a card before adding more basics"
+          : `Add ${type}`
+      }
     >
       <PlusIcon className="h-4 w-4" />
       <span className="ml-2">{type}</span>

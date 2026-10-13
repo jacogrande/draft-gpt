@@ -1,89 +1,75 @@
-import { api } from "@convex/_generated/api";
-import { useMutation } from "convex/react";
-import Draggable, { DraggableEventHandler } from "react-draggable";
+import { useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import Card from "~/components/Card";
 import { Card as CardType } from "~/util/types";
-import { useDeckEditorStore } from "~/routes/decks.$deckId/store";
-import { deckIdOf, useDeckStore } from "~/hooks/useDeck";
-import { useState } from "react";
-import { useGlobalStore } from "~/hooks/useGlobalStore";
-import { useToast } from "~/hooks/useToast";
+import { useDeckEdits } from "./useDeckEdits";
 
-const ORIGIN = { x: 0, y: 0 };
-const SCALE = 0.65;
-
+export const DECK_CARD_SCALE = 0.65;
 const DraggableCard = ({ card }: { card: CardType }) => {
-  const [isDragging, setIsDragging] = useState(false);
-  const sideboardRect = useDeckEditorStore((state) => state.sideboardRect);
-  const sideboardRef = useDeckEditorStore((state) => state.sideboardRef);
-  const deck = useDeckStore((state) => state.deck);
-  const selectedCards = useGlobalStore((state) => state.selectedCards);
-  const toast = useToast((state) => state.toast);
-  const moveToSideboard = useMutation(api.deck.decks.moveToSideboard);
-
-  const isCardInSideboard = (rect: DOMRect) => {
-    if (!sideboardRect) return false;
-    return (
-      rect.x >= sideboardRect.x &&
-      rect.x <= sideboardRect.x + sideboardRect.width &&
-      rect.y >= sideboardRect.y &&
-      rect.y <= sideboardRect.y + sideboardRect.height
-    );
-  };
-
-  const highlightSideboard = () => {
-    if (!sideboardRef) return;
-    sideboardRef.classList.add("border-primary");
-  };
-
-  const removeHighlight = () => {
-    if (!sideboardRef) return;
-    sideboardRef.classList.remove("border-primary");
-  };
-
-  const onDrag: DraggableEventHandler = (_e, data) => {
-    const { node } = data;
-    const rect = node.getBoundingClientRect();
-    if (!sideboardRect || !sideboardRef) return;
-    if (!isCardInSideboard(rect)) {
-      removeHighlight();
-    } else {
-      highlightSideboard();
-    }
-  };
-
-  const onStop: DraggableEventHandler = (_e, data) => {
-    setIsDragging(false);
-    removeHighlight();
-    if (!deck) return;
-    const { node } = data;
-    const rect = node.getBoundingClientRect();
-    if (!sideboardRect) return;
-    if (!isCardInSideboard(rect)) return;
-    if (selectedCards.length > 0) return;
-    moveToSideboard({ deckId: deckIdOf(deck), cardId: card.id }).catch(() =>
-      toast("Could not move card to the sideboard", "error")
-    );
-  };
-
+  const { toSideboard } = useDeckEdits();
+  const start = useRef<{ x: number; y: number } | null>(null);
+  const moved = useRef(false);
+  const [pointer, setPointer] = useState<{ x: number; y: number } | null>(null);
+  const sideboard = () => document.querySelector("[data-deck-sideboard]");
+  const isOver = (x: number, y: number) =>
+    Boolean(document.elementFromPoint(x, y)?.closest("[data-deck-sideboard]"));
+  const clear = () => sideboard()?.classList.remove("ring-2", "ring-primary");
   return (
-    <Draggable
-      axis="both"
-      handle=".handle"
-      position={ORIGIN}
-      grid={[10, 10]}
-      scale={1}
-      onStop={onStop}
-      onDrag={onDrag}
-      onStart={() => setIsDragging(true)}
-    >
-      <div>
-        <div className={`transition-transform ${isDragging && "-rotate-12"}`}>
-          <Card card={card} scale={SCALE} />
-        </div>
+    <>
+      <div
+        className="touch-none select-none"
+        style={{ opacity: pointer ? 0.35 : 1 }}
+        onPointerDown={(event) => {
+          if (event.button !== 0) return;
+          (event.target as Element).setPointerCapture(event.pointerId);
+          start.current = { x: event.clientX, y: event.clientY };
+          moved.current = false;
+        }}
+        onPointerMove={(event) => {
+          if (!start.current) return;
+          if (
+            !moved.current &&
+            Math.abs(event.clientX - start.current.x) +
+              Math.abs(event.clientY - start.current.y) <
+              5
+          )
+            return;
+          moved.current = true;
+          event.currentTarget.setPointerCapture(event.pointerId);
+          setPointer({ x: event.clientX, y: event.clientY });
+          clear();
+          if (isOver(event.clientX, event.clientY))
+            sideboard()?.classList.add("ring-2", "ring-primary");
+        }}
+        onPointerCancel={() => {
+          start.current = null;
+          setPointer(null);
+          clear();
+        }}
+        onPointerUp={(event) => {
+          start.current = null;
+          setPointer(null);
+          clear();
+          if (event.currentTarget.hasPointerCapture(event.pointerId))
+            event.currentTarget.releasePointerCapture(event.pointerId);
+          if (moved.current && isOver(event.clientX, event.clientY))
+            void toSideboard(card.id);
+        }}
+        onDoubleClick={() => void toSideboard(card.id)}
+      >
+        <Card card={card} scale={DECK_CARD_SCALE} readOnly />
       </div>
-    </Draggable>
+      {pointer &&
+        createPortal(
+          <div
+            className="fixed z-[200] pointer-events-none -rotate-6"
+            style={{ left: pointer.x - 80, top: pointer.y - 110 }}
+          >
+            <Card card={card} scale={DECK_CARD_SCALE} readOnly />
+          </div>,
+          document.body
+        )}
+    </>
   );
 };
-
 export default DraggableCard;

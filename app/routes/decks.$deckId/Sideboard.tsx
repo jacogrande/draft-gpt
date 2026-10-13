@@ -1,66 +1,56 @@
-import { useEffect, useMemo, useRef } from "react";
 import Card from "~/components/Card";
-import Subheading from "~/components/Subheading";
 import { useDeckStore } from "~/hooks/useDeck";
 import { useGlobalStore } from "~/hooks/useGlobalStore";
-import BasicAdder from "~/routes/decks.$deckId/BasicAdder";
-import SideboardItem from "~/routes/decks.$deckId/SideboardItem";
-import { useDeckEditorStore } from "~/routes/decks.$deckId/store";
 import { BASICS } from "~/util/constants";
 import { getCMC } from "~/util/getCMC";
+import BasicAdder from "./BasicAdder";
+import SideboardItem from "./SideboardItem";
 
 const Sideboard = () => {
   const deck = useDeckStore((state) => state.deck);
-  const peekedCard = useGlobalStore((state) => state.peekedCard);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const trueRef = useRef<HTMLDivElement>(null);
-  const setSideboardRect = useDeckEditorStore(
-    (state) => state.setSideboardRect
+  const peeked = useGlobalStore((state) => state.peekedCard);
+  const sideboard = [...(deck?.sideboard ?? [])].sort(
+    (a, b) => getCMC(a.mana_cost) - getCMC(b.mana_cost)
   );
-  const setSideboardRef = useDeckEditorStore((state) => state.setSideboardRef);
-
-  const sortedSideboard = useMemo(() => {
-    if (!deck || !deck.sideboard) return null;
-    return [...deck.sideboard].sort(
-      (a, b) => getCMC(a.mana_cost) - getCMC(b.mana_cost)
-    );
-  }, [deck]);
-
-  useEffect(() => {
-    if (!containerRef.current || !trueRef.current) return;
-    setSideboardRect(containerRef.current.getBoundingClientRect());
-    setSideboardRef(trueRef.current);
-  }, [containerRef, trueRef, setSideboardRect, setSideboardRef]);
-
   return (
-    <div
-      className="flex flex-col gap-4 py-4 rounded-lg w-[250px] sticky top-0"
-      ref={containerRef}
-    >
-      <Subheading>
-        <span className="ml-2">Card Preview</span>
-      </Subheading>
-      <div className="w-[250px] h-[350px]">
-        {peekedCard && <Card card={peekedCard} scale={1} disabled />}
-      </div>
+    <aside className="flex flex-col w-60 shrink-0 gap-3 min-h-0 overflow-y-auto pr-2">
       <div
-        className="border w-full rounded p-2 flex-1 flex flex-col justify-between gap-2"
-        ref={trueRef}
+        className="h-[273px] shrink-0 flex justify-center rounded-lg bg-base-200/40"
+        aria-label="Card preview"
       >
+        {peeked ? (
+          <Card card={peeked} scale={0.78} disabled />
+        ) : (
+          <p className="self-center text-sm opacity-60">
+            Hover or focus a card to preview
+          </p>
+        )}
+      </div>
+      <section className="border border-base-300 rounded-lg p-3 shrink-0">
+        <h2 className="font-semibold text-sm mb-2">Basic lands</h2>
+        <div className="flex flex-wrap gap-1">
+          {BASICS.map((type) => (
+            <BasicAdder key={type} type={type} />
+          ))}
+        </div>
+      </section>
+      <section
+        data-deck-sideboard
+        className="border border-base-300 rounded-lg p-3 min-h-40 flex-1"
+      >
+        <h2 className="font-semibold text-sm mb-2">
+          Sideboard · {sideboard.length}
+        </h2>
+        <p className="text-xs opacity-60 mb-3">
+          Drop cards here. Click a card to return it.
+        </p>
         <div className="flex flex-col gap-2">
-          <Subheading>Sideboard</Subheading>
-          {sortedSideboard?.map((card) => (
+          {sideboard.map((card) => (
             <SideboardItem key={card.id} card={card} />
           ))}
         </div>
-        <div className="flex flex-col gap-1">
-          {BASICS.map((basic) => (
-            <BasicAdder key={basic} type={basic} />
-          ))}
-        </div>
-      </div>
-    </div>
+      </section>
+    </aside>
   );
 };
-
 export default Sideboard;
