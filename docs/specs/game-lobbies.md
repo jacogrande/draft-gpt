@@ -53,3 +53,5 @@ Checked on the local stack with three browser sessions; the same behaviour is co
 7. Ana changes her life total; Ben sees it.
 8. Ana creates a counter and a token and taps the token; Ben sees both and the tapped state.
 9. Ben closes the tab and reopens the game URL: same seat, same board.
+
+October 20 release regression check: the mana shortcut now matches the shared parser's uppercase color symbols. `a`, `u`, Enter selects and taps an untapped Island; two local browser sessions observed the same tapped land and log entry. Tests cover all five colors, input casing, generic costs, insufficient colors and tapped lands. This fixes a parser-consumer mismatch without adding game-rule enforcement. Screenshot: `.artifacts/release-infrastructure/mana-shortcut.png`.

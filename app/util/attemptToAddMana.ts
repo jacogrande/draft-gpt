@@ -2,11 +2,11 @@ import { parseManaCost } from "~/util/parseManaCost";
 import { Card } from "~/util/types";
 
 const LAND_COLORS: Record<string, string> = {
-  plains: "w",
-  island: "u",
-  swamp: "b",
-  mountain: "r",
-  forest: "g",
+  plains: "W",
+  island: "U",
+  swamp: "B",
+  mountain: "R",
+  forest: "G",
 };
 
 export const attemptToAddMana = <C extends Card>(
@@ -15,7 +15,7 @@ export const attemptToAddMana = <C extends Card>(
 ): C[] | null => {
 
   // count occurrences of mana symbols
-  const manaSymbols = parseManaCost(amount.toLowerCase());
+  const manaSymbols = parseManaCost(amount);
   const manaRequirements: Record<string, number> = {};
   for (const symbol of manaSymbols) {
     manaRequirements[symbol] = (manaRequirements[symbol] || 0) + 1;
@@ -45,7 +45,7 @@ export const attemptToAddMana = <C extends Card>(
   const selectedLands: C[] = [];
 
   // Step 1: Tap lands for colored mana
-  for (const colorSymbol of ["w", "u", "b", "r", "g"]) {
+  for (const colorSymbol of Object.values(LAND_COLORS)) {
     const required = manaRequirements[colorSymbol] || 0;
     for (let i = 0; i < required; i++) {
       // Find an untapped land that produces this color
