@@ -35,6 +35,20 @@ export const pass = async (
 
 export const settle = (backend: Backend) => pass(backend, GENERATION_SECONDS);
 
+export const settleSet = async (
+  backend: Backend,
+  lobbyId: Id<"lobbies">,
+  players: Player[]
+) => {
+  for (let elapsed = 0; elapsed < 180; elapsed++) {
+    await pass(backend, 1);
+    if (elapsed % 20 === 0) await seen(lobbyId, players);
+    const lobby = await players[0].as.query(api.lobby.lobbies.get, { lobbyId });
+    if (!lobby || lobby.status !== "generating" || lobby.generationError) return;
+  }
+  throw new Error("Set generation did not reach ready or error within 180 seconds");
+};
+
 export const startedDraft = async (usernames: string[]) => {
   const backend = startBackend();
   const { lobbyId, players } = await openLobby(backend, usernames);

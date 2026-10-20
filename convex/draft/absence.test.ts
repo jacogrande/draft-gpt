@@ -18,11 +18,13 @@ const WINDOW_SECONDS = 120;
 
 beforeEach(() => {
   vi.useFakeTimers();
+  vi.stubEnv("SET_GENERATION_ENABLED", "false");
   fakeOutsideWorld();
 });
 
 afterEach(() => {
   vi.unstubAllGlobals();
+  vi.unstubAllEnvs();
   vi.useRealTimers();
 });
 

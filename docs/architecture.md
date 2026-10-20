@@ -56,6 +56,10 @@ Convex tables:
 | `lobbyMessages` | Worldbuilding suggestions |
 | `lobbyPresence` | `lastSeenAt` per member. Never changes the roster; during a draft it decides when a reconnect countdown starts |
 | `settings` | The generated world for a lobby |
+| `setRuns` | Frozen ideas, blueprint, versions, phase, generation key, budget reservations and spend; linked by `lobbies.setRunId` |
+| `setDesigns` | Canonical slot, card, revision and shared art |
+| `setJobs` | Keyed tasks, attempts, partial results, reported usage and reservations |
+| `setManifests` | Immutable ordered design IDs for each pack in all three rounds |
 | `packs` | `round`, `order` (user ids), `position`, `holderId`, `cardCount`, `ready`, `jobId` (the latest generation attempt) |
 | `absences` | One row per participant who is away during a draft: `deadline` while the countdown runs, `remainingMs` while it is paused |
 | `cards` | Every generated card, with its pack and `pickedBy` |
@@ -77,7 +81,15 @@ A lobby's `status` moves `open` → `generating` → `drafting` → (`generating
 
 **Lobby.** Opening a lobby URL calls `join`, which is idempotent: an existing member gets their seat back. Membership ends only when the member leaves, the host removes them, or the lobby closes. Presence is a heartbeat every 20 seconds while the tab is visible; a member unseen for 60 seconds is shown as away and nothing else changes.
 
-**Draft.**
+**Set draft (default for new drafts).**
+
+The start mutation freezes player ideas and creates a 135-card run for two to four players, or 270 cards for five to eight. The initial brief task saves a structural world direction: focus, conflict, magic access and visual emphasis. Allocation favors categories used least often in the last twelve runs, without passing other lobbies’ lore to the model; retries reuse the saved direction. Luna creates a structured world and all ten color-pair archetypes, then plans broad gameplay jobs within fixed slots and writes batches of fifteen cards. Slot costs are planned by type and role, with a useful common curve. Shared creative guidance centers immense supernatural powers with observable effects and limits, expressed through physical descriptions and implied subtext; writers and reviewers target Modern Horizons strength using bounded role-ranked real-card references and factual support reports. They check underpowered cards as well as dominant ones. Pair and global reviews inspect every card and feed one editing plan, targeted revisions and final review. Decisions is available for offline experiments, but normal runs skip screening/rescreening and give editors no classification labels. Unresolved major issues prevent publication.
+
+Each scheduled job carries a run and attempt key, saves accepted work, reserves spend before dispatch and records usage afterward. The queue permits four concurrent jobs per run and eight overall. Transport failures retry with backoff; malformed card batches repair only unfinished slots, at most twice. App and preview share repair feedback and reserve names from accepted cards so retries cannot collide with them. Exhausted budgets preserve checkpoints. Quality failures require a fresh candidate.
+
+After review, deterministic manifests select fifteen-card packs (ten commons, four uncommons, one rare or mythic), with a monocolor common for every color and no repeated design within a pack. Copies across packs have independent card IDs and share canonical art through `designId`. All three rounds are planned before drafting; later rounds make no new design calls. Only selected designs are painted. Art has a ninety-second deadline and missing art does not block play. Draft, deck and visible game-card queries resolve shared art after access checks. Players see stage progress and a setting/archetype guide; unrevealed cards remain private.
+
+**Legacy draft (existing legacy runs or explicit `SET_GENERATION_ENABLED=false` at start).**
 
 1. `startDraft` requires two or more members, all ready. It freezes `participantIds` in seat order and schedules setting generation.
 2. `generation.createSetting` sends the worldbuilding messages to the model, saves the setting, and deals round 1: one pack per participant, each with a passing order.
@@ -106,4 +118,4 @@ A heartbeat is only sent while the tab is visible, so a player who switches to a
 - **Table placement is shared.** Tokens and counters use bounded battlefield-relative positions, mirrored for the opponent and rescaled for each viewport. Cards stay in automatic rows. Legacy placement and UI behavior are described in [game-lobbies.md](specs/game-lobbies.md#table-view).
 - **A draft cannot be left.** A participant stays in the draft to the end; if they go away, their picks are made at random after the reconnect countdown. If the host is the one away, nobody can pause or skip and the countdown simply runs out.
 - **Test sign-in exists in the code** and is enabled only when `AUTH_TEST_LOGIN` is set and the deployment URL is localhost. `scripts/deploy.sh` refuses to deploy while the variable is set on production.
-- **The card-design model and prompts are the 2024 originals** (`gpt-4o`), moved without change. Rebuilding card creation is step 6 of the roadmap. Card art is current; see `docs/specs/card-art.md`.
+- **Set generation is the default for new drafts in the source tree.** Explicit `SET_GENERATION_ENABLED=false` retains the legacy start path; existing drafts keep their mode. This change is not yet deployed. Human calibration and playtests are still required; automated review is not proof of balance. See `docs/specs/set-generation.md`.

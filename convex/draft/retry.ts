@@ -7,9 +7,10 @@ const JITTER = 0.25;
 export class UpstreamFailure extends Error {
   constructor(
     readonly status: number,
-    readonly retryAfterMs: number | null
+    readonly retryAfterMs: number | null,
+    provider = "OpenAI"
   ) {
-    super(`OpenAI responded ${status}`);
+    super(`${provider} responded ${status}`);
   }
 }
 

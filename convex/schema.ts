@@ -6,7 +6,10 @@ import { gameTables } from "./game/tables";
 import { identityTables } from "./identity/tables";
 import { lobbyTables } from "./lobby/tables";
 
+import { setTables } from "./draft/set/tables";
+
 export default defineSchema({
+  ...setTables,
   ...authTables,
   ...identityTables,
   ...lobbyTables,

@@ -2,6 +2,7 @@ import { Infer, v } from "convex/values";
 
 export const cardFace = {
   name: v.string(),
+  designId: v.optional(v.id("setDesigns")),
   mana_cost: v.string(),
   art_direction: v.string(),
   image_url: v.union(v.string(), v.null()),
@@ -22,6 +23,7 @@ export type CardFace = Infer<typeof cardFaceObject>;
 
 export const pickFace = (source: CardFace): CardFace => ({
   name: source.name,
+  ...(source.designId ? { designId: source.designId } : {}),
   mana_cost: source.mana_cost,
   art_direction: source.art_direction,
   image_url: source.image_url,

@@ -1,0 +1,3795 @@
+{
+  "schema_version": 1,
+  "researched_on": "2026-10-16",
+  "target": "High-powered, interactive Modern Horizons-style two-player Limited",
+  "status": "Curated research library; imported into a generated runtime catalog for prompt reference selection",
+  "scope": {
+    "rarities": [
+      "common",
+      "uncommon",
+      "rare",
+      "mythic"
+    ],
+    "types": [
+      "Creature",
+      "Instant",
+      "Sorcery",
+      "Enchantment",
+      "Artifact",
+      "Land"
+    ],
+    "matrix_cells": 24,
+    "matrix_examples": 72,
+    "supplemental_examples": 15,
+    "excluded": "Planeswalkers and other unsupported card types; Aura and Equipment are covered within their card types."
+  },
+  "methodology": {
+    "facts": "Fetched from the public Scryfall API and pinned to specific printing IDs; type and rarity checked mechanically. Summaries are paraphrases, not complete rules text.",
+    "judgments": "Editorial judgments for the stated support and cost context, not Scryfall or Wizards ratings. Constructed bans are evidence about that format and shell, not automatic Limited verdicts.",
+    "rarity": "Uses the selected printing, not first printing or cheapest/latest version. VMA Tolarian Academy is a digital draft reprint at mythic.",
+    "comparison": "Match role, cost, color commitment, and support after rarity/type. A row is not a universal linear ranking between dissimilar effects.",
+    "metrics": "No numerical win-rate claims. The attempted dated 17Lands request returned null win rates and was not used."
+  },
+  "primary_context_sources": {
+    "mh3-design": "https://magic.wizards.com/en/news/making-magic/third-times-the-charm-part-2",
+    "nadu-analysis": "https://magic.wizards.com/en/news/feature/on-banning-nadu-winged-wisdom-in-modern",
+    "december-2024-bans": "https://magic.wizards.com/en/news/announcements/banned-and-restricted-december-16-2024",
+    "chrysalis-firsthand": "https://www.youtube.com/watch?v=214jwV92jcY"
+  },
+  "entries": [
+    {
+      "id": "too_strong-mh3-208",
+      "rarity": "common",
+      "category": "Creature",
+      "band": "too_strong",
+      "name": "Writhing Chrysalis",
+      "role": "midgame board, ramp, sacrifice payoff",
+      "comparison_scope": "boundary_example",
+      "card_facts": {
+        "mana_cost": "{2}{R}{G}",
+        "cmc": 4.0,
+        "type_line": "Creature — Eldrazi Drone",
+        "power": "2",
+        "toughness": "3",
+        "colors": [],
+        "color_identity": [
+          "G",
+          "R"
+        ],
+        "layout": "normal"
+      },
+      "effect_summary": "Four mana buys a reach body, two Spawn on casting, and permanent growth whenever another Eldrazi is sacrificed.",
+      "rationale": "Above the desired common ceiling: it supplies its own fuel, grows while refunding mana, and improves sharply in multiples. Treat this as a common outlier to avoid normalizing, not the baseline for every four-drop.",
+      "context_and_costs": "Eldrazi/Spawn support makes the ceiling higher; the two included Spawn already turn it into a 4/5 and generate two mana when sacrificed.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "mh3",
+        "set_name": "Modern Horizons 3",
+        "collector_number": "208",
+        "rarity": "common",
+        "released_at": "2024-06-14",
+        "digital": false,
+        "scryfall_id": "f54dbeb1-51f8-40e2-912a-ec25457de5a2",
+        "oracle_id": "d27bebc9-348d-4b8e-816a-a4da66fb5618"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/mh3/208/writhing-chrysalis",
+        "api": "https://api.scryfall.com/cards/f54dbeb1-51f8-40e2-912a-ec25457de5a2",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=662360&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": [
+          "https://www.youtube.com/watch?v=214jwV92jcY"
+        ]
+      }
+    },
+    {
+      "id": "target-mh3-150",
+      "rarity": "common",
+      "category": "Creature",
+      "band": "target",
+      "name": "Eldrazi Repurposer",
+      "role": "midgame creature and ramp fodder",
+      "comparison_scope": "role_anchor",
+      "card_facts": {
+        "mana_cost": "{2}{G}",
+        "cmc": 3.0,
+        "type_line": "Creature — Eldrazi Drone",
+        "power": "3",
+        "toughness": "3",
+        "colors": [],
+        "color_identity": [
+          "G"
+        ],
+        "layout": "normal"
+      },
+      "effect_summary": "A three-mana 3/3 makes one Spawn when cast and another when it dies.",
+      "rationale": "A useful body plus immediate and deferred resources is the desired common floor for a supported midgame role. There is value even when the main creature trades.",
+      "context_and_costs": "Spawn sacrifice, ramp, and death synergies add value. The cast trigger also supplies a Spawn if the creature spell is countered.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "mh3",
+        "set_name": "Modern Horizons 3",
+        "collector_number": "150",
+        "rarity": "common",
+        "released_at": "2024-06-14",
+        "digital": false,
+        "scryfall_id": "37f79ba7-7b65-4387-b498-f770816ce8dd",
+        "oracle_id": "ae3e5c80-6a6a-4781-a7b9-4d63357ffa3b"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/mh3/150/eldrazi-repurposer",
+        "api": "https://api.scryfall.com/cards/37f79ba7-7b65-4387-b498-f770816ce8dd",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=662302&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "too_weak-9ed-197",
+      "rarity": "common",
+      "category": "Creature",
+      "band": "too_weak",
+      "name": "Hill Giant",
+      "role": "midgame attacker",
+      "comparison_scope": "boundary_example",
+      "card_facts": {
+        "mana_cost": "{3}{R}",
+        "cmc": 4.0,
+        "type_line": "Creature — Giant",
+        "power": "3",
+        "toughness": "3",
+        "colors": [
+          "R"
+        ],
+        "color_identity": [
+          "R"
+        ],
+        "layout": "normal"
+      },
+      "effect_summary": "Four mana for a vanilla 3/3.",
+      "rationale": "Below the target: no immediate resource, evasion, resilience, or synergy compensates for spending a midgame turn. This is a deliberately obvious lower bound.",
+      "context_and_costs": "Creature-type bonuses could improve it, but do not justify this baseline in an ordinary supported deck.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "9ed",
+        "set_name": "Ninth Edition",
+        "collector_number": "197",
+        "rarity": "common",
+        "released_at": "2005-07-29",
+        "digital": false,
+        "scryfall_id": "caa75eaf-948f-4503-962d-95b0321b36d9",
+        "oracle_id": "342199e0-15b6-4824-83da-25caef2592b3"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/9ed/197/hill-giant",
+        "api": "https://api.scryfall.com/cards/caa75eaf-948f-4503-962d-95b0321b36d9",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=83120&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "too_strong-fut-138",
+      "rarity": "common",
+      "category": "Instant",
+      "band": "too_strong",
+      "name": "Sprout Swarm",
+      "role": "repeatable token engine",
+      "comparison_scope": "conditional_upper_bound",
+      "card_facts": {
+        "mana_cost": "{1}{G}",
+        "cmc": 2.0,
+        "type_line": "Instant",
+        "power": null,
+        "toughness": null,
+        "colors": [
+          "G"
+        ],
+        "color_identity": [
+          "G"
+        ],
+        "layout": "normal"
+      },
+      "effect_summary": "Creates a Saproling; convoke helps pay its two-mana cost and optional three-mana buyback.",
+      "rationale": "Too strong as a frequent common in a creature-rich environment: the output helps fund later casts while buyback preserves the spell. It can take over stalled games without drawing more engine pieces.",
+      "context_and_costs": "Conditional ceiling: needs bodies or spare mana and is vulnerable to counters and board resets. It is not automatically infinite.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "fut",
+        "set_name": "Future Sight",
+        "collector_number": "138",
+        "rarity": "common",
+        "released_at": "2007-05-04",
+        "digital": false,
+        "scryfall_id": "0b915355-4e98-44df-81bd-961a3d3c86b8",
+        "oracle_id": "8b33d890-7d67-44a8-a253-e2b171d7ca9d"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/fut/138/sprout-swarm",
+        "api": "https://api.scryfall.com/cards/0b915355-4e98-44df-81bd-961a3d3c86b8",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=136042&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "target-mh3-122",
+      "rarity": "common",
+      "category": "Instant",
+      "band": "target",
+      "name": "Galvanic Discharge",
+      "role": "cheap creature interaction",
+      "comparison_scope": "role_anchor",
+      "card_facts": {
+        "mana_cost": "{R}",
+        "cmc": 1.0,
+        "type_line": "Instant",
+        "power": null,
+        "toughness": null,
+        "colors": [
+          "R"
+        ],
+        "color_identity": [
+          "R"
+        ],
+        "layout": "normal"
+      },
+      "effect_summary": "One red mana supplies three energy, then spends any amount of available energy as damage to a creature or planeswalker.",
+      "rationale": "This is the desired efficiency: three damage for one mana without needing prior setup, with a relevant resource interface. Do not weaken it just because it is common.",
+      "context_and_costs": "Additional energy can increase damage; spending less can bank energy. It cannot damage players.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "mh3",
+        "set_name": "Modern Horizons 3",
+        "collector_number": "122",
+        "rarity": "common",
+        "released_at": "2024-06-14",
+        "digital": false,
+        "scryfall_id": "32aa6e33-221f-414c-9b51-850d97a7e051",
+        "oracle_id": "ef0f06f1-3991-4897-bf62-d4cab7ec79a0"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/mh3/122/galvanic-discharge",
+        "api": "https://api.scryfall.com/cards/32aa6e33-221f-414c-9b51-850d97a7e051",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=662274&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "too_weak-7ed-18",
+      "rarity": "common",
+      "category": "Instant",
+      "band": "too_weak",
+      "name": "Healing Salve",
+      "role": "protection or life buffer",
+      "comparison_scope": "boundary_example",
+      "card_facts": {
+        "mana_cost": "{W}",
+        "cmc": 1.0,
+        "type_line": "Instant",
+        "power": null,
+        "toughness": null,
+        "colors": [
+          "W"
+        ],
+        "color_identity": [
+          "W"
+        ],
+        "layout": "normal"
+      },
+      "effect_summary": "One white mana either gains three life or prevents the next three damage to a target that turn.",
+      "rationale": "Usually too little lasting value for spending a card. A dedicated combat save can work, but the generic common slot should offer broader protection, replacement, or offensive use.",
+      "context_and_costs": "Damage-based combat can make prevention useful; this is a weak default, not a claim it never wins a combat.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "7ed",
+        "set_name": "Seventh Edition",
+        "collector_number": "18",
+        "rarity": "common",
+        "released_at": "2001-04-11",
+        "digital": false,
+        "scryfall_id": "9670a69a-bd68-4de9-bf83-c912564012f6",
+        "oracle_id": "8da8644c-75a1-4fe9-8e94-900d948d631c"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/7ed/18/healing-salve",
+        "api": "https://api.scryfall.com/cards/9670a69a-bd68-4de9-bf83-c912564012f6",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=25545&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "too_strong-ktk-59",
+      "rarity": "common",
+      "category": "Sorcery",
+      "band": "too_strong",
+      "name": "Treasure Cruise",
+      "role": "graveyard-funded card draw",
+      "comparison_scope": "conditional_upper_bound",
+      "card_facts": {
+        "mana_cost": "{7}{U}",
+        "cmc": 8.0,
+        "type_line": "Sorcery",
+        "power": null,
+        "toughness": null,
+        "colors": [
+          "U"
+        ],
+        "color_identity": [
+          "U"
+        ],
+        "layout": "normal"
+      },
+      "effect_summary": "Draws three cards; graveyard cards can pay the seven generic mana through delve.",
+      "rationale": "Too strong when routine play reliably makes this cost one blue mana: a large resource refill with almost no tempo loss. The printed eight mana is not its effective price in a stocked graveyard.",
+      "context_and_costs": "Conditional ceiling: without self-mill, cheap spells, or a developed graveyard it is expensive. Delve consumes resources other cards may need.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "ktk",
+        "set_name": "Khans of Tarkir",
+        "collector_number": "59",
+        "rarity": "common",
+        "released_at": "2014-09-26",
+        "digital": false,
+        "scryfall_id": "7a59d4b1-6cf4-44ec-8a96-1bb7094fea21",
+        "oracle_id": "5b6bdf5a-2742-4851-92cd-a857a3852836"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/ktk/59/treasure-cruise",
+        "api": "https://api.scryfall.com/cards/7a59d4b1-6cf4-44ec-8a96-1bb7094fea21",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=386705&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "target-mh3-161",
+      "rarity": "common",
+      "category": "Sorcery",
+      "band": "target",
+      "name": "Malevolent Rumble",
+      "role": "selection, graveyard setup, ramp",
+      "comparison_scope": "role_anchor",
+      "card_facts": {
+        "mana_cost": "{1}{G}",
+        "cmc": 2.0,
+        "type_line": "Sorcery",
+        "power": null,
+        "toughness": null,
+        "colors": [
+          "G"
+        ],
+        "color_identity": [
+          "G"
+        ],
+        "layout": "normal"
+      },
+      "effect_summary": "For two mana, selects a permanent from the top four, mills the rest, and creates a Spawn.",
+      "rationale": "A strong common should perform useful jobs together: find a needed resource, stock the graveyard, and leave a body or future mana. This is a concrete generation anchor.",
+      "context_and_costs": "Can miss on a permanent-light deck. Permanent density and graveyard synergies matter; this is not unconditional draw-two.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "mh3",
+        "set_name": "Modern Horizons 3",
+        "collector_number": "161",
+        "rarity": "common",
+        "released_at": "2024-06-14",
+        "digital": false,
+        "scryfall_id": "a178cfe8-f9fa-4255-88d0-54a0bed079f5",
+        "oracle_id": "d30d8968-ec24-4155-97e2-28efd52c8810"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/mh3/161/malevolent-rumble",
+        "api": "https://api.scryfall.com/cards/a178cfe8-f9fa-4255-88d0-54a0bed079f5",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=662313&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "too_weak-m10-49",
+      "rarity": "common",
+      "category": "Sorcery",
+      "band": "too_weak",
+      "name": "Divination",
+      "role": "straight card draw",
+      "comparison_scope": "near_floor",
+      "card_facts": {
+        "mana_cost": "{2}{U}",
+        "cmc": 3.0,
+        "type_line": "Sorcery",
+        "power": null,
+        "toughness": null,
+        "colors": [
+          "U"
+        ],
+        "color_identity": [
+          "U"
+        ],
+        "layout": "normal"
+      },
+      "effect_summary": "Three mana at sorcery speed draws two cards.",
+      "rationale": "Below our premium spell-slot target: it replaces itself and gains one card but supplies no board, selection, discount, or later reuse. Prefer a meaningful second job at this cost.",
+      "context_and_costs": "Still playable when the format is slow or card draw is scarce. A near-floor reference, not an intrinsically bad Magic card.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "m10",
+        "set_name": "Magic 2010",
+        "collector_number": "49",
+        "rarity": "common",
+        "released_at": "2009-07-17",
+        "digital": false,
+        "scryfall_id": "3102cec9-1cdc-4946-a2dd-caf04eaa8b97",
+        "oracle_id": "273b339c-964b-4a18-8eb5-ceb8abcdfd9e"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/m10/49/divination",
+        "api": "https://api.scryfall.com/cards/3102cec9-1cdc-4946-a2dd-caf04eaa8b97",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=190172&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "too_strong-usg-147",
+      "rarity": "common",
+      "category": "Enchantment",
+      "band": "too_strong",
+      "name": "Pestilence",
+      "role": "repeatable sweeper and reach",
+      "comparison_scope": "conditional_upper_bound",
+      "card_facts": {
+        "mana_cost": "{2}{B}{B}",
+        "cmc": 4.0,
+        "type_line": "Enchantment",
+        "power": null,
+        "toughness": null,
+        "colors": [
+          "B"
+        ],
+        "color_identity": [
+          "B"
+        ],
+        "layout": "normal"
+      },
+      "effect_summary": "A four-mana enchantment converts each black mana into damage to every creature and player; it expires if the battlefield has no creatures at the end step.",
+      "rationale": "Above the common ceiling in a small-creature format: repeatable board control and player damage concentrate too much of the game in one widely available engine.",
+      "context_and_costs": "Needs black mana, life to spend, and often a durable creature. High toughness, enchantment removal, and the end-step condition provide counterplay.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "usg",
+        "set_name": "Urza's Saga",
+        "collector_number": "147",
+        "rarity": "common",
+        "released_at": "1998-10-12",
+        "digital": false,
+        "scryfall_id": "2f1f5630-647f-4789-8506-e7fafcbdd671",
+        "oracle_id": "dafe63ef-f3d6-45e7-877a-573da92ba85e"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/usg/147/pestilence",
+        "api": "https://api.scryfall.com/cards/2f1f5630-647f-4789-8506-e7fafcbdd671",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=5619&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "target-snc-66",
+      "rarity": "common",
+      "category": "Enchantment",
+      "band": "target",
+      "name": "Witness Protection",
+      "role": "cheap creature neutralization",
+      "comparison_scope": "role_anchor",
+      "card_facts": {
+        "mana_cost": "{U}",
+        "cmc": 1.0,
+        "type_line": "Enchantment — Aura",
+        "power": null,
+        "toughness": null,
+        "colors": [
+          "U"
+        ],
+        "color_identity": [
+          "U"
+        ],
+        "layout": "normal"
+      },
+      "effect_summary": "One-mana Aura removes a creature's abilities and makes it a 1/1.",
+      "rationale": "Appropriate strong common interaction: a tiny mana commitment substantially answers a threat while leaving the opponent a body and possible escape routes.",
+      "context_and_costs": "It is not hard removal. Enchantment removal, bounce, and sacrifice can undo or exploit the remaining creature.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "snc",
+        "set_name": "Streets of New Capenna",
+        "collector_number": "66",
+        "rarity": "common",
+        "released_at": "2022-04-29",
+        "digital": false,
+        "scryfall_id": "a2be6f2c-8ad0-402d-a7ca-9fe817e83b72",
+        "oracle_id": "a5f5e71e-83a7-468d-829a-6392b764c76e"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/snc/66/witness-protection",
+        "api": "https://api.scryfall.com/cards/a2be6f2c-8ad0-402d-a7ca-9fe817e83b72",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=555267&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "too_weak-con-2",
+      "rarity": "common",
+      "category": "Enchantment",
+      "band": "too_weak",
+      "name": "Asha's Favor",
+      "role": "combat Aura",
+      "comparison_scope": "boundary_example",
+      "card_facts": {
+        "mana_cost": "{2}{W}",
+        "cmc": 3.0,
+        "type_line": "Enchantment — Aura",
+        "power": null,
+        "toughness": null,
+        "colors": [
+          "W"
+        ],
+        "color_identity": [
+          "W"
+        ],
+        "layout": "normal"
+      },
+      "effect_summary": "Three-mana Aura grants flying, first strike, and vigilance without increasing size.",
+      "rationale": "Too much card and tempo exposure for an enhancement with no replacement or immediate body. A removal response can erase the investment.",
+      "context_and_costs": "A protected large creature or Aura-specific deck improves it; assess those supports rather than assuming every keyword package is valuable.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "con",
+        "set_name": "Conflux",
+        "collector_number": "2",
+        "rarity": "common",
+        "released_at": "2009-02-06",
+        "digital": false,
+        "scryfall_id": "28b817f7-ae05-4d31-8a2c-29d8082b4132",
+        "oracle_id": "97e7ada6-dee1-4bb3-a42d-38a61d946bd4"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/con/2/ashas-favor",
+        "api": "https://api.scryfall.com/cards/28b817f7-ae05-4d31-8a2c-29d8082b4132",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=150826&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "too_strong-5dn-113",
+      "rarity": "common",
+      "category": "Artifact",
+      "band": "too_strong",
+      "name": "Cranial Plating",
+      "role": "artifact combat payoff",
+      "comparison_scope": "conditional_upper_bound",
+      "card_facts": {
+        "mana_cost": "{2}",
+        "cmc": 2.0,
+        "type_line": "Artifact — Equipment",
+        "power": null,
+        "toughness": null,
+        "colors": [],
+        "color_identity": [
+          "B"
+        ],
+        "layout": "normal"
+      },
+      "effect_summary": "Two-mana Equipment adds power equal to artifact count; equip costs one, with a two-black instant attachment option.",
+      "rationale": "Above our common payoff ceiling when artifacts are plentiful: it translates cheap permanents and artifact lands into large evasive damage at very low attachment cost.",
+      "context_and_costs": "Conditional ceiling: count actual artifacts, evasive carriers, and removal. A low-artifact set should not reject its descendants by name alone.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "5dn",
+        "set_name": "Fifth Dawn",
+        "collector_number": "113",
+        "rarity": "common",
+        "released_at": "2004-06-04",
+        "digital": false,
+        "scryfall_id": "90ea95d0-9f95-462b-a080-22a5da7b2e97",
+        "oracle_id": "75564721-e4e9-463a-b49e-f0c7cd6f53a7"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/5dn/113/cranial-plating",
+        "api": "https://api.scryfall.com/cards/90ea95d0-9f95-462b-a080-22a5da7b2e97",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=51184&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "target-ltr-243",
+      "rarity": "common",
+      "category": "Artifact",
+      "band": "target",
+      "name": "Lembas",
+      "role": "artifact cantrip and sacrifice resource",
+      "comparison_scope": "role_anchor",
+      "card_facts": {
+        "mana_cost": "{2}",
+        "cmc": 2.0,
+        "type_line": "Artifact — Food",
+        "power": null,
+        "toughness": null,
+        "colors": [],
+        "color_identity": [],
+        "layout": "normal"
+      },
+      "effect_summary": "Two mana gives scry and a card immediately; later two mana and sacrifice gain life, and the artifact shuffles back when it dies.",
+      "rationale": "A useful artifact replaces itself before asking for synergy. The later sacrifice is optional utility, not the sole reward for spending the original card.",
+      "context_and_costs": "The later life costs two more mana. Artifact entry, sacrifice, and Food support raise its value; shuffling it back is not an immediate extra card.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "ltr",
+        "set_name": "The Lord of the Rings: Tales of Middle-earth",
+        "collector_number": "243",
+        "rarity": "common",
+        "released_at": "2023-06-23",
+        "digital": false,
+        "scryfall_id": "3b46aacf-b31a-4380-9e4b-82795fbaba3b",
+        "oracle_id": "f71fcdc3-5e96-416e-a49d-37019806e2e2"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/ltr/243/lembas",
+        "api": "https://api.scryfall.com/cards/3b46aacf-b31a-4380-9e4b-82795fbaba3b",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=617073&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "too_weak-som-158",
+      "rarity": "common",
+      "category": "Artifact",
+      "band": "too_weak",
+      "name": "Golden Urn",
+      "role": "delayed life-gain artifact",
+      "comparison_scope": "boundary_example",
+      "card_facts": {
+        "mana_cost": "{1}",
+        "cmc": 1.0,
+        "type_line": "Artifact",
+        "power": null,
+        "toughness": null,
+        "colors": [],
+        "color_identity": [],
+        "layout": "normal"
+      },
+      "effect_summary": "One-mana artifact accumulates upkeep counters and can be tapped and sacrificed for that much life.",
+      "rationale": "Spends a card for slow life gain without affecting the board or replacing itself. Cheapness alone does not rescue an effect with so little return.",
+      "context_and_costs": "Artifact-count support supplies some value, but stronger cantrip artifacts can usually fill that role.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "som",
+        "set_name": "Scars of Mirrodin",
+        "collector_number": "158",
+        "rarity": "common",
+        "released_at": "2010-10-01",
+        "digital": false,
+        "scryfall_id": "ec7abeca-da01-4962-b107-dd7a77469753",
+        "oracle_id": "ddb19cac-20b0-4ab8-a31d-c5c155491780"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/som/158/golden-urn",
+        "api": "https://api.scryfall.com/cards/ec7abeca-da01-4962-b107-dd7a77469753",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=213926&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "too_strong-mrd-283",
+      "rarity": "common",
+      "category": "Land",
+      "band": "too_strong",
+      "name": "Seat of the Synod",
+      "role": "untapped artifact mana source",
+      "comparison_scope": "conditional_upper_bound",
+      "card_facts": {
+        "mana_cost": "",
+        "cmc": 0.0,
+        "type_line": "Artifact Land",
+        "power": null,
+        "toughness": null,
+        "colors": [],
+        "color_identity": [
+          "U"
+        ],
+        "layout": "normal"
+      },
+      "effect_summary": "An artifact land that enters untapped and produces blue mana.",
+      "rationale": "Too efficient when artifact count is a major resource: a normal land drop also discounts affinity, grows payoffs, and supplies sacrifice material without a tempo charge.",
+      "context_and_costs": "Conditional ceiling: ordinary in decks without artifact rewards; vulnerable to artifact removal. Compare with the tapped Bridge, not with a spell that consumes mana.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "mrd",
+        "set_name": "Mirrodin",
+        "collector_number": "283",
+        "rarity": "common",
+        "released_at": "2003-10-02",
+        "digital": false,
+        "scryfall_id": "5da5587d-6b6c-4645-8cc9-2866d1e6911b",
+        "oracle_id": "39451b4d-cd7a-40da-b457-cb51b609173f"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/mrd/283/seat-of-the-synod",
+        "api": "https://api.scryfall.com/cards/5da5587d-6b6c-4645-8cc9-2866d1e6911b",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=46064&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "target-mh2-255",
+      "rarity": "common",
+      "category": "Land",
+      "band": "target",
+      "name": "Silverbluff Bridge",
+      "role": "two-color fixing and artifact support",
+      "comparison_scope": "role_anchor",
+      "card_facts": {
+        "mana_cost": "",
+        "cmc": 0.0,
+        "type_line": "Artifact Land",
+        "power": null,
+        "toughness": null,
+        "colors": [],
+        "color_identity": [
+          "R",
+          "U"
+        ],
+        "layout": "normal"
+      },
+      "effect_summary": "An indestructible artifact land that enters tapped and produces blue or red.",
+      "rationale": "A good common synergy land: fixes two colors and supports artifacts, with a real entry-tempo cost. The cost keeps the extra resource type from being free.",
+      "context_and_costs": "Still inspect affinity and indestructible interactions. Strong common fixing is not license to make every land untapped.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "mh2",
+        "set_name": "Modern Horizons 2",
+        "collector_number": "255",
+        "rarity": "common",
+        "released_at": "2021-06-18",
+        "digital": false,
+        "scryfall_id": "d80dc025-c2c4-48c2-8354-7d9ddb430eb9",
+        "oracle_id": "081bfd50-a436-463b-9d2c-5bc8a32b387c"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/mh2/255/silverbluff-bridge",
+        "api": "https://api.scryfall.com/cards/d80dc025-c2c4-48c2-8354-7d9ddb430eb9",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=522331&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "too_weak-lrw-273",
+      "rarity": "common",
+      "category": "Land",
+      "band": "too_weak",
+      "name": "Shimmering Grotto",
+      "role": "rainbow filtering",
+      "comparison_scope": "near_floor",
+      "card_facts": {
+        "mana_cost": "",
+        "cmc": 0.0,
+        "type_line": "Land",
+        "power": null,
+        "toughness": null,
+        "colors": [],
+        "color_identity": [],
+        "layout": "normal"
+      },
+      "effect_summary": "Produces colorless normally; producing a chosen color requires paying an additional mana.",
+      "rationale": "Below the intended routine fixing floor: each colored activation ties up an extra mana source and disrupts the curve. It can rescue a splash but should not be the premium fixer.",
+      "context_and_costs": "Five-color flexibility has value; compare total mana available after filtering, not just number of colors listed.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "lrw",
+        "set_name": "Lorwyn",
+        "collector_number": "273",
+        "rarity": "common",
+        "released_at": "2007-10-12",
+        "digital": false,
+        "scryfall_id": "b5e85acc-ed12-4036-8193-739721c3e178",
+        "oracle_id": "bae49475-fe01-400b-8959-f0dde959577c"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/lrw/273/shimmering-grotto",
+        "api": "https://api.scryfall.com/cards/b5e85acc-ed12-4036-8193-739721c3e178",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=141802&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "too_strong-mh3-114",
+      "rarity": "uncommon",
+      "category": "Creature",
+      "band": "too_strong",
+      "name": "Amped Raptor",
+      "role": "cheap body plus spell acceleration",
+      "comparison_scope": "conditional_upper_bound",
+      "card_facts": {
+        "mana_cost": "{1}{R}",
+        "cmc": 2.0,
+        "type_line": "Creature — Dinosaur",
+        "power": "2",
+        "toughness": "1",
+        "colors": [
+          "R"
+        ],
+        "color_identity": [
+          "R"
+        ],
+        "layout": "normal"
+      },
+      "effect_summary": "A two-mana 2/1 first striker supplies energy and, when cast from hand, can use energy to cast the next revealed nonland card.",
+      "rationale": "Conditional upper boundary: with many cheap hits or surplus energy it bundles a creature, resource production, and a free spell into an explosive early turn. Do not reproduce reliable high-end hits for two mana.",
+      "context_and_costs": "In an ordinary draft curve it can miss on an unaffordable spell. Its Modern ban is corroboration of an optimized energy shell, not proof that every Limited copy is excessive.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "mh3",
+        "set_name": "Modern Horizons 3",
+        "collector_number": "114",
+        "rarity": "uncommon",
+        "released_at": "2024-06-14",
+        "digital": false,
+        "scryfall_id": "1ac0e78b-0fdd-44f9-8b7b-c4f28a32782e",
+        "oracle_id": "3ed14ea7-ee62-4604-af3b-deafb00108c3"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/mh3/114/amped-raptor",
+        "api": "https://api.scryfall.com/cards/1ac0e78b-0fdd-44f9-8b7b-c4f28a32782e",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=662266&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": [
+          "https://magic.wizards.com/en/news/announcements/banned-and-restricted-december-16-2024"
+        ]
+      }
+    },
+    {
+      "id": "target-mh2-125",
+      "rarity": "uncommon",
+      "category": "Creature",
+      "band": "target",
+      "name": "Flametongue Yearling",
+      "role": "scalable removal creature",
+      "comparison_scope": "role_anchor",
+      "card_facts": {
+        "mana_cost": "{R}{R}",
+        "cmc": 2.0,
+        "type_line": "Creature — Kavu",
+        "power": "2",
+        "toughness": "1",
+        "colors": [
+          "R"
+        ],
+        "color_identity": [
+          "R"
+        ],
+        "layout": "normal"
+      },
+      "effect_summary": "Two red mana buys a 2/1 that deals its power to a creature on entry; each two-mana kicker adds a counter.",
+      "rationale": "A real uncommon power anchor: body plus removal at two mana, with scaling when drawn late. Strong two-for-ones belong in the target environment.",
+      "context_and_costs": "Double red constrains casting. The damage target is mandatory and can be your own creature if no opponent creature is available.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "mh2",
+        "set_name": "Modern Horizons 2",
+        "collector_number": "125",
+        "rarity": "uncommon",
+        "released_at": "2021-06-18",
+        "digital": false,
+        "scryfall_id": "33ab05b5-d6f5-439c-9aed-1a58ceb282ad",
+        "oracle_id": "8181f131-626b-4f9a-812c-9fddaae58025"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/mh2/125/flametongue-yearling",
+        "api": "https://api.scryfall.com/cards/33ab05b5-d6f5-439c-9aed-1a58ceb282ad",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=522201&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "too_weak-m10-42",
+      "rarity": "uncommon",
+      "category": "Creature",
+      "band": "too_weak",
+      "name": "Air Elemental",
+      "role": "evasive finisher",
+      "comparison_scope": "near_floor",
+      "card_facts": {
+        "mana_cost": "{3}{U}{U}",
+        "cmc": 5.0,
+        "type_line": "Creature — Elemental",
+        "power": "4",
+        "toughness": "4",
+        "colors": [
+          "U"
+        ],
+        "color_identity": [
+          "U"
+        ],
+        "layout": "normal"
+      },
+      "effect_summary": "Five mana buys a 4/4 flyer with no other ability.",
+      "rationale": "Below the intended premium uncommon finisher: it does not refund a card, answer a threat, or protect the investment. This is a useful near-floor comparison for bland expensive flyers.",
+      "context_and_costs": "Flying still wins games. In a slower or flyer-light environment it can be good; the verdict concerns our stronger target.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "m10",
+        "set_name": "Magic 2010",
+        "collector_number": "42",
+        "rarity": "uncommon",
+        "released_at": "2009-07-17",
+        "digital": false,
+        "scryfall_id": "f9de2b27-f7d1-4e2d-97b2-2bb236b6fb10",
+        "oracle_id": "7744bae4-a8b7-44a5-9b4c-0048ad4cc448"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/m10/42/air-elemental",
+        "api": "https://api.scryfall.com/cards/f9de2b27-f7d1-4e2d-97b2-2bb236b6fb10",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=189884&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "too_strong-leg-65",
+      "rarity": "uncommon",
+      "category": "Instant",
+      "band": "too_strong",
+      "name": "Mana Drain",
+      "role": "counterspell plus mana swing",
+      "comparison_scope": "boundary_example",
+      "card_facts": {
+        "mana_cost": "{U}{U}",
+        "cmc": 2.0,
+        "type_line": "Instant",
+        "power": null,
+        "toughness": null,
+        "colors": [
+          "U"
+        ],
+        "color_identity": [
+          "U"
+        ],
+        "layout": "normal"
+      },
+      "effect_summary": "A two-blue counterspell supplies colorless mana equal to the countered spell's mana value at the next main phase.",
+      "rationale": "Above the desired interaction ceiling: a full answer also finances a much earlier threat. Increasing rarity changes frequency but does not remove the tempo swing.",
+      "context_and_costs": "Requires a relevant opposing spell, double blue, and a way to use the temporary colorless mana. Its uncommon and mythic printings demonstrate why rarity alone is not a power scale.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "leg",
+        "set_name": "Legends",
+        "collector_number": "65",
+        "rarity": "uncommon",
+        "released_at": "1994-06-01",
+        "digital": false,
+        "scryfall_id": "e691adef-3027-4e6a-889f-9f4e2df36a7c",
+        "oracle_id": "74d3277a-38e5-4732-afed-084a56148f20"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/leg/65/mana-drain",
+        "api": "https://api.scryfall.com/cards/e691adef-3027-4e6a-889f-9f4e2df36a7c",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=1491&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "target-mh2-267",
+      "rarity": "uncommon",
+      "category": "Instant",
+      "band": "target",
+      "name": "Counterspell",
+      "role": "broad stack interaction",
+      "comparison_scope": "role_anchor",
+      "card_facts": {
+        "mana_cost": "{U}{U}",
+        "cmc": 2.0,
+        "type_line": "Instant",
+        "power": null,
+        "toughness": null,
+        "colors": [
+          "U"
+        ],
+        "color_identity": [
+          "U"
+        ],
+        "layout": "normal"
+      },
+      "effect_summary": "Two blue mana counters a spell without a type restriction.",
+      "rationale": "This is a fair high-powered uncommon answer. Full interaction at two mana is allowed; do not add a weak tax or a four-mana price to make it feel safe.",
+      "context_and_costs": "Needs double blue and mana held open; cannot remove a permanent already in play.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "mh2",
+        "set_name": "Modern Horizons 2",
+        "collector_number": "267",
+        "rarity": "uncommon",
+        "released_at": "2021-06-18",
+        "digital": false,
+        "scryfall_id": "1920dae4-fb92-4f19-ae4b-eb3276b8dac7",
+        "oracle_id": "cc187110-1148-4090-bbb8-e205694a39f5"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/mh2/267/counterspell",
+        "api": "https://api.scryfall.com/cards/1920dae4-fb92-4f19-ae4b-eb3276b8dac7",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=526238&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "too_weak-gpt-25",
+      "rarity": "uncommon",
+      "category": "Instant",
+      "band": "too_weak",
+      "name": "Frazzle",
+      "role": "restricted counterspell",
+      "comparison_scope": "boundary_example",
+      "card_facts": {
+        "mana_cost": "{3}{U}",
+        "cmc": 4.0,
+        "type_line": "Instant",
+        "power": null,
+        "toughness": null,
+        "colors": [
+          "U"
+        ],
+        "color_identity": [
+          "U"
+        ],
+        "layout": "normal"
+      },
+      "effect_summary": "Four mana counters a nonblue spell.",
+      "rationale": "A four-mana answer with a color exclusion loses the key efficiency that makes countermagic useful. Its restriction does not buy a compensating upside.",
+      "context_and_costs": "Blue-light opponents improve coverage, but not its tempo cost.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "gpt",
+        "set_name": "Guildpact",
+        "collector_number": "25",
+        "rarity": "uncommon",
+        "released_at": "2006-02-03",
+        "digital": false,
+        "scryfall_id": "68b7f705-4d64-4551-8d76-826d91324e9e",
+        "oracle_id": "55c4df81-9513-424b-aa58-10190797bba7"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/gpt/25/frazzle",
+        "api": "https://api.scryfall.com/cards/68b7f705-4d64-4551-8d76-826d91324e9e",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=96890&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "too_strong-4ed-236",
+      "rarity": "uncommon",
+      "category": "Sorcery",
+      "band": "too_strong",
+      "name": "Channel",
+      "role": "life-funded fast mana",
+      "comparison_scope": "conditional_upper_bound",
+      "card_facts": {
+        "mana_cost": "{G}{G}",
+        "cmc": 2.0,
+        "type_line": "Sorcery",
+        "power": null,
+        "toughness": null,
+        "colors": [
+          "G"
+        ],
+        "color_identity": [
+          "G"
+        ],
+        "layout": "normal"
+      },
+      "effect_summary": "Two green mana enables paying life for colorless mana during the turn.",
+      "rationale": "Above the upper bound with expensive generic-cost payoffs: it can bypass most of the mana curve immediately. Moving it from uncommon to mythic does not make that play pattern fair.",
+      "context_and_costs": "Requires payoff cards and enough life. An empty hand or colored-only costs limit it; do not invent a combo without identifying the payoff.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "4ed",
+        "set_name": "Fourth Edition",
+        "collector_number": "236",
+        "rarity": "uncommon",
+        "released_at": "1995-04-01",
+        "digital": false,
+        "scryfall_id": "e42eb95f-638d-410c-a830-a414fb2494ec",
+        "oracle_id": "d1b815d1-2848-40d4-a555-66822d1becbc"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/4ed/236/channel",
+        "api": "https://api.scryfall.com/cards/e42eb95f-638d-410c-a830-a414fb2494ec",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=2203&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "target-dka-12",
+      "rarity": "uncommon",
+      "category": "Sorcery",
+      "band": "target",
+      "name": "Lingering Souls",
+      "role": "resilient token pressure",
+      "comparison_scope": "role_anchor",
+      "card_facts": {
+        "mana_cost": "{2}{W}",
+        "cmc": 3.0,
+        "type_line": "Sorcery",
+        "power": null,
+        "toughness": null,
+        "colors": [
+          "W"
+        ],
+        "color_identity": [
+          "B",
+          "W"
+        ],
+        "layout": "normal"
+      },
+      "effect_summary": "Three mana creates two flying Spirits; a later two-mana flashback makes two more.",
+      "rationale": "A strong uncommon provides an independently useful first cast and a meaningful second resource. Two evasive bodies now and two later is the right ambition for token pressure.",
+      "context_and_costs": "Full output costs five mana across two casts and access to black for flashback. Graveyard hate and sweepers remain relevant.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "dka",
+        "set_name": "Dark Ascension",
+        "collector_number": "12",
+        "rarity": "uncommon",
+        "released_at": "2012-02-03",
+        "digital": false,
+        "scryfall_id": "891a92d7-9ccf-4de1-8286-aa5254f27ba9",
+        "oracle_id": "0b8c3337-04dd-4798-8203-6d8b8cfb936b"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/dka/12/lingering-souls",
+        "api": "https://api.scryfall.com/cards/891a92d7-9ccf-4de1-8286-aa5254f27ba9",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=262695&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "too_weak-sth-39",
+      "rarity": "uncommon",
+      "category": "Sorcery",
+      "band": "too_weak",
+      "name": "Ransack",
+      "role": "library manipulation",
+      "comparison_scope": "boundary_example",
+      "card_facts": {
+        "mana_cost": "{3}{U}",
+        "cmc": 4.0,
+        "type_line": "Sorcery",
+        "power": null,
+        "toughness": null,
+        "colors": [
+          "U"
+        ],
+        "color_identity": [
+          "U"
+        ],
+        "layout": "normal"
+      },
+      "effect_summary": "Four mana rearranges the top five cards of a chosen player’s library between top and bottom.",
+      "rationale": "Spends a card and a full midgame turn without drawing, answering a permanent, or creating a body. Selection needs a better rate or actual resource return.",
+      "context_and_costs": "Can manipulate an opponent’s draws or support top-deck payoffs; those uses must justify losing a card and tempo.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "sth",
+        "set_name": "Stronghold",
+        "collector_number": "39",
+        "rarity": "uncommon",
+        "released_at": "1998-03-02",
+        "digital": false,
+        "scryfall_id": "b438802b-629a-42c8-824d-f081a1619f68",
+        "oracle_id": "5b4a400b-435d-4140-984b-65f034c6a9fc"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/sth/39/ransack",
+        "api": "https://api.scryfall.com/cards/b438802b-629a-42c8-824d-f081a1619f68",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=5206&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "too_strong-leg-26",
+      "rarity": "uncommon",
+      "category": "Enchantment",
+      "band": "too_strong",
+      "name": "Land Tax",
+      "role": "repeatable land-card advantage",
+      "comparison_scope": "conditional_upper_bound",
+      "card_facts": {
+        "mana_cost": "{W}",
+        "cmc": 1.0,
+        "type_line": "Enchantment",
+        "power": null,
+        "toughness": null,
+        "colors": [
+          "W"
+        ],
+        "color_identity": [
+          "W"
+        ],
+        "layout": "normal"
+      },
+      "effect_summary": "A one-mana enchantment can repeatedly find up to three basic lands at upkeep when an opponent has more lands.",
+      "rationale": "Conditional upper boundary for cheap engines: repeated three-card refills can secure every land drop and fuel discard or hand-conversion effects with minimal mana investment.",
+      "context_and_costs": "It finds lands into hand, not the battlefield. Needs the land-count condition, basics, and preferably a way to use excess lands; it can be inactive when ahead.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "leg",
+        "set_name": "Legends",
+        "collector_number": "26",
+        "rarity": "uncommon",
+        "released_at": "1994-06-01",
+        "digital": false,
+        "scryfall_id": "d53b20b0-67bc-4587-817b-efbf21cb2512",
+        "oracle_id": "d2d9ecea-7925-420e-98b9-2f87f41f387c"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/leg/26/land-tax",
+        "api": "https://api.scryfall.com/cards/d53b20b0-67bc-4587-817b-efbf21cb2512",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=1624&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "target-tmp-179",
+      "rarity": "uncommon",
+      "category": "Enchantment",
+      "band": "target",
+      "name": "Goblin Bombardment",
+      "role": "sacrifice outlet and reach",
+      "comparison_scope": "role_anchor",
+      "card_facts": {
+        "mana_cost": "{1}{R}",
+        "cmc": 2.0,
+        "type_line": "Enchantment",
+        "power": null,
+        "toughness": null,
+        "colors": [
+          "R"
+        ],
+        "color_identity": [
+          "R"
+        ],
+        "layout": "normal"
+      },
+      "effect_summary": "Two-mana enchantment converts sacrificed creatures into damage to any target without a mana activation cost.",
+      "rationale": "A strong, desirable build-around: every activation consumes a real creature. Free activation alone is not a reason to nerf a finite-resource engine.",
+      "context_and_costs": "Check token density and recursion. If a concrete cheap loop produces unlimited creatures, the package can cross the ceiling.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "tmp",
+        "set_name": "Tempest",
+        "collector_number": "179",
+        "rarity": "uncommon",
+        "released_at": "1997-10-14",
+        "digital": false,
+        "scryfall_id": "179e954f-1d90-4ef4-b800-25845cc338e2",
+        "oracle_id": "edad60c6-80de-4033-af1b-a703ac332983"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/tmp/179/goblin-bombardment",
+        "api": "https://api.scryfall.com/cards/179e954f-1d90-4ef4-b800-25845cc338e2",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=4821&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "too_weak-chk-14",
+      "rarity": "uncommon",
+      "category": "Enchantment",
+      "band": "too_weak",
+      "name": "Honden of Cleansing Fire",
+      "role": "upkeep life-gain engine",
+      "comparison_scope": "unsupported_package",
+      "card_facts": {
+        "mana_cost": "{3}{W}",
+        "cmc": 4.0,
+        "type_line": "Legendary Enchantment — Shrine",
+        "power": null,
+        "toughness": null,
+        "colors": [
+          "W"
+        ],
+        "color_identity": [
+          "W"
+        ],
+        "layout": "normal"
+      },
+      "effect_summary": "Four-mana Shrine gains two life per controlled Shrine at upkeep.",
+      "rationale": "As a lone engine, it has no immediate board impact and only a small recurring reward. This is the same failure mode as the generated four-mana life-gain enchantment.",
+      "context_and_costs": "Shrine density changes the evaluation substantially. This weak verdict assumes no dedicated multi-Shrine package.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "chk",
+        "set_name": "Champions of Kamigawa",
+        "collector_number": "14",
+        "rarity": "uncommon",
+        "released_at": "2004-10-01",
+        "digital": false,
+        "scryfall_id": "463f598a-7de0-4691-a61a-fe24c29f9e1b",
+        "oracle_id": "15ee7e1d-b13e-4fd0-bc41-345b6ed34f53"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/chk/14/honden-of-cleansing-fire",
+        "api": "https://api.scryfall.com/cards/463f598a-7de0-4691-a61a-fe24c29f9e1b",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=79159&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "too_strong-dst-140",
+      "rarity": "uncommon",
+      "category": "Artifact",
+      "band": "too_strong",
+      "name": "Skullclamp",
+      "role": "equipment card-draw engine",
+      "comparison_scope": "boundary_example",
+      "card_facts": {
+        "mana_cost": "{1}",
+        "cmc": 1.0,
+        "type_line": "Artifact — Equipment",
+        "power": null,
+        "toughness": null,
+        "colors": [],
+        "color_identity": [],
+        "layout": "normal"
+      },
+      "effect_summary": "One-mana Equipment gives a power bonus and toughness penalty; equipped creatures dying draw two cards. Equip costs one.",
+      "rationale": "Above the ceiling: one-toughness tokens become very cheap two-card refills, and normal removal also feeds the engine. Common fodder makes this accessible without elaborate setup.",
+      "context_and_costs": "Count one mana per equip and a consumed creature. Those costs remain far too small when tokens are abundant.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "dst",
+        "set_name": "Darksteel",
+        "collector_number": "140",
+        "rarity": "uncommon",
+        "released_at": "2004-02-06",
+        "digital": false,
+        "scryfall_id": "55318397-de3c-47ea-a088-72a24df5c8fa",
+        "oracle_id": "65986c1b-8e51-4604-b685-d82fa7d1263a"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/dst/140/skullclamp",
+        "api": "https://api.scryfall.com/cards/55318397-de3c-47ea-a088-72a24df5c8fa",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=48197&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "target-mh2-5",
+      "rarity": "uncommon",
+      "category": "Artifact",
+      "band": "target",
+      "name": "Barbed Spike",
+      "role": "equipment with an immediate flyer",
+      "comparison_scope": "role_anchor",
+      "card_facts": {
+        "mana_cost": "{1}{W}",
+        "cmc": 2.0,
+        "type_line": "Artifact — Equipment",
+        "power": null,
+        "toughness": null,
+        "colors": [
+          "W"
+        ],
+        "color_identity": [
+          "W"
+        ],
+        "layout": "normal"
+      },
+      "effect_summary": "Two-mana Equipment arrives attached to a 1/1 flying Thopter, adds one power, and later equips for two.",
+      "rationale": "A two-mana 2/1 flyer up front plus reusable equipment later is an excellent uncommon baseline. The first body pays for the development turn.",
+      "context_and_costs": "The token and Equipment are separate permanents; count both artifact entry triggers, but do not double-count the same creature's power.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "mh2",
+        "set_name": "Modern Horizons 2",
+        "collector_number": "5",
+        "rarity": "uncommon",
+        "released_at": "2021-06-18",
+        "digital": false,
+        "scryfall_id": "c75c8631-e630-402b-a559-f1b1aa49763c",
+        "oracle_id": "28b22709-3e69-4eb7-8a3d-b75b6e65f30e"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/mh2/5/barbed-spike",
+        "api": "https://api.scryfall.com/cards/c75c8631-e630-402b-a559-f1b1aa49763c",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=522081&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "too_weak-dst-92",
+      "rarity": "uncommon",
+      "category": "Artifact",
+      "band": "too_weak",
+      "name": "Angel's Feather",
+      "role": "conditional life-gain artifact",
+      "comparison_scope": "boundary_example",
+      "card_facts": {
+        "mana_cost": "{2}",
+        "cmc": 2.0,
+        "type_line": "Artifact",
+        "power": null,
+        "toughness": null,
+        "colors": [],
+        "color_identity": [],
+        "layout": "normal"
+      },
+      "effect_summary": "Two-mana artifact gains one life when a player casts a white spell.",
+      "rationale": "No board effect, card return, or serious payoff for its setup. Increasing the number of trigger opportunities does not automatically make a weak reward worthwhile.",
+      "context_and_costs": "Life-gain payoffs can help, but prefer enablers that also attack, block, or replace themselves.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "dst",
+        "set_name": "Darksteel",
+        "collector_number": "92",
+        "rarity": "uncommon",
+        "released_at": "2004-02-06",
+        "digital": false,
+        "scryfall_id": "4a11d101-2e82-42d5-b4a1-8f0c520441ab",
+        "oracle_id": "3d0d4ba4-d5aa-4d9f-89ab-46687637fecf"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/dst/92/angels-feather",
+        "api": "https://api.scryfall.com/cards/4a11d101-2e82-42d5-b4a1-8f0c520441ab",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=72686&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "too_strong-4ed-363",
+      "rarity": "uncommon",
+      "category": "Land",
+      "band": "too_strong",
+      "name": "Strip Mine",
+      "role": "land denial",
+      "comparison_scope": "boundary_example",
+      "card_facts": {
+        "mana_cost": "",
+        "cmc": 0.0,
+        "type_line": "Land",
+        "power": null,
+        "toughness": null,
+        "colors": [],
+        "color_identity": [],
+        "layout": "normal"
+      },
+      "effect_summary": "A land produces colorless mana or sacrifices itself to destroy any land.",
+      "rationale": "Above our utility-land ceiling: a land slot can erase an opponent's only basic of a color, and recursion can lock development. Basics do not provide a safe escape.",
+      "context_and_costs": "One-for-one land trading has a real cost. Recursion and low-land aggressive decks make it most dangerous; the verdict is about the desired play experience as well as efficiency.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "4ed",
+        "set_name": "Fourth Edition",
+        "collector_number": "363",
+        "rarity": "uncommon",
+        "released_at": "1995-04-01",
+        "digital": false,
+        "scryfall_id": "a5899b46-226b-4be6-8e80-d2396f54210d",
+        "oracle_id": "d21a89eb-7c5b-459a-acc7-12b20b13bf79"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/4ed/363/strip-mine",
+        "api": "https://api.scryfall.com/cards/a5899b46-226b-4be6-8e80-d2396f54210d",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=2380&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "target-dis-173",
+      "rarity": "uncommon",
+      "category": "Land",
+      "band": "target",
+      "name": "Ghost Quarter",
+      "role": "answer to exceptional lands",
+      "comparison_scope": "role_anchor",
+      "card_facts": {
+        "mana_cost": "",
+        "cmc": 0.0,
+        "type_line": "Land",
+        "power": null,
+        "toughness": null,
+        "colors": [],
+        "color_identity": [],
+        "layout": "normal"
+      },
+      "effect_summary": "A colorless land can sacrifice to destroy a land, whose controller may find a basic replacement.",
+      "rationale": "A reasonable safety valve: it answers a problematic land while usually preserving the opponent's ability to play. The replacement is an intentional cost, not useless generosity.",
+      "context_and_costs": "Needs actual troublesome lands to justify the slot. Repeated activations can exhaust basics; inspect recursion and basic counts.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "dis",
+        "set_name": "Dissension",
+        "collector_number": "173",
+        "rarity": "uncommon",
+        "released_at": "2006-05-05",
+        "digital": false,
+        "scryfall_id": "893eb7e4-5d8d-477b-aaa7-fb85ef2a54fc",
+        "oracle_id": "2ec4288e-34c6-4831-a2c0-ba1ca1d9d1dc"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/dis/173/ghost-quarter",
+        "api": "https://api.scryfall.com/cards/893eb7e4-5d8d-477b-aaa7-fb85ef2a54fc",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=107504&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "too_weak-pls-142",
+      "rarity": "uncommon",
+      "category": "Land",
+      "band": "too_weak",
+      "name": "Terminal Moraine",
+      "role": "slow basic-land fixing",
+      "comparison_scope": "near_floor",
+      "card_facts": {
+        "mana_cost": "",
+        "cmc": 0.0,
+        "type_line": "Land",
+        "power": null,
+        "toughness": null,
+        "colors": [],
+        "color_identity": [],
+        "layout": "normal"
+      },
+      "effect_summary": "A colorless land requires two mana, tapping, and sacrifice to find a tapped basic.",
+      "rationale": "Below the fixing target because the conversion ties up the land plus two other mana and delays the replacement. Low immediate cost hides substantial tempo loss.",
+      "context_and_costs": "It offers late flexibility. Its weakness is the full conversion cost, not an inability to produce mana.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "pls",
+        "set_name": "Planeshift",
+        "collector_number": "142",
+        "rarity": "uncommon",
+        "released_at": "2001-02-05",
+        "digital": false,
+        "scryfall_id": "353a8ea8-3f1f-4f77-95bc-b09b96996285",
+        "oracle_id": "58eaaa8b-45c6-439b-bdd1-5f4e77a75a8c"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/pls/142/terminal-moraine",
+        "api": "https://api.scryfall.com/cards/353a8ea8-3f1f-4f77-95bc-b09b96996285",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=25980&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "too_strong-mh3-193",
+      "rarity": "rare",
+      "category": "Creature",
+      "band": "too_strong",
+      "name": "Nadu, Winged Wisdom",
+      "role": "target-triggered resource engine",
+      "comparison_scope": "conditional_upper_bound",
+      "card_facts": {
+        "mana_cost": "{1}{G}{U}",
+        "cmc": 3.0,
+        "type_line": "Legendary Creature — Bird Wizard",
+        "power": "3",
+        "toughness": "4",
+        "colors": [
+          "G",
+          "U"
+        ],
+        "color_identity": [
+          "G",
+          "U"
+        ],
+        "layout": "normal"
+      },
+      "effect_summary": "A three-mana flying creature grants creatures target-triggered land-or-card value, limited separately for each creature each turn.",
+      "rationale": "Above the ceiling with repeatable cheap targeting: per-creature limits and new creatures do not meaningfully bound the engine. Evaluate the entire trigger network, not just the word twice.",
+      "context_and_costs": "The documented constructed failure used Shuko or Outrider en-Kor, then more complex loops. A draft set without targeting enablers is a different context.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "mh3",
+        "set_name": "Modern Horizons 3",
+        "collector_number": "193",
+        "rarity": "rare",
+        "released_at": "2024-06-14",
+        "digital": false,
+        "scryfall_id": "94b67489-5eb0-4406-9bf3-27e50dc632eb",
+        "oracle_id": "0ff11a61-6fe3-4c70-aba8-417023a5e54e"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/mh3/193/nadu-winged-wisdom",
+        "api": "https://api.scryfall.com/cards/94b67489-5eb0-4406-9bf3-27e50dc632eb",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=662345&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": [
+          "https://magic.wizards.com/en/news/feature/on-banning-nadu-winged-wisdom-in-modern"
+        ]
+      }
+    },
+    {
+      "id": "target-mh3-199",
+      "rarity": "rare",
+      "category": "Creature",
+      "band": "target",
+      "name": "Psychic Frog",
+      "role": "cheap evasive card engine",
+      "comparison_scope": "role_anchor",
+      "card_facts": {
+        "mana_cost": "{U}{B}",
+        "cmc": 2.0,
+        "type_line": "Creature — Frog",
+        "power": "1",
+        "toughness": "2",
+        "colors": [
+          "B",
+          "U"
+        ],
+        "color_identity": [
+          "B",
+          "U"
+        ],
+        "layout": "normal"
+      },
+      "effect_summary": "A two-mana creature draws on player or planeswalker combat damage, grows by discarding cards, and gains flying by exiling graveyard cards.",
+      "rationale": "An ambitious but appropriate rare target for a supported blue-black lane: pressure, resource conversion, and card advantage on a cheap interactive body.",
+      "context_and_costs": "Needs combat connection; growth consumes cards and flying consumes graveyard material. Its Legacy ban does not automatically make the design an invalid high-powered Limited reference.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "mh3",
+        "set_name": "Modern Horizons 3",
+        "collector_number": "199",
+        "rarity": "rare",
+        "released_at": "2024-06-14",
+        "digital": false,
+        "scryfall_id": "68924203-c3d9-41ce-8ca8-c6dd491eb3ca",
+        "oracle_id": "e157ad1e-be35-47f3-92db-01799f8fb6a5"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/mh3/199/psychic-frog",
+        "api": "https://api.scryfall.com/cards/68924203-c3d9-41ce-8ca8-c6dd491eb3ca",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=662351&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": [
+          "https://magic.wizards.com/en/news/announcements/banned-and-restricted-december-16-2024"
+        ]
+      }
+    },
+    {
+      "id": "too_weak-leg-215",
+      "rarity": "rare",
+      "category": "Creature",
+      "band": "too_weak",
+      "name": "Wood Elemental",
+      "role": "expensive resource-consuming creature",
+      "comparison_scope": "boundary_example",
+      "card_facts": {
+        "mana_cost": "{3}{G}",
+        "cmc": 4.0,
+        "type_line": "Creature — Elemental",
+        "power": "*",
+        "toughness": "*",
+        "colors": [
+          "G"
+        ],
+        "color_identity": [
+          "G"
+        ],
+        "layout": "normal"
+      },
+      "effect_summary": "A four-mana creature requires sacrificing untapped Forests on entry; those sacrifices determine its size.",
+      "rationale": "An obvious lower bound: development is paid twice, first in mana and then in lands, for a body with no compensating impact or protection.",
+      "context_and_costs": "Land-sacrifice synergies rarely recover the immediate tempo loss. Do not treat printed mana as the full cost.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "leg",
+        "set_name": "Legends",
+        "collector_number": "215",
+        "rarity": "rare",
+        "released_at": "1994-06-01",
+        "digital": false,
+        "scryfall_id": "edc71122-2951-43eb-8ca8-1cda6d231013",
+        "oracle_id": "2b6da458-e075-4696-a74f-c8846e0cc370"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/leg/215/wood-elemental",
+        "api": "https://api.scryfall.com/cards/edc71122-2951-43eb-8ca8-1cda6d231013",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=1555&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "too_strong-lea-47",
+      "rarity": "rare",
+      "category": "Instant",
+      "band": "too_strong",
+      "name": "Ancestral Recall",
+      "role": "cheap card advantage",
+      "comparison_scope": "boundary_example",
+      "card_facts": {
+        "mana_cost": "{U}",
+        "cmc": 1.0,
+        "type_line": "Instant",
+        "power": null,
+        "toughness": null,
+        "colors": [
+          "U"
+        ],
+        "color_identity": [
+          "U"
+        ],
+        "layout": "normal"
+      },
+      "effect_summary": "One blue mana lets a target player draw three cards.",
+      "rationale": "Far above the ceiling: two net cards for a single mana with no setup, leaving the rest of the turn available for development or interaction.",
+      "context_and_costs": "This is a deliberately extreme upper bound, not a close comparison for every draw spell.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "lea",
+        "set_name": "Limited Edition Alpha",
+        "collector_number": "47",
+        "rarity": "rare",
+        "released_at": "1993-08-05",
+        "digital": false,
+        "scryfall_id": "70e7ddf2-5604-41e7-bb9d-ddd03d3e9d0b",
+        "oracle_id": "550c74d4-1fcb-406a-b02a-639a760a4380"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/lea/47/ancestral-recall",
+        "api": "https://api.scryfall.com/cards/70e7ddf2-5604-41e7-bb9d-ddd03d3e9d0b",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=95&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "target-mh1-52",
+      "rarity": "rare",
+      "category": "Instant",
+      "band": "target",
+      "name": "Force of Negation",
+      "role": "free defensive interaction",
+      "comparison_scope": "role_anchor",
+      "card_facts": {
+        "mana_cost": "{1}{U}{U}",
+        "cmc": 3.0,
+        "type_line": "Instant",
+        "power": null,
+        "toughness": null,
+        "colors": [
+          "U"
+        ],
+        "color_identity": [
+          "U"
+        ],
+        "layout": "normal"
+      },
+      "effect_summary": "Counters and exiles a noncreature spell; outside your turn, a blue card can be exiled instead of paying three mana.",
+      "rationale": "A suitable rare efficiency anchor: zero-mana defense is allowed when it costs another card, has a timing gate, and misses creatures.",
+      "context_and_costs": "Free use spends two cards to answer one. Evaluate blue-card density and the set's noncreature threats; it is not a universally efficient two-for-one.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "mh1",
+        "set_name": "Modern Horizons",
+        "collector_number": "52",
+        "rarity": "rare",
+        "released_at": "2019-06-14",
+        "digital": false,
+        "scryfall_id": "e9be371c-c688-44ad-ab71-bd4c9f242d58",
+        "oracle_id": "ac2173f9-f223-440a-9231-fd98762bdc6f"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/mh1/52/force-of-negation",
+        "api": "https://api.scryfall.com/cards/e9be371c-c688-44ad-ab71-bd4c9f242d58",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=464001&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "too_weak-nem-36",
+      "rarity": "rare",
+      "category": "Instant",
+      "band": "too_weak",
+      "name": "Pale Moon",
+      "role": "temporary mana disruption",
+      "comparison_scope": "boundary_example",
+      "card_facts": {
+        "mana_cost": "{1}{U}",
+        "cmc": 2.0,
+        "type_line": "Instant",
+        "power": null,
+        "toughness": null,
+        "colors": [
+          "U"
+        ],
+        "color_identity": [
+          "U"
+        ],
+        "layout": "normal"
+      },
+      "effect_summary": "Two-mana instant makes nonbasic lands produce only colorless mana for the rest of the turn.",
+      "rationale": "A narrow one-turn inconvenience is not enough for a premium rare interaction slot. It neither removes a threat nor reliably denies the opponent a useful action.",
+      "context_and_costs": "An opponent can often float colored mana in response, and basics are unaffected. Nonbasic-heavy combo matchups are special cases.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "nem",
+        "set_name": "Nemesis",
+        "collector_number": "36",
+        "rarity": "rare",
+        "released_at": "2000-02-14",
+        "digital": false,
+        "scryfall_id": "aeb282bb-d0b8-4822-8197-ff0523549309",
+        "oracle_id": "78e3a3c3-3091-46ab-a47a-86b7db68ced4"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/nem/36/pale-moon",
+        "api": "https://api.scryfall.com/cards/aeb282bb-d0b8-4822-8197-ff0523549309",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=21302&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "too_strong-lea-3",
+      "rarity": "rare",
+      "category": "Sorcery",
+      "band": "too_strong",
+      "name": "Balance",
+      "role": "asymmetric reset enabler",
+      "comparison_scope": "conditional_upper_bound",
+      "card_facts": {
+        "mana_cost": "{1}{W}",
+        "cmc": 2.0,
+        "type_line": "Sorcery",
+        "power": null,
+        "toughness": null,
+        "colors": [
+          "W"
+        ],
+        "color_identity": [
+          "W"
+        ],
+        "layout": "normal"
+      },
+      "effect_summary": "Two mana reduces players' lands, hands, and creatures to the smallest respective counts through sacrifice and discard.",
+      "rationale": "Above the ceiling when a deck converts resources into unaffected permanents: the nominal symmetry can become a cheap one-sided reset.",
+      "context_and_costs": "Requires tracking what each player actually loses. Artifact/enchantment-heavy boards and emptied hands break the symmetry; it is not literally a one-sided spell.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "lea",
+        "set_name": "Limited Edition Alpha",
+        "collector_number": "3",
+        "rarity": "rare",
+        "released_at": "1993-08-05",
+        "digital": false,
+        "scryfall_id": "6f9ea46a-411f-40ce-a873-a905180093f4",
+        "oracle_id": "17fa98cd-ed8f-483f-9525-7e989a82ebb2"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/lea/3/balance",
+        "api": "https://api.scryfall.com/cards/6f9ea46a-411f-40ce-a873-a905180093f4",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=234&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "target-mh2-80",
+      "rarity": "rare",
+      "category": "Sorcery",
+      "band": "target",
+      "name": "Damn",
+      "role": "spot removal with a sweeper mode",
+      "comparison_scope": "role_anchor",
+      "card_facts": {
+        "mana_cost": "{B}{B}",
+        "cmc": 2.0,
+        "type_line": "Sorcery",
+        "power": null,
+        "toughness": null,
+        "colors": [
+          "B"
+        ],
+        "color_identity": [
+          "B",
+          "W"
+        ],
+        "layout": "normal"
+      },
+      "effect_summary": "Two black mana destroys a creature; four-mana overload instead destroys every creature.",
+      "rationale": "A desirable rare combines efficient early interaction with a major late board option. Flexibility creates rare value without making the baseline weak.",
+      "context_and_costs": "The single-target and overload modes require different colored commitments. The sweeper also destroys your creatures.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "mh2",
+        "set_name": "Modern Horizons 2",
+        "collector_number": "80",
+        "rarity": "rare",
+        "released_at": "2021-06-18",
+        "digital": false,
+        "scryfall_id": "efeae088-9ac5-4d2f-a15c-d8675a471ac5",
+        "oracle_id": "b01d61cc-9844-4191-86a0-f2db6d42d6e5"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/mh2/80/damn",
+        "api": "https://api.scryfall.com/cards/efeae088-9ac5-4d2f-a15c-d8675a471ac5",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=522156&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "too_weak-jud-70",
+      "rarity": "rare",
+      "category": "Sorcery",
+      "band": "too_weak",
+      "name": "Morality Shift",
+      "role": "large graveyard setup",
+      "comparison_scope": "unsupported_package",
+      "card_facts": {
+        "mana_cost": "{5}{B}{B}",
+        "cmc": 7.0,
+        "type_line": "Sorcery",
+        "power": null,
+        "toughness": null,
+        "colors": [
+          "B"
+        ],
+        "color_identity": [
+          "B"
+        ],
+        "layout": "normal"
+      },
+      "effect_summary": "Seven mana exchanges its controller's library and graveyard.",
+      "rationale": "Too little immediate board or resource access for a normal expensive spell slot. It asks for another payoff after consuming most of a turn.",
+      "context_and_costs": "Dedicated graveyard wins can exploit it. Such a package must exist in the actual set before this is credited as a finisher.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "jud",
+        "set_name": "Judgment",
+        "collector_number": "70",
+        "rarity": "rare",
+        "released_at": "2002-05-27",
+        "digital": false,
+        "scryfall_id": "b5c83e4d-ccc1-4ebf-9e74-2cc1ff9a7b07",
+        "oracle_id": "82e36ba9-9652-4594-8660-86c766b47709"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/jud/70/morality-shift",
+        "api": "https://api.scryfall.com/cards/b5c83e4d-ccc1-4ebf-9e74-2cc1ff9a7b07",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=35171&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "too_strong-uds-40",
+      "rarity": "rare",
+      "category": "Enchantment",
+      "band": "too_strong",
+      "name": "Opposition",
+      "role": "repeatable tap and mana-denial engine",
+      "comparison_scope": "conditional_upper_bound",
+      "card_facts": {
+        "mana_cost": "{2}{U}{U}",
+        "cmc": 4.0,
+        "type_line": "Enchantment",
+        "power": null,
+        "toughness": null,
+        "colors": [
+          "U"
+        ],
+        "color_identity": [
+          "U"
+        ],
+        "layout": "normal"
+      },
+      "effect_summary": "Four-mana enchantment lets creatures tap to tap an artifact, creature, or land.",
+      "rationale": "Above our ceiling in a token-rich environment: spare creatures can deny mana before main phases as well as clear blockers, turning a board lead into a soft lock.",
+      "context_and_costs": "Needs a creature board and can be attacked by removal or sweepers. Tapping only blockers without land denial would be a different design.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "uds",
+        "set_name": "Urza's Destiny",
+        "collector_number": "40",
+        "rarity": "rare",
+        "released_at": "1999-06-07",
+        "digital": false,
+        "scryfall_id": "95be2701-af7c-483e-8165-e8bd4b2774ed",
+        "oracle_id": "bf0b252d-1295-44e4-bac3-113b5732a2a9"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/uds/40/opposition",
+        "api": "https://api.scryfall.com/cards/95be2701-af7c-483e-8165-e8bd4b2774ed",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=15162&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "target-mor-58",
+      "rarity": "rare",
+      "category": "Enchantment",
+      "band": "target",
+      "name": "Bitterblossom",
+      "role": "low-cost flying token engine",
+      "comparison_scope": "role_anchor",
+      "card_facts": {
+        "mana_cost": "{1}{B}",
+        "cmc": 2.0,
+        "type_line": "Kindred Enchantment — Faerie",
+        "power": null,
+        "toughness": null,
+        "colors": [
+          "B"
+        ],
+        "color_identity": [
+          "B"
+        ],
+        "layout": "normal"
+      },
+      "effect_summary": "Two-mana enchantment creates a flying Faerie each upkeep at the cost of one life.",
+      "rationale": "A real rare engine can accumulate evasive material cheaply. It is acceptable to gain repeated value when the first token is delayed and life loss creates a race.",
+      "context_and_costs": "No immediate body, continued life loss, and enchantment answers matter. Sacrifice or tribal packages can push it higher.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "mor",
+        "set_name": "Morningtide",
+        "collector_number": "58",
+        "rarity": "rare",
+        "released_at": "2008-02-01",
+        "digital": false,
+        "scryfall_id": "8145fed6-6b51-420a-84cf-4ea5e0aa1883",
+        "oracle_id": "fb868840-09fa-49b1-85cb-b08ad065e972"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/mor/58/bitterblossom",
+        "api": "https://api.scryfall.com/cards/8145fed6-6b51-420a-84cf-4ea5e0aa1883",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=152648&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "too_weak-rtr-33",
+      "rarity": "rare",
+      "category": "Enchantment",
+      "band": "too_weak",
+      "name": "Conjured Currency",
+      "role": "delayed permanent exchange",
+      "comparison_scope": "boundary_example",
+      "card_facts": {
+        "mana_cost": "{5}{U}",
+        "cmc": 6.0,
+        "type_line": "Enchantment",
+        "power": null,
+        "toughness": null,
+        "colors": [
+          "U"
+        ],
+        "color_identity": [
+          "U"
+        ],
+        "layout": "normal"
+      },
+      "effect_summary": "Six-mana enchantment can trade control of itself for an eligible permanent at each upkeep of its current controller.",
+      "rationale": "Below target: no entry impact, a full-turn delay, and the opponent receives the same exchange tool. It does not reliably secure the resource it appears to steal.",
+      "context_and_costs": "Ownership restrictions affect eligible targets. A carefully engineered board can improve it, but ordinary use is slow and unreliable.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "rtr",
+        "set_name": "Return to Ravnica",
+        "collector_number": "33",
+        "rarity": "rare",
+        "released_at": "2012-10-05",
+        "digital": false,
+        "scryfall_id": "a7c2ea6e-7d29-4526-b135-9bbb1eed9d4a",
+        "oracle_id": "427ba80d-cfdf-4651-a1eb-89a2125a9217"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/rtr/33/conjured-currency",
+        "api": "https://api.scryfall.com/cards/a7c2ea6e-7d29-4526-b135-9bbb1eed9d4a",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=253606&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "too_strong-bok-163",
+      "rarity": "rare",
+      "category": "Artifact",
+      "band": "too_strong",
+      "name": "Umezawa's Jitte",
+      "role": "equipment combat-control engine",
+      "comparison_scope": "boundary_example",
+      "card_facts": {
+        "mana_cost": "{2}",
+        "cmc": 2.0,
+        "type_line": "Legendary Artifact — Equipment",
+        "power": null,
+        "toughness": null,
+        "colors": [],
+        "color_identity": [],
+        "layout": "normal"
+      },
+      "effect_summary": "Two-mana Equipment gains counters from combat damage; counters provide removal, pump, or life. Equip costs two.",
+      "rationale": "Above our combat ceiling: the first connection finances future removal and makes subsequent combat increasingly unfavorable. Multiple resource modes snowball from normal attacks or blocks.",
+      "context_and_costs": "Full initial investment is four mana plus a creature. Killing the carrier or artifact remains possible, but the accumulated counters make racing and small creatures much worse.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "bok",
+        "set_name": "Betrayers of Kamigawa",
+        "collector_number": "163",
+        "rarity": "rare",
+        "released_at": "2005-02-04",
+        "digital": false,
+        "scryfall_id": "3b6e5956-f795-451b-bb24-56462d1ced27",
+        "oracle_id": "1da10d5c-36a8-473f-a5d4-782ad61d8057"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/bok/163/umezawas-jitte",
+        "api": "https://api.scryfall.com/cards/3b6e5956-f795-451b-bb24-56462d1ced27",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=81979&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "target-mh2-231",
+      "rarity": "rare",
+      "category": "Artifact",
+      "band": "target",
+      "name": "Nettlecyst",
+      "role": "artifact/enchantment scaling threat",
+      "comparison_scope": "role_anchor",
+      "card_facts": {
+        "mana_cost": "{3}",
+        "cmc": 3.0,
+        "type_line": "Artifact — Equipment",
+        "power": null,
+        "toughness": null,
+        "colors": [],
+        "color_identity": [],
+        "layout": "normal"
+      },
+      "effect_summary": "Three-mana living-weapon Equipment supplies a Germ and scales its bonus with controlled artifacts and enchantments; later equip costs two.",
+      "rationale": "A strong rare build-around supplies its own body and rewards the deck's ordinary permanents. This is a much better expensive Equipment pattern than paying twice before obtaining any creature.",
+      "context_and_costs": "Count the Equipment itself; Germ dies if its final toughness is zero. Actual artifact/enchantment density controls the ceiling.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "mh2",
+        "set_name": "Modern Horizons 2",
+        "collector_number": "231",
+        "rarity": "rare",
+        "released_at": "2021-06-18",
+        "digital": false,
+        "scryfall_id": "4a0bb5dc-75a6-4bd6-81f8-611197fb0fba",
+        "oracle_id": "04c7f4fe-2098-4311-866d-6733c08d5178"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/mh2/231/nettlecyst",
+        "api": "https://api.scryfall.com/cards/4a0bb5dc-75a6-4bd6-81f8-611197fb0fba",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=522307&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "too_weak-7ed-305",
+      "rarity": "rare",
+      "category": "Artifact",
+      "band": "too_weak",
+      "name": "Jayemdae Tome",
+      "role": "repeatable card draw artifact",
+      "comparison_scope": "boundary_example",
+      "card_facts": {
+        "mana_cost": "{4}",
+        "cmc": 4.0,
+        "type_line": "Artifact — Book",
+        "power": null,
+        "toughness": null,
+        "colors": [],
+        "color_identity": [],
+        "layout": "normal"
+      },
+      "effect_summary": "Four mana to cast, then four mana and tapping to draw each card.",
+      "rationale": "The first card costs eight total mana and only replaces the Tome. Repeatability does not excuse a huge initial tempo deficit in this environment.",
+      "context_and_costs": "A very slow control game can eventually repay the investment. Compare that timetable to immediate cantrips and draw engines attached to threats.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "7ed",
+        "set_name": "Seventh Edition",
+        "collector_number": "305",
+        "rarity": "rare",
+        "released_at": "2001-04-11",
+        "digital": false,
+        "scryfall_id": "3bed9644-5dc1-4d1c-b60d-4bcf305f2d0b",
+        "oracle_id": "39ee576a-0803-4063-9c84-f2b537e4d44c"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/7ed/305/jayemdae-tome",
+        "api": "https://api.scryfall.com/cards/3bed9644-5dc1-4d1c-b60d-4bcf305f2d0b",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=25660&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "too_strong-usg-330",
+      "rarity": "rare",
+      "category": "Land",
+      "band": "too_strong",
+      "name": "Tolarian Academy",
+      "role": "artifact-funded fast mana land",
+      "comparison_scope": "conditional_upper_bound",
+      "card_facts": {
+        "mana_cost": "",
+        "cmc": 0.0,
+        "type_line": "Legendary Land",
+        "power": null,
+        "toughness": null,
+        "colors": [],
+        "color_identity": [
+          "U"
+        ],
+        "layout": "normal"
+      },
+      "effect_summary": "A legendary land taps for blue mana equal to the number of controlled artifacts.",
+      "rationale": "Above the ceiling with cheap artifacts: a land drop produces multiple mana without an activation investment. Artifact tokens can accelerate the engine further.",
+      "context_and_costs": "Conditional ceiling: it produces nothing without artifacts. Rare and mythic printings are both shown; neither rarity makes a dense artifact shell safe.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "usg",
+        "set_name": "Urza's Saga",
+        "collector_number": "330",
+        "rarity": "rare",
+        "released_at": "1998-10-12",
+        "digital": false,
+        "scryfall_id": "ad7ac9a5-340f-4509-826c-7b9416d47887",
+        "oracle_id": "dba4fd31-8931-42dd-bd86-45479c2abf74"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/usg/330/tolarian-academy",
+        "api": "https://api.scryfall.com/cards/ad7ac9a5-340f-4509-826c-7b9416d47887",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=8883&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "target-mh1-244",
+      "rarity": "rare",
+      "category": "Land",
+      "band": "target",
+      "name": "Prismatic Vista",
+      "role": "flexible untapped basic fixing",
+      "comparison_scope": "role_anchor",
+      "card_facts": {
+        "mana_cost": "",
+        "cmc": 0.0,
+        "type_line": "Land",
+        "power": null,
+        "toughness": null,
+        "colors": [],
+        "color_identity": [],
+        "layout": "normal"
+      },
+      "effect_summary": "A land sacrifices with one life to find a basic land, which enters untapped.",
+      "rationale": "Appropriate premium fixing: any basic color on demand without a tempo delay, paid for with life and restricted to basic targets.",
+      "context_and_costs": "Does not fetch duals merely because they have basic land types. Landfall and graveyard support add value; basics must be available.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "mh1",
+        "set_name": "Modern Horizons",
+        "collector_number": "244",
+        "rarity": "rare",
+        "released_at": "2019-06-14",
+        "digital": false,
+        "scryfall_id": "e37da81e-be12-45a2-9128-376f1ad7b3e8",
+        "oracle_id": "032b8a0d-491a-4a12-ab9f-689010054d5b"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/mh1/244/prismatic-vista",
+        "api": "https://api.scryfall.com/cards/e37da81e-be12-45a2-9128-376f1ad7b3e8",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=464193&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "too_weak-pcy-143",
+      "rarity": "rare",
+      "category": "Land",
+      "band": "too_weak",
+      "name": "Wintermoon Mesa",
+      "role": "slow land with one-shot disruption",
+      "comparison_scope": "boundary_example",
+      "card_facts": {
+        "mana_cost": "",
+        "cmc": 0.0,
+        "type_line": "Land",
+        "power": null,
+        "toughness": null,
+        "colors": [],
+        "color_identity": [],
+        "layout": "normal"
+      },
+      "effect_summary": "Enters tapped, produces colorless, and can spend two mana plus sacrifice to tap two lands.",
+      "rationale": "Weak premium land: an entry penalty and no fixing buy only temporary disruption with another activation cost and loss of the land.",
+      "context_and_costs": "Specific denial strategies can use it. A routine draft deck should prefer colored sources or more reliable utility.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "pcy",
+        "set_name": "Prophecy",
+        "collector_number": "143",
+        "rarity": "rare",
+        "released_at": "2000-06-05",
+        "digital": false,
+        "scryfall_id": "f07144a6-6e47-4315-8353-f8958f014f41",
+        "oracle_id": "a4a6f95e-856c-4eb5-82ba-b2406be22b23"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/pcy/143/wintermoon-mesa",
+        "api": "https://api.scryfall.com/cards/f07144a6-6e47-4315-8353-f8958f014f41",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=23318&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "too_strong-thb-229",
+      "rarity": "mythic",
+      "category": "Creature",
+      "band": "too_strong",
+      "name": "Uro, Titan of Nature's Wrath",
+      "role": "recursive value and ramp threat",
+      "comparison_scope": "conditional_upper_bound",
+      "card_facts": {
+        "mana_cost": "{1}{G}{U}",
+        "cmc": 3.0,
+        "type_line": "Legendary Creature — Elder Giant",
+        "power": "6",
+        "toughness": "6",
+        "colors": [
+          "G",
+          "U"
+        ],
+        "color_identity": [
+          "G",
+          "U"
+        ],
+        "layout": "normal"
+      },
+      "effect_summary": "Three mana gains life, draws, and can put a land into play; escape later retains a 6/6 that repeats the value when attacking.",
+      "rationale": "Conditional upper boundary: cheap stabilization and acceleration lead into a recurring threat, making one-for-one answers struggle to catch up. This is an engine package, not just a large creature.",
+      "context_and_costs": "Requires escape mana and five other graveyard cards for the persistent body. Graveyard hate and exile change its resilience; do not omit those costs.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "thb",
+        "set_name": "Theros Beyond Death",
+        "collector_number": "229",
+        "rarity": "mythic",
+        "released_at": "2020-01-24",
+        "digital": false,
+        "scryfall_id": "a0b6a71e-56cb-4d25-8f2b-7a4f1b60900d",
+        "oracle_id": "ee302659-59ed-4eef-babe-451b9ccf7f14"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/thb/229/uro-titan-of-natures-wrath",
+        "api": "https://api.scryfall.com/cards/a0b6a71e-56cb-4d25-8f2b-7a4f1b60900d",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=476480&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "target-mh2-75",
+      "rarity": "mythic",
+      "category": "Creature",
+      "band": "target",
+      "name": "Archon of Cruelty",
+      "role": "expensive stabilizing finisher",
+      "comparison_scope": "role_anchor",
+      "card_facts": {
+        "mana_cost": "{6}{B}{B}",
+        "cmc": 8.0,
+        "type_line": "Creature — Archon",
+        "power": "6",
+        "toughness": "6",
+        "colors": [
+          "B"
+        ],
+        "color_identity": [
+          "B"
+        ],
+        "layout": "normal"
+      },
+      "effect_summary": "An eight-mana 6/6 flyer creates a sacrifice, discard, life swing, and card draw on entry and attack.",
+      "rationale": "This is appropriate ambition for eight mana: immediate recovery plus a real closing threat. Do not flatten its payoff to a bare large body because the effect looks dramatic.",
+      "context_and_costs": "The opponent sacrifices a creature or planeswalker rather than a chosen target. Cheap reanimation or repeated blink can move this beyond the hard-cast reference context.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "mh2",
+        "set_name": "Modern Horizons 2",
+        "collector_number": "75",
+        "rarity": "mythic",
+        "released_at": "2021-06-18",
+        "digital": false,
+        "scryfall_id": "1be9d9a4-d7ee-4854-abc2-85cabf993ec9",
+        "oracle_id": "aa1a6646-c1e6-4bff-9092-43ee3e137914"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/mh2/75/archon-of-cruelty",
+        "api": "https://api.scryfall.com/cards/1be9d9a4-d7ee-4854-abc2-85cabf993ec9",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=522151&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "too_weak-ala-196",
+      "rarity": "mythic",
+      "category": "Creature",
+      "band": "too_weak",
+      "name": "Sphinx Sovereign",
+      "role": "expensive evasive threat",
+      "comparison_scope": "boundary_example",
+      "card_facts": {
+        "mana_cost": "{4}{W}{U}{U}{B}",
+        "cmc": 8.0,
+        "type_line": "Artifact Creature — Sphinx",
+        "power": "6",
+        "toughness": "6",
+        "colors": [
+          "B",
+          "U",
+          "W"
+        ],
+        "color_identity": [
+          "B",
+          "U",
+          "W"
+        ],
+        "layout": "normal"
+      },
+      "effect_summary": "An eight-mana 6/6 flyer gains three life at your end step if untapped, otherwise makes opponents lose three life.",
+      "rationale": "Below the eight-mana mythic target: no entry card or removal swing, difficult colors, and most value requires surviving until a later step.",
+      "context_and_costs": "Can stabilize against flyers and eventually race. Compare immediate payoff and colored requirements with Archon rather than body size alone.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "ala",
+        "set_name": "Shards of Alara",
+        "collector_number": "196",
+        "rarity": "mythic",
+        "released_at": "2008-10-03",
+        "digital": false,
+        "scryfall_id": "d0fc130e-57ed-40a7-a9ba-d689e7dc3698",
+        "oracle_id": "41907508-9ffc-4e01-969a-4f9c35cdf548"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/ala/196/sphinx-sovereign",
+        "api": "https://api.scryfall.com/cards/d0fc130e-57ed-40a7-a9ba-d689e7dc3698",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=175107&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "too_strong-ima-65",
+      "rarity": "mythic",
+      "category": "Instant",
+      "band": "too_strong",
+      "name": "Mana Drain",
+      "role": "counterspell plus mana swing",
+      "comparison_scope": "boundary_example",
+      "card_facts": {
+        "mana_cost": "{U}{U}",
+        "cmc": 2.0,
+        "type_line": "Instant",
+        "power": null,
+        "toughness": null,
+        "colors": [
+          "U"
+        ],
+        "color_identity": [
+          "U"
+        ],
+        "layout": "normal"
+      },
+      "effect_summary": "A two-blue counterspell supplies colorless mana equal to the countered spell's mana value at the next main phase.",
+      "rationale": "Above the desired interaction ceiling: a full answer also finances a much earlier threat. Increasing rarity changes frequency but does not remove the tempo swing.",
+      "context_and_costs": "Requires a relevant opposing spell, double blue, and a way to use the temporary colorless mana. Its uncommon and mythic printings demonstrate why rarity alone is not a power scale.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "ima",
+        "set_name": "Iconic Masters",
+        "collector_number": "65",
+        "rarity": "mythic",
+        "released_at": "2017-11-17",
+        "digital": false,
+        "scryfall_id": "416d2d51-8f29-4e95-b037-e8c32b081e6c",
+        "oracle_id": "74d3277a-38e5-4732-afed-084a56148f20"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/ima/65/mana-drain",
+        "api": "https://api.scryfall.com/cards/416d2d51-8f29-4e95-b037-e8c32b081e6c",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=438631&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "target-stx-203",
+      "rarity": "mythic",
+      "category": "Instant",
+      "band": "target",
+      "name": "Magma Opus",
+      "role": "expensive flexible board and card swing",
+      "comparison_scope": "role_anchor",
+      "card_facts": {
+        "mana_cost": "{6}{U}{R}",
+        "cmc": 8.0,
+        "type_line": "Instant",
+        "power": null,
+        "toughness": null,
+        "colors": [
+          "R",
+          "U"
+        ],
+        "color_identity": [
+          "R",
+          "U"
+        ],
+        "layout": "normal"
+      },
+      "effect_summary": "Eight mana combines divided damage, tapping permanents, a 4/4 token, and two cards; discarding it for two mana instead makes a Treasure.",
+      "rationale": "A suitable mythic spell offers several concrete returns when expensive and an early use when stuck in hand. This is the right scale for a late-game resource swing.",
+      "context_and_costs": "Costs eight at instant speed; the early Treasure mode spends the card. Casting from the graveyard cheaply would require separate package review.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "stx",
+        "set_name": "Strixhaven: School of Mages",
+        "collector_number": "203",
+        "rarity": "mythic",
+        "released_at": "2021-04-23",
+        "digital": false,
+        "scryfall_id": "27c914a3-2294-4feb-9450-c012cfd307a6",
+        "oracle_id": "985f9dd7-e693-48ff-9dd6-a1a3cbaa236b"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/stx/203/magma-opus",
+        "api": "https://api.scryfall.com/cards/27c914a3-2294-4feb-9450-c012cfd307a6",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=513695&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "too_weak-bbd-51",
+      "rarity": "mythic",
+      "category": "Instant",
+      "band": "too_weak",
+      "name": "Stunning Reversal",
+      "role": "emergency loss replacement",
+      "comparison_scope": "unsupported_package",
+      "card_facts": {
+        "mana_cost": "{3}{B}",
+        "cmc": 4.0,
+        "type_line": "Instant",
+        "power": null,
+        "toughness": null,
+        "colors": [
+          "B"
+        ],
+        "color_identity": [
+          "B"
+        ],
+        "layout": "normal"
+      },
+      "effect_summary": "Four-mana instant replaces the next game loss that turn with drawing seven and setting life to one, then exiles itself.",
+      "rationale": "Weak default mythic slot: no development or ordinary interaction, must be held for a narrow crisis, and often leaves the player exposed at one life.",
+      "context_and_costs": "A special alternate-loss combo or protection plan can improve it. Do not credit that package when absent.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "bbd",
+        "set_name": "Battlebond",
+        "collector_number": "51",
+        "rarity": "mythic",
+        "released_at": "2018-06-08",
+        "digital": false,
+        "scryfall_id": "6714197d-7420-43a1-8b08-4e1fd6355b54",
+        "oracle_id": "3db00947-d568-45d7-82cd-b54b4fcb1312"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/bbd/51/stunning-reversal",
+        "api": "https://api.scryfall.com/cards/6714197d-7420-43a1-8b08-4e1fd6355b54",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=446019&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "too_strong-ima-157",
+      "rarity": "mythic",
+      "category": "Sorcery",
+      "band": "too_strong",
+      "name": "Channel",
+      "role": "life-funded fast mana",
+      "comparison_scope": "conditional_upper_bound",
+      "card_facts": {
+        "mana_cost": "{G}{G}",
+        "cmc": 2.0,
+        "type_line": "Sorcery",
+        "power": null,
+        "toughness": null,
+        "colors": [
+          "G"
+        ],
+        "color_identity": [
+          "G"
+        ],
+        "layout": "normal"
+      },
+      "effect_summary": "Two green mana enables paying life for colorless mana during the turn.",
+      "rationale": "Above the upper bound with expensive generic-cost payoffs: it can bypass most of the mana curve immediately. Moving it from uncommon to mythic does not make that play pattern fair.",
+      "context_and_costs": "Requires payoff cards and enough life. An empty hand or colored-only costs limit it; do not invent a combo without identifying the payoff.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "ima",
+        "set_name": "Iconic Masters",
+        "collector_number": "157",
+        "rarity": "mythic",
+        "released_at": "2017-11-17",
+        "digital": false,
+        "scryfall_id": "ce54c7c1-3401-4414-8da0-5846cb0ae1b4",
+        "oracle_id": "d1b815d1-2848-40d4-a555-66822d1becbc"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/ima/157/channel",
+        "api": "https://api.scryfall.com/cards/ce54c7c1-3401-4414-8da0-5846cb0ae1b4",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=438723&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "target-mh1-46",
+      "rarity": "mythic",
+      "category": "Sorcery",
+      "band": "target",
+      "name": "Echo of Eons",
+      "role": "graveyard-enabled hand reset",
+      "comparison_scope": "role_anchor",
+      "card_facts": {
+        "mana_cost": "{4}{U}{U}",
+        "cmc": 6.0,
+        "type_line": "Sorcery",
+        "power": null,
+        "toughness": null,
+        "colors": [
+          "U"
+        ],
+        "color_identity": [
+          "U"
+        ],
+        "layout": "normal"
+      },
+      "effect_summary": "Six-mana spell shuffles hands and graveyards into libraries and draws seven for everyone; flashback costs three.",
+      "rationale": "A suitable high-powered build-around when its graveyard mode is deliberately supported: a meaningful hand reset at an attractive alternate price, with real symmetry and sequencing decisions.",
+      "context_and_costs": "Needs discard or mill to access the cheaper mode. Also refills the opponent; free discard and fast mana can make the package excessive. Not a general-purpose baseline draw spell.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "mh1",
+        "set_name": "Modern Horizons",
+        "collector_number": "46",
+        "rarity": "mythic",
+        "released_at": "2019-06-14",
+        "digital": false,
+        "scryfall_id": "ff590af2-2d6c-4f16-a9b8-1a6dab6e9ad5",
+        "oracle_id": "23d3e5fe-3f82-44cf-91a1-6646a12a0255"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/mh1/46/echo-of-eons",
+        "api": "https://api.scryfall.com/cards/ff590af2-2d6c-4f16-a9b8-1a6dab6e9ad5",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=463995&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "too_weak-dka-1",
+      "rarity": "mythic",
+      "category": "Sorcery",
+      "band": "too_weak",
+      "name": "Archangel's Light",
+      "role": "expensive life gain and graveyard reset",
+      "comparison_scope": "boundary_example",
+      "card_facts": {
+        "mana_cost": "{7}{W}",
+        "cmc": 8.0,
+        "type_line": "Sorcery",
+        "power": null,
+        "toughness": null,
+        "colors": [
+          "W"
+        ],
+        "color_identity": [
+          "W"
+        ],
+        "layout": "normal"
+      },
+      "effect_summary": "Eight mana gains two life per graveyard card, then shuffles that graveyard into the library.",
+      "rationale": "Too little board or usable card impact for an eight-mana mythic. A large life total can delay losing without providing a way to recover or win.",
+      "context_and_costs": "Life-gain payoffs and decking can matter; without them, compare it directly with a finisher that also removes, draws, or supplies bodies.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "dka",
+        "set_name": "Dark Ascension",
+        "collector_number": "1",
+        "rarity": "mythic",
+        "released_at": "2012-02-03",
+        "digital": false,
+        "scryfall_id": "f99837b3-b487-43bb-846b-7a0e8afb6eef",
+        "oracle_id": "fc734a75-93bf-448b-b347-810ae835fe49"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/dka/1/archangels-light",
+        "api": "https://api.scryfall.com/cards/f99837b3-b487-43bb-846b-7a0e8afb6eef",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=244691&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "too_strong-ima-98",
+      "rarity": "mythic",
+      "category": "Enchantment",
+      "band": "too_strong",
+      "name": "Necropotence",
+      "role": "life-funded card engine",
+      "comparison_scope": "boundary_example",
+      "card_facts": {
+        "mana_cost": "{B}{B}{B}",
+        "cmc": 3.0,
+        "type_line": "Enchantment",
+        "power": null,
+        "toughness": null,
+        "colors": [
+          "B"
+        ],
+        "color_identity": [
+          "B"
+        ],
+        "layout": "normal"
+      },
+      "effect_summary": "A three-black enchantment trades life for cards arriving at the end step, while skipping normal draws and exiling discarded cards.",
+      "rationale": "Above our sustained-card-advantage ceiling: many cards can be purchased for life without further mana, rapidly overwhelming ordinary exchanges.",
+      "context_and_costs": "Triple black, delayed access, hand size, skipped draws, and pressure on life are real constraints. They do not make life a substitute for a meaningful ongoing mana cost.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "ima",
+        "set_name": "Iconic Masters",
+        "collector_number": "98",
+        "rarity": "mythic",
+        "released_at": "2017-11-17",
+        "digital": false,
+        "scryfall_id": "c89c6895-b0f8-444a-9c89-c6b4fd027b3e",
+        "oracle_id": "94a844d2-0574-45a7-b347-e0e329767c42"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/ima/98/necropotence",
+        "api": "https://api.scryfall.com/cards/c89c6895-b0f8-444a-9c89-c6b4fd027b3e",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=438664&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "target-mid-112",
+      "rarity": "mythic",
+      "category": "Enchantment",
+      "band": "target",
+      "name": "The Meathook Massacre",
+      "role": "scalable sweeper and death engine",
+      "comparison_scope": "role_anchor",
+      "card_facts": {
+        "mana_cost": "{X}{B}{B}",
+        "cmc": 2.0,
+        "type_line": "Legendary Enchantment",
+        "power": null,
+        "toughness": null,
+        "colors": [
+          "B"
+        ],
+        "color_identity": [
+          "B"
+        ],
+        "layout": "normal"
+      },
+      "effect_summary": "An X-cost enchantment shrinks all creatures on entry and then turns deaths into life swings.",
+      "rationale": "A strong mythic should affect the board immediately and leave a coherent engine. The sweeper scales with actual mana spent; the remaining triggers need creatures to die.",
+      "context_and_costs": "The shrink effect hits your creatures too. Small-creature density and token sacrifice can raise its ceiling; do not automatically label every death trigger excessive.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "mid",
+        "set_name": "Innistrad: Midnight Hunt",
+        "collector_number": "112",
+        "rarity": "mythic",
+        "released_at": "2021-09-24",
+        "digital": false,
+        "scryfall_id": "08950015-eee5-4327-888c-82dfd13bb9ad",
+        "oracle_id": "127de52b-df75-4342-95a0-20d84c5bf916"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/mid/112/the-meathook-massacre",
+        "api": "https://api.scryfall.com/cards/08950015-eee5-4327-888c-82dfd13bb9ad",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=534886&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "too_weak-roe-55",
+      "rarity": "mythic",
+      "category": "Enchantment",
+      "band": "too_weak",
+      "name": "Cast Through Time",
+      "role": "expensive spell-doubling setup",
+      "comparison_scope": "unsupported_package",
+      "card_facts": {
+        "mana_cost": "{4}{U}{U}{U}",
+        "cmc": 7.0,
+        "type_line": "Enchantment",
+        "power": null,
+        "toughness": null,
+        "colors": [
+          "U"
+        ],
+        "color_identity": [
+          "U"
+        ],
+        "layout": "normal"
+      },
+      "effect_summary": "Seven-mana enchantment gives its controller's instants and sorceries rebound.",
+      "rationale": "Below target as an ordinary engine: spends seven mana and a card without changing the board, then requires another spell and time to realize the payoff.",
+      "context_and_costs": "A deck with abundant mana and strong spells can exploit it. The label is about its unsupported floor and deployment timetable.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "roe",
+        "set_name": "Rise of the Eldrazi",
+        "collector_number": "55",
+        "rarity": "mythic",
+        "released_at": "2010-04-23",
+        "digital": false,
+        "scryfall_id": "c9850489-c056-4b17-8743-a5b514d8edf4",
+        "oracle_id": "0a911cb2-caae-4378-bf09-1c5b0751dd35"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/roe/55/cast-through-time",
+        "api": "https://api.scryfall.com/cards/c9850489-c056-4b17-8743-a5b514d8edf4",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=198301&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "too_strong-ema-225",
+      "rarity": "mythic",
+      "category": "Artifact",
+      "band": "too_strong",
+      "name": "Mana Crypt",
+      "role": "zero-cost permanent fast mana",
+      "comparison_scope": "boundary_example",
+      "card_facts": {
+        "mana_cost": "{0}",
+        "cmc": 0.0,
+        "type_line": "Artifact",
+        "power": null,
+        "toughness": null,
+        "colors": [],
+        "color_identity": [],
+        "layout": "normal"
+      },
+      "effect_summary": "Zero-mana artifact taps for two colorless; upkeep coin flips can deal three damage to its controller.",
+      "rationale": "Above the ceiling: repeatable two-mana acceleration without a mana investment skips early curve stages. Random life loss does not reliably repay that tempo advantage.",
+      "context_and_costs": "Long games make the damage relevant. It still accelerates any deck with generic costs and needs very little synergy.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "ema",
+        "set_name": "Eternal Masters",
+        "collector_number": "225",
+        "rarity": "mythic",
+        "released_at": "2016-06-10",
+        "digital": false,
+        "scryfall_id": "0cb33b46-4d1b-4f97-bfdc-d815aee111da",
+        "oracle_id": "2c63e4e1-89d2-4bc6-a232-94e75c4b1c8a"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/ema/225/mana-crypt",
+        "api": "https://api.scryfall.com/cards/0cb33b46-4d1b-4f97-bfdc-d815aee111da",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=413767&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "target-som-223",
+      "rarity": "mythic",
+      "category": "Artifact",
+      "band": "target",
+      "name": "Wurmcoil Engine",
+      "role": "stabilizing resilient finisher",
+      "comparison_scope": "role_anchor",
+      "card_facts": {
+        "mana_cost": "{6}",
+        "cmc": 6.0,
+        "type_line": "Artifact Creature — Phyrexian Wurm",
+        "power": "6",
+        "toughness": "6",
+        "colors": [],
+        "color_identity": [],
+        "layout": "normal"
+      },
+      "effect_summary": "Six-mana 6/6 has deathtouch and lifelink; dying leaves two 3/3 tokens, each inheriting one ability.",
+      "rationale": "A strong mythic can dominate combat, stabilize life, and leave material after destruction. That is a suitable payoff for six mana in a powerful environment.",
+      "context_and_costs": "Colorless access makes this a high-end target, not an average six-drop. Exile, bounce, theft, and artifact answers differ from ordinary destruction.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "som",
+        "set_name": "Scars of Mirrodin",
+        "collector_number": "223",
+        "rarity": "mythic",
+        "released_at": "2010-10-01",
+        "digital": false,
+        "scryfall_id": "33672990-4860-4aa6-ac1b-f9da66f5da59",
+        "oracle_id": "d1a60f44-7696-49ee-91fb-cab5b3102962"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/som/223/wurmcoil-engine",
+        "api": "https://api.scryfall.com/cards/33672990-4860-4aa6-ac1b-f9da66f5da59",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=207875&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "too_weak-ori-221",
+      "rarity": "mythic",
+      "category": "Artifact",
+      "band": "too_weak",
+      "name": "Alhammarret's Archive",
+      "role": "resource-doubling engine",
+      "comparison_scope": "unsupported_package",
+      "card_facts": {
+        "mana_cost": "{5}",
+        "cmc": 5.0,
+        "type_line": "Legendary Artifact",
+        "power": null,
+        "toughness": null,
+        "colors": [],
+        "color_identity": [],
+        "layout": "normal"
+      },
+      "effect_summary": "Five-mana artifact doubles life gain and most card draws, excluding the first draw in the draw step.",
+      "rationale": "Below target without a substantial support package: no body, entry value, or benefit to the ordinary first draw. Another effect must produce the resources it doubles.",
+      "context_and_costs": "With many repeatable draw or life-gain effects it can become powerful. Count those sources before assigning either verdict.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "ori",
+        "set_name": "Magic Origins",
+        "collector_number": "221",
+        "rarity": "mythic",
+        "released_at": "2015-07-17",
+        "digital": false,
+        "scryfall_id": "70afb856-6697-411b-b1aa-e9290a0bfd68",
+        "oracle_id": "d5c4d36c-54b3-4149-906b-a57a670260fc"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/ori/221/alhammarrets-archive",
+        "api": "https://api.scryfall.com/cards/70afb856-6697-411b-b1aa-e9290a0bfd68",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=398564&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "too_strong-vma-319",
+      "rarity": "mythic",
+      "category": "Land",
+      "band": "too_strong",
+      "name": "Tolarian Academy",
+      "role": "artifact-funded fast mana land",
+      "comparison_scope": "conditional_upper_bound",
+      "card_facts": {
+        "mana_cost": "",
+        "cmc": 0.0,
+        "type_line": "Legendary Land",
+        "power": null,
+        "toughness": null,
+        "colors": [],
+        "color_identity": [
+          "U"
+        ],
+        "layout": "normal"
+      },
+      "effect_summary": "A legendary land taps for blue mana equal to the number of controlled artifacts.",
+      "rationale": "Above the ceiling with cheap artifacts: a land drop produces multiple mana without an activation investment. Artifact tokens can accelerate the engine further.",
+      "context_and_costs": "Conditional ceiling: it produces nothing without artifacts. Rare and mythic printings are both shown; neither rarity makes a dense artifact shell safe.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "vma",
+        "set_name": "Vintage Masters",
+        "collector_number": "319",
+        "rarity": "mythic",
+        "released_at": "2014-06-16",
+        "digital": true,
+        "scryfall_id": "fd99bce1-ce39-464b-8e61-2631eb3ed6f6",
+        "oracle_id": "dba4fd31-8931-42dd-bd86-45479c2abf74"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/vma/319/tolarian-academy",
+        "api": "https://api.scryfall.com/cards/fd99bce1-ce39-464b-8e61-2631eb3ed6f6",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=383133&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "target-lci-269",
+      "rarity": "mythic",
+      "category": "Land",
+      "band": "target",
+      "name": "Cavern of Souls",
+      "role": "typed creature fixing",
+      "comparison_scope": "role_anchor",
+      "card_facts": {
+        "mana_cost": "",
+        "cmc": 0.0,
+        "type_line": "Land",
+        "power": null,
+        "toughness": null,
+        "colors": [],
+        "color_identity": [],
+        "layout": "normal"
+      },
+      "effect_summary": "A land names a creature type; it produces colorless normally or any color for that type's creatures, which become uncounterable.",
+      "rationale": "A useful mythic land reference when tribes overlap: untapped fixing plus specialized protection without producing extra mana or winning by itself.",
+      "context_and_costs": "Only the colored-mana mode carries the creature-type restriction and uncounterability. It cannot pay arbitrary colored noncreature costs; no supported tribe means this is the wrong target.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "lci",
+        "set_name": "The Lost Caverns of Ixalan",
+        "collector_number": "269",
+        "rarity": "mythic",
+        "released_at": "2023-11-17",
+        "digital": false,
+        "scryfall_id": "3aad15a2-8a1b-4460-9b06-e85863081878",
+        "oracle_id": "89ca686a-7c72-4d8f-9290-e89635624a83"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/lci/269/cavern-of-souls",
+        "api": "https://api.scryfall.com/cards/3aad15a2-8a1b-4460-9b06-e85863081878",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=636994&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "too_weak-dgm-152",
+      "rarity": "mythic",
+      "category": "Land",
+      "band": "too_weak",
+      "name": "Maze's End",
+      "role": "Gate engine and alternate win",
+      "comparison_scope": "unsupported_package",
+      "card_facts": {
+        "mana_cost": "",
+        "cmc": 0.0,
+        "type_line": "Land",
+        "power": null,
+        "toughness": null,
+        "colors": [],
+        "color_identity": [],
+        "layout": "normal"
+      },
+      "effect_summary": "A tapped land produces colorless; a three-mana activation returns it to hand, searches for a Gate, and checks for ten differently named Gates.",
+      "rationale": "Too weak in our current unsupported Gate context: slow fixing and an unreachable alternate victory do not justify a mythic slot.",
+      "context_and_costs": "A deliberate ten-Gate environment changes the verdict. It is a support-mismatch example, not evidence that alternate-win lands must always be weak.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "dgm",
+        "set_name": "Dragon's Maze",
+        "collector_number": "152",
+        "rarity": "mythic",
+        "released_at": "2013-05-03",
+        "digital": false,
+        "scryfall_id": "401f7042-24fd-42a0-ae7c-e6b7de1aa446",
+        "oracle_id": "49479778-c4c0-43ba-a7b7-45f00d067462"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/dgm/152/mazes-end",
+        "api": "https://api.scryfall.com/cards/401f7042-24fd-42a0-ae7c-e6b7de1aa446",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=369038&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    }
+  ],
+  "supplemental": [
+    {
+      "id": "supplemental_target-mh3-105",
+      "rarity": "common",
+      "category": "Creature",
+      "band": "supplemental_target",
+      "name": "Refurbished Familiar",
+      "role": "affinity value creature",
+      "comparison_scope": "role_anchor",
+      "card_facts": {
+        "mana_cost": "{3}{B}",
+        "cmc": 4.0,
+        "type_line": "Artifact Creature — Zombie Rat",
+        "power": "2",
+        "toughness": "1",
+        "colors": [
+          "B"
+        ],
+        "color_identity": [
+          "B"
+        ],
+        "layout": "normal"
+      },
+      "effect_summary": "Four-mana 2/1 flyer with artifact discounts and an entry discard effect that draws instead when the opponent cannot discard.",
+      "rationale": "A cheap supported common can supply evasion and immediate card advantage. Compare the expected discounted cost, not just the printed four.",
+      "context_and_costs": "Strong target only with declared artifact density. Artifact lands and plentiful tokens can make one-mana casts routine; check that ceiling.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "mh3",
+        "set_name": "Modern Horizons 3",
+        "collector_number": "105",
+        "rarity": "common",
+        "released_at": "2024-06-14",
+        "digital": false,
+        "scryfall_id": "b338e078-629c-4cac-bd1d-e1f0a132728d",
+        "oracle_id": "009e1638-9055-4872-93e1-85841bce4648"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/mh3/105/refurbished-familiar",
+        "api": "https://api.scryfall.com/cards/b338e078-629c-4cac-bd1d-e1f0a132728d",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=662257&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "supplemental_target-mh3-45",
+      "rarity": "common",
+      "category": "Instant",
+      "band": "supplemental_target",
+      "name": "Thraben Charm",
+      "role": "flexible common interaction",
+      "comparison_scope": "role_anchor",
+      "card_facts": {
+        "mana_cost": "{1}{W}",
+        "cmc": 2.0,
+        "type_line": "Instant",
+        "power": null,
+        "toughness": null,
+        "colors": [
+          "W"
+        ],
+        "color_identity": [
+          "W"
+        ],
+        "layout": "normal"
+      },
+      "effect_summary": "Two-mana instant chooses creature-count damage, enchantment destruction, or graveyard exile.",
+      "rationale": "Modes make an answer relevant in more matchups. Common interaction can be flexible and efficient without needing extra drawback clauses.",
+      "context_and_costs": "The damage mode depends on your board and can fail to kill through removal. The other modes do not require creatures.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "mh3",
+        "set_name": "Modern Horizons 3",
+        "collector_number": "45",
+        "rarity": "common",
+        "released_at": "2024-06-14",
+        "digital": false,
+        "scryfall_id": "dd28a646-f38f-4cdf-948c-969cd979e5e6",
+        "oracle_id": "7eccd10d-f224-4467-af25-f2b768993f9f"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/mh3/45/thraben-charm",
+        "api": "https://api.scryfall.com/cards/dd28a646-f38f-4cdf-948c-969cd979e5e6",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=662197&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "supplemental_target-mh2-145",
+      "rarity": "common",
+      "category": "Instant",
+      "band": "supplemental_target",
+      "name": "Unholy Heat",
+      "role": "cheap removal with supported scaling",
+      "comparison_scope": "role_anchor",
+      "card_facts": {
+        "mana_cost": "{R}",
+        "cmc": 1.0,
+        "type_line": "Instant",
+        "power": null,
+        "toughness": null,
+        "colors": [
+          "R"
+        ],
+        "color_identity": [
+          "R"
+        ],
+        "layout": "normal"
+      },
+      "effect_summary": "One red mana deals two damage to a creature or planeswalker, increasing to six with four graveyard card types.",
+      "rationale": "Two damage is already useful. Ordinary deck construction can unlock a major payoff, instead of unlocking mere playability.",
+      "context_and_costs": "Delirium requires actual type diversity and graveyard access. Do not assume six damage is always available on turn one.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "mh2",
+        "set_name": "Modern Horizons 2",
+        "collector_number": "145",
+        "rarity": "common",
+        "released_at": "2021-06-18",
+        "digital": false,
+        "scryfall_id": "2b73d294-6ab1-4051-9b0f-d8e335d37674",
+        "oracle_id": "b23cba46-6ed2-442d-bc39-7c4933f6b083"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/mh2/145/unholy-heat",
+        "api": "https://api.scryfall.com/cards/2b73d294-6ab1-4051-9b0f-d8e335d37674",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=522221&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "supplemental_target-soi-44",
+      "rarity": "common",
+      "category": "Creature",
+      "band": "supplemental_target",
+      "name": "Thraben Inspector",
+      "role": "one-drop body plus deferred card",
+      "comparison_scope": "role_anchor",
+      "card_facts": {
+        "mana_cost": "{W}",
+        "cmc": 1.0,
+        "type_line": "Creature — Human Soldier",
+        "power": "1",
+        "toughness": "2",
+        "colors": [
+          "W"
+        ],
+        "color_identity": [
+          "W"
+        ],
+        "layout": "normal"
+      },
+      "effect_summary": "One white mana makes a 1/2 and a Clue.",
+      "rationale": "An inexpensive enabler should leave material immediately and a useful later option. This is a good floor for small value creatures.",
+      "context_and_costs": "The Clue costs two more mana to draw. It is not a free immediate cantrip; artifact and token synergies add separate value.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "soi",
+        "set_name": "Shadows over Innistrad",
+        "collector_number": "44",
+        "rarity": "common",
+        "released_at": "2016-04-08",
+        "digital": false,
+        "scryfall_id": "d140c3b7-ca78-483d-baeb-307b624fea8b",
+        "oracle_id": "caa02547-66e3-4e27-a2d3-5e94f3e7a069"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/soi/44/thraben-inspector",
+        "api": "https://api.scryfall.com/cards/d140c3b7-ca78-483d-baeb-307b624fea8b",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=409784&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "supplemental_target-dka-87",
+      "rarity": "common",
+      "category": "Sorcery",
+      "band": "supplemental_target",
+      "name": "Faithless Looting",
+      "role": "cheap selection and graveyard setup",
+      "comparison_scope": "role_anchor",
+      "card_facts": {
+        "mana_cost": "{R}",
+        "cmc": 1.0,
+        "type_line": "Sorcery",
+        "power": null,
+        "toughness": null,
+        "colors": [
+          "R"
+        ],
+        "color_identity": [
+          "R"
+        ],
+        "layout": "normal"
+      },
+      "effect_summary": "One red mana draws two and discards two; a three-mana flashback repeats it.",
+      "rationale": "Card disadvantage can be worthwhile when the spell is very cheap and actively enables graveyard plans. Do not ban every draw/discard pattern after the weak two-mana sample.",
+      "context_and_costs": "The first cast loses one net card. It needs valuable selection or discarded-card use, and flashback costs real mana.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "dka",
+        "set_name": "Dark Ascension",
+        "collector_number": "87",
+        "rarity": "common",
+        "released_at": "2012-02-03",
+        "digital": false,
+        "scryfall_id": "a1b0da17-d595-441d-811c-a2d28d2bb232",
+        "oracle_id": "3d6fa57a-aa53-4b5c-b8af-a7612c823117"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/dka/87/faithless-looting",
+        "api": "https://api.scryfall.com/cards/a1b0da17-d595-441d-811c-a2d28d2bb232",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=245299&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "supplemental_target-mh2-1",
+      "rarity": "uncommon",
+      "category": "Enchantment",
+      "band": "supplemental_target",
+      "name": "Abiding Grace",
+      "role": "repeatable small-creature recovery",
+      "comparison_scope": "role_anchor",
+      "card_facts": {
+        "mana_cost": "{2}{W}",
+        "cmc": 3.0,
+        "type_line": "Enchantment",
+        "power": null,
+        "toughness": null,
+        "colors": [
+          "W"
+        ],
+        "color_identity": [
+          "W"
+        ],
+        "layout": "normal"
+      },
+      "effect_summary": "Three-mana enchantment offers one life or returns a one-mana creature at each of your end steps.",
+      "rationale": "This is a substantial engine that can pay off on the casting turn. The attractive mode returns a real creature, not just a little life.",
+      "context_and_costs": "Requires enough one-drops, trades, and sacrifice outlets. Judge repeated entry/death effects; the life mode is the fallback.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "mh2",
+        "set_name": "Modern Horizons 2",
+        "collector_number": "1",
+        "rarity": "uncommon",
+        "released_at": "2021-06-18",
+        "digital": false,
+        "scryfall_id": "db113c47-c403-4c7f-9fa9-212c977df8d1",
+        "oracle_id": "f4e7bc58-336d-4670-84cb-a46ca1f48671"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/mh2/1/abiding-grace",
+        "api": "https://api.scryfall.com/cards/db113c47-c403-4c7f-9fa9-212c977df8d1",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=522077&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "supplemental_target-mh3-44",
+      "rarity": "uncommon",
+      "category": "Enchantment",
+      "band": "supplemental_target",
+      "name": "Static Prison",
+      "role": "cheap broad temporary removal",
+      "comparison_scope": "role_anchor",
+      "card_facts": {
+        "mana_cost": "{W}",
+        "cmc": 1.0,
+        "type_line": "Enchantment",
+        "power": null,
+        "toughness": null,
+        "colors": [
+          "W"
+        ],
+        "color_identity": [
+          "W"
+        ],
+        "layout": "normal"
+      },
+      "effect_summary": "One-mana enchantment exiles an opposing nonland permanent, supplies two energy, and needs energy at each first main phase to remain.",
+      "rationale": "A one-mana broad answer can be strong with a genuine duration constraint. The card comes with its first maintenance payments.",
+      "context_and_costs": "Additional energy extends the removal. Without it, the threat returns; counting this as permanent unconditional exile misprices it.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "mh3",
+        "set_name": "Modern Horizons 3",
+        "collector_number": "44",
+        "rarity": "uncommon",
+        "released_at": "2024-06-14",
+        "digital": false,
+        "scryfall_id": "dd16222e-349c-4a2b-a7c8-8eb35a8ab332",
+        "oracle_id": "b1bc8e58-ea4f-46a9-b833-d780cf6758b3"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/mh3/44/static-prison",
+        "api": "https://api.scryfall.com/cards/dd16222e-349c-4a2b-a7c8-8eb35a8ab332",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=662196&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "supplemental_target-mh2-96",
+      "rarity": "rare",
+      "category": "Sorcery",
+      "band": "supplemental_target",
+      "name": "Persist",
+      "role": "efficient graveyard-to-battlefield recovery",
+      "comparison_scope": "role_anchor",
+      "card_facts": {
+        "mana_cost": "{1}{B}",
+        "cmc": 2.0,
+        "type_line": "Sorcery",
+        "power": null,
+        "toughness": null,
+        "colors": [
+          "B"
+        ],
+        "color_identity": [
+          "B"
+        ],
+        "layout": "normal"
+      },
+      "effect_summary": "Two mana reanimates a nonlegendary creature with a minus-one counter.",
+      "rationale": "High-powered recovery can return a meaningful body directly at an aggressive rate. Five mana merely to put an artifact into hand is nowhere close.",
+      "context_and_costs": "Requires a creature in the graveyard. Large entry effects such as Archon of Cruelty change the acceptable package; this is not permission for arbitrary early cheat targets.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "mh2",
+        "set_name": "Modern Horizons 2",
+        "collector_number": "96",
+        "rarity": "rare",
+        "released_at": "2021-06-18",
+        "digital": false,
+        "scryfall_id": "90f390c3-af1c-424f-9721-e26e9321e5a3",
+        "oracle_id": "367d4cf2-270f-4236-af10-7d5e8ea8c9fe"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/mh2/96/persist",
+        "api": "https://api.scryfall.com/cards/90f390c3-af1c-424f-9721-e26e9321e5a3",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=522172&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "supplemental_target-soi-233",
+      "rarity": "rare",
+      "category": "Creature",
+      "band": "supplemental_target",
+      "name": "Tireless Tracker",
+      "role": "midgame value threat",
+      "comparison_scope": "role_anchor",
+      "card_facts": {
+        "mana_cost": "{2}{G}",
+        "cmc": 3.0,
+        "type_line": "Creature — Human Scout",
+        "power": "3",
+        "toughness": "2",
+        "colors": [
+          "G"
+        ],
+        "color_identity": [
+          "G"
+        ],
+        "layout": "normal"
+      },
+      "effect_summary": "Three-mana 3/2 makes Clues from landfall and gains counters when Clues are sacrificed.",
+      "rationale": "A threat can link routine land drops, delayed cards, and permanent growth. This is a coherent rare engine rather than a weak body with unrelated flavor text.",
+      "context_and_costs": "No guaranteed entry Clue unless a land can follow it. Each ordinary Clue activation costs two; do not count all future cards as immediate.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "soi",
+        "set_name": "Shadows over Innistrad",
+        "collector_number": "233",
+        "rarity": "rare",
+        "released_at": "2016-04-08",
+        "digital": false,
+        "scryfall_id": "ee8e9928-d9b2-4570-adb8-44b34115decd",
+        "oracle_id": "e6555cca-e608-4c87-b835-9cd47fd1f543"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/soi/233/tireless-tracker",
+        "api": "https://api.scryfall.com/cards/ee8e9928-d9b2-4570-adb8-44b34115decd",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=409997&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "supplemental_target-mh2-32",
+      "rarity": "mythic",
+      "category": "Creature",
+      "band": "supplemental_target",
+      "name": "Solitude",
+      "role": "removal creature with a costly free mode",
+      "comparison_scope": "role_anchor",
+      "card_facts": {
+        "mana_cost": "{3}{W}{W}",
+        "cmc": 5.0,
+        "type_line": "Creature — Elemental Incarnation",
+        "power": "3",
+        "toughness": "2",
+        "colors": [
+          "W"
+        ],
+        "color_identity": [
+          "W"
+        ],
+        "layout": "normal"
+      },
+      "effect_summary": "Five-mana 3/2 with flash and lifelink exiles another creature for life compensation; pitching a white card can evoke it.",
+      "rationale": "Efficient interaction attached to a useful body is appropriate at mythic. A free defensive mode may deliberately trade card economy for tempo.",
+      "context_and_costs": "Evoke normally sacrifices Solitude, so pitching spends two cards for the removal. Blink can evade that sacrifice; inspect the exact package before approving it.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "mh2",
+        "set_name": "Modern Horizons 2",
+        "collector_number": "32",
+        "rarity": "mythic",
+        "released_at": "2021-06-18",
+        "digital": false,
+        "scryfall_id": "47a6234f-309f-4e03-9263-66da48b57153",
+        "oracle_id": "dcb9c2a7-ae54-4ddc-a567-640bf4bf4366"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/mh2/32/solitude",
+        "api": "https://api.scryfall.com/cards/47a6234f-309f-4e03-9263-66da48b57153",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=522108&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "supplemental_target-mh2-232",
+      "rarity": "common",
+      "category": "Creature",
+      "band": "supplemental_target",
+      "name": "Ornithopter of Paradise",
+      "role": "cheap fixing creature",
+      "comparison_scope": "role_anchor",
+      "card_facts": {
+        "mana_cost": "{2}",
+        "cmc": 2.0,
+        "type_line": "Artifact Creature — Thopter",
+        "power": "0",
+        "toughness": "2",
+        "colors": [],
+        "color_identity": [],
+        "layout": "normal"
+      },
+      "effect_summary": "Two-mana 0/2 artifact flyer taps for any color.",
+      "rationale": "Two mana can provide both a blocker and flexible acceleration. Creature vulnerability and summoning sickness are meaningful costs, not reasons to add more taxes.",
+      "context_and_costs": "It cannot tap for mana immediately without haste. Artifact synergies improve it; board wipes also remove the acceleration.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "mh2",
+        "set_name": "Modern Horizons 2",
+        "collector_number": "232",
+        "rarity": "common",
+        "released_at": "2021-06-18",
+        "digital": false,
+        "scryfall_id": "025b0f0f-daf6-4071-82e7-39c015447ce4",
+        "oracle_id": "3a940dfa-a026-4969-8981-ef90cdfbe9ef"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/mh2/232/ornithopter-of-paradise",
+        "api": "https://api.scryfall.com/cards/025b0f0f-daf6-4071-82e7-39c015447ce4",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=522308&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "supplemental_target-usg-318",
+      "rarity": "uncommon",
+      "category": "Artifact",
+      "band": "supplemental_target",
+      "name": "Worn Powerstone",
+      "role": "substantial mana acceleration",
+      "comparison_scope": "role_anchor",
+      "card_facts": {
+        "mana_cost": "{3}",
+        "cmc": 3.0,
+        "type_line": "Artifact",
+        "power": null,
+        "toughness": null,
+        "colors": [],
+        "color_identity": [],
+        "layout": "normal"
+      },
+      "effect_summary": "Three-mana artifact enters tapped and later produces two colorless mana per tap.",
+      "rationale": "A three-mana ramp investment should create a meaningful jump. Compare a rock’s future output and entry delay with its casting cost.",
+      "context_and_costs": "No fixing and no mana on the entry turn. Multiple copies or untap effects require reviewing how early expensive threats arrive.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "usg",
+        "set_name": "Urza's Saga",
+        "collector_number": "318",
+        "rarity": "uncommon",
+        "released_at": "1998-10-12",
+        "digital": false,
+        "scryfall_id": "2224d7ef-2e2f-47dd-a4a0-e36b3170b124",
+        "oracle_id": "b166b670-febc-4821-855e-f8d465644c03"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/usg/318/worn-powerstone",
+        "api": "https://api.scryfall.com/cards/2224d7ef-2e2f-47dd-a4a0-e36b3170b124",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=8876&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "supplemental_target-mrd-146",
+      "rarity": "common",
+      "category": "Artifact",
+      "band": "supplemental_target",
+      "name": "Bonesplitter",
+      "role": "efficient combat Equipment",
+      "comparison_scope": "role_anchor",
+      "card_facts": {
+        "mana_cost": "{1}",
+        "cmc": 1.0,
+        "type_line": "Artifact — Equipment",
+        "power": null,
+        "toughness": null,
+        "colors": [],
+        "color_identity": [],
+        "layout": "normal"
+      },
+      "effect_summary": "One-mana Equipment adds two power and equips for one.",
+      "rationale": "A small combat bonus needs a small combined investment: two total mana for the first equipped attacker, then one to move it.",
+      "context_and_costs": "Supplies no body or card replacement. Evasion and token density matter, and removing the carrier can create a tempo loss.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "mrd",
+        "set_name": "Mirrodin",
+        "collector_number": "146",
+        "rarity": "common",
+        "released_at": "2003-10-02",
+        "digital": false,
+        "scryfall_id": "465a7990-c9f9-4716-a833-fd41458b9cee",
+        "oracle_id": "452e3f5f-ce17-4682-966b-5cc100210aee"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/mrd/146/bonesplitter",
+        "api": "https://api.scryfall.com/cards/465a7990-c9f9-4716-a833-fd41458b9cee",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=47442&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "combo_warning-mh3-145",
+      "rarity": "common",
+      "category": "Creature",
+      "band": "combo_warning",
+      "name": "Basking Broodscale",
+      "role": "counter engine and combo component",
+      "comparison_scope": "boundary_example",
+      "card_facts": {
+        "mana_cost": "{1}{G}",
+        "cmc": 2.0,
+        "type_line": "Creature — Eldrazi Lizard",
+        "power": "2",
+        "toughness": "2",
+        "colors": [],
+        "color_identity": [
+          "G"
+        ],
+        "layout": "normal"
+      },
+      "effect_summary": "A two-mana 2/2 can adapt for two mana and makes a Spawn whenever it receives one or more counters.",
+      "rationale": "An appealing supported common on its own, but it becomes a concrete unlimited loop with Sadistic Glee. This is a package warning, not a blanket ban on counters.",
+      "context_and_costs": "With Glee attached, sacrifice a Spawn: Glee adds a counter to Broodscale, which makes the next Spawn. Each repetition produces colorless mana; an initial Spawn or paid adapt starts it.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "mh3",
+        "set_name": "Modern Horizons 3",
+        "collector_number": "145",
+        "rarity": "common",
+        "released_at": "2024-06-14",
+        "digital": false,
+        "scryfall_id": "5feba5d6-99a6-4e9b-8a7d-90d955868fc3",
+        "oracle_id": "a7c69802-99c4-4778-934e-cc09ba58c267"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/mh3/145/basking-broodscale",
+        "api": "https://api.scryfall.com/cards/5feba5d6-99a6-4e9b-8a7d-90d955868fc3",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=662297&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    },
+    {
+      "id": "combo_warning-tmp-153",
+      "rarity": "common",
+      "category": "Enchantment",
+      "band": "combo_warning",
+      "name": "Sadistic Glee",
+      "role": "death-trigger Aura and combo component",
+      "comparison_scope": "boundary_example",
+      "card_facts": {
+        "mana_cost": "{B}",
+        "cmc": 1.0,
+        "type_line": "Enchantment — Aura",
+        "power": null,
+        "toughness": null,
+        "colors": [
+          "B"
+        ],
+        "color_identity": [
+          "B"
+        ],
+        "layout": "normal"
+      },
+      "effect_summary": "One-mana Aura gives its enchanted creature a counter whenever a creature dies.",
+      "rationale": "Cheap individually modest enablers can remove the limits on another card. Review the loop with Broodscale rather than adding arbitrary once-per-turn text to every sacrifice card.",
+      "context_and_costs": "Needs Broodscale, the Aura, and a starting death or Spawn; removal can disrupt the chain. Unlimited colorless mana needs a sink to win immediately, while the creature also grows without bound.",
+      "judgment_status": "editorial; human calibration and draft playtesting pending",
+      "printing": {
+        "set": "tmp",
+        "set_name": "Tempest",
+        "collector_number": "153",
+        "rarity": "common",
+        "released_at": "1997-10-14",
+        "digital": false,
+        "scryfall_id": "d9e1959c-b87b-4e17-a0d2-0489ea79220b",
+        "oracle_id": "2af22962-8f66-4868-a175-ad5d7f4c9d58"
+      },
+      "sources": {
+        "card_page": "https://scryfall.com/card/tmp/153/sadistic-glee",
+        "api": "https://api.scryfall.com/cards/d9e1959c-b87b-4e17-a0d2-0489ea79220b",
+        "gatherer": "https://gatherer.wizards.com/Pages/Card/Details.aspx?multiverseid=4682&printed=false",
+        "retrieved_on": "2026-10-16",
+        "supporting_context": []
+      }
+    }
+  ]
+}

@@ -7,6 +7,8 @@ import { drawFromPool, topUpCount } from "./passing";
 import { scheduleGeneration } from "./scheduling";
 import { packOrders } from "./seating";
 
+import { publishRound } from "./setPacks";
+
 export const PACK_STAGGER_MS = 1000;
 
 export const roundPacks = (
@@ -26,6 +28,12 @@ export const dealRound = async (
   lobby: Doc<"lobbies">,
   round: number
 ) => {
+  if (lobby.setRunId) {
+    const run = await ctx.db.get(lobby.setRunId);
+    if (!run) throw new Error("Set is missing");
+    await publishRound(ctx, lobby, run, round);
+    return;
+  }
   await markGenerating(ctx, lobby._id, round);
   const orders = packOrders(lobby.participantIds ?? [], round);
   for (const [index, order] of orders.entries()) {

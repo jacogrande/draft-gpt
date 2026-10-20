@@ -4,6 +4,7 @@ import { reject } from "../errors";
 import { loadMembers, requireMember } from "../lobby/access";
 import { beginDraft } from "../lobby/lifecycle";
 import { bySeat, startBlocker } from "../lobby/roster";
+import { beginSet } from "./setRuns";
 import { scheduleGeneration } from "./scheduling";
 
 export const startDraft = mutation({
@@ -19,6 +20,8 @@ export const startDraft = mutation({
       lobbyId,
       bySeat(members).map((member) => member.userId)
     );
-    await scheduleGeneration(ctx, 0, lobbyId, undefined, 1);
+    if (process.env.SET_GENERATION_ENABLED === "false")
+      await scheduleGeneration(ctx, 0, lobbyId, undefined, 1);
+    else await beginSet(ctx, lobby, members.length);
   },
 });

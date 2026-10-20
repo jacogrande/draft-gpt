@@ -1,4 +1,5 @@
 import { v } from "convex/values";
+import { withDesignArt } from "./presentation";
 import { pickFace } from "../card";
 import { mutation, query } from "../_generated/server";
 import { reject } from "../errors";
@@ -40,7 +41,7 @@ export const current = query({
     const cards = await unpickedCards(ctx, pack._id);
     return {
       packId: pack._id,
-      cards: cards.map((card) => ({ id: card._id, ...pickFace(card) })),
+      cards: await withDesignArt(ctx, cards.map((card) => ({ id: card._id, ...pickFace(card) }))),
     };
   },
 });

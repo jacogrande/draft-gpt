@@ -34,6 +34,8 @@ Friends draft a Magic-style card set that an LLM invents for them on the spot, b
 - How the pieces fit, the data model, flows, known gaps: `docs/architecture.md`
 - Dependencies, services, environment variables: `docs/tech-stack.md`
 - The refactor in progress: `docs/specs/refactor-roadmap.md`
+- Research on Limited set design, archetypes, mechanics, and worldbuilding: `docs/research/limited-set-design/README.md`
+- Setting prompts, set generation, contextual review, and revision: `docs/specs/set-generation.md`
 - Card art model, prompt, cost, and limits: `docs/specs/card-art.md`
 - The Convex rewrite, its engineering rules, and what is left to deploy it: `docs/specs/convex-rewrite.md`
 - Why lobbies were rebuilt: `docs/specs/draft-lobby-refactor.md`
@@ -48,3 +50,12 @@ Friends draft a Magic-style card set that an LLM invents for them on the spot, b
 - A change that makes one of these docs false updates the doc in the same commit.
 - Roadmap reviews check current code and commits before calling a feature unbuilt; distinguish pushed changes from production validation.
 - Add a line to this file when an agent makes a mistake the line would have prevented. Keep it under about 100 lines.
+- When changing a shared parser's output format, check every consumer, including keyboard shortcuts.
+- When a review correction conflicts with a fixed slot, preserve the slot and adjust the effect; repair feedback must identify the card and exact violated constraint, including the rejected name for name collisions.
+- Keep writers, screeners, reviewers and preview seeds aligned on the same concrete prose and card-power target; a reviewer must count full costs before demanding a nerf.
+- Do not use a small pool of complete fantasy scenes as a diversity mechanism; measure premise differences and keep prose examples from becoming repeated lore.
+- Concrete prose does not mean mundane worlds: center observable supernatural powers and consequences; human factions need extraordinary means and stakes.
+- Research scrapers must back off on HTTP 429; batch card lookups and verify the selected printing’s rarity before classifying examples.
+- A parsed generation response may contain only a partial batch; evaluation tools must check accepted-card counts and slot errors before reporting success.
+- Partial-batch retries must reserve accepted card names and narrow both slots and design context; use the shared repair planner in app and preview.
+- Batch-size evals must allow the requested response count and sufficient output tokens, and exclude partially resumed wall times from latency comparisons.

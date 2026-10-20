@@ -15,8 +15,7 @@ const BASE_URL = process.env.OPENAI_BASE_URL ?? "https://api.openai.com";
 const MODEL = "gpt-4o";
 const REPLY_TIMEOUT_MS = 4 * 60_000;
 
-const between = (min: number, max: number) =>
-  min + Math.random() * (max - min);
+const between = (min: number, max: number) => min + Math.random() * (max - min);
 
 const complete = async (body: Record<string, unknown>) => {
   const response = await fetch(`${BASE_URL}/v1/chat/completions`, {
@@ -90,4 +89,98 @@ export const requestPack = async (setting: Setting): Promise<unknown> => {
   const call = message.tool_calls?.[0]?.function;
   if (!call?.arguments) throw new Error("The model did not design any cards");
   return JSON.parse(call.arguments);
+};
+
+export const requestLuna = async (
+  system: string,
+  prompt: string,
+  schema: import("./set/schema").Schema,
+  maxTokens: number,
+  effort: import("./set/modelSettings").ReasoningEffort = "low"
+) => {
+  const { MODELS } = await import("./set/types");
+  const { parseUsage } = await import("./set/usage");
+  const response = await fetch(
+    `${process.env.OPENAI_BASE_URL ?? "https://api.openai.com"}/v1/responses`,
+    {
+      method: "POST",
+      signal: AbortSignal.timeout(REPLY_TIMEOUT_MS),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY ?? "local-fake"}`,
+      },
+      body: JSON.stringify({
+        model: MODELS.luna,
+        instructions: system,
+        input: prompt,
+        store: false,
+        reasoning: { effort },
+        max_output_tokens: maxTokens,
+        text: {
+          format: {
+            type: "json_schema",
+            name: "card_batch",
+            strict: true,
+            schema,
+          },
+        },
+      }),
+    }
+  );
+  if (!response.ok)
+    throw new UpstreamFailure(
+      response.status,
+      parseRetryAfter(response.headers.get("retry-after"))
+    );
+  const body = await response.json();
+  const usage = parseUsage(
+    body.usage,
+    response.headers.get("x-request-id") ?? body.id ?? ""
+  );
+  if (body.status !== "completed")
+    return { raw: null, usage, error: `Luna stopped: ${body.status}` };
+  try {
+    const text = body.output
+      .filter((o: { type: string }) => o.type === "message")
+      .flatMap((o: { content: { type: string; text?: string }[] }) => o.content)
+      .filter((c: { type: string }) => c.type === "output_text")
+      .map((c: { text: string }) => c.text)
+      .join("");
+    return { raw: JSON.parse(text) as unknown, usage };
+  } catch {
+    return { raw: null, usage, error: "Luna returned invalid JSON" };
+  }
+};
+
+export const requestDecisions = async (
+  input: string,
+  questions: ReturnType<typeof import("./set/screening").questionsFor>
+) => {
+  const { parseUsage } = await import("./set/usage");
+  const response = await fetch(
+    `${process.env.OPENAI_BASE_URL ?? "https://api.openai.com"}/v1/decisions`,
+    {
+      method: "POST",
+      signal: AbortSignal.timeout(REPLY_TIMEOUT_MS),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY ?? "local-fake"}`,
+      },
+      body: JSON.stringify({ model: "gpt-6-luna", input, questions }),
+    }
+  );
+  if (!response.ok)
+    throw new UpstreamFailure(
+      response.status,
+      parseRetryAfter(response.headers.get("retry-after"))
+    );
+  const raw = await response.json();
+  return {
+    raw: raw as unknown,
+    usage: parseUsage(
+      raw.usage,
+      response.headers.get("x-request-id") ?? "",
+      true
+    ),
+  };
 };

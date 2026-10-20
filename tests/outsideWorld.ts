@@ -1,3 +1,5 @@
+import { cannedResponse, cannedDecisions } from "./cannedSet";
+import { Task } from "../convex/draft/set/types";
 import { vi } from "vitest";
 import { cannedPack, cannedSetting, CANNED_IMAGE } from "./cannedGeneration";
 
@@ -11,6 +13,19 @@ const completion = (message: unknown) => json({ choices: [{ message }] });
 export const fakeOutsideWorld = () => {
   const world = {
     openaiIsDown: false,
+    setRequests: [] as Task[],
+    setPayloads: [] as {
+      instructions?: string;
+      input: string;
+      reasoning?: { effort: string };
+      questions?: { name: string }[];
+    }[],
+    setReply: null as
+      | ((
+          task: Task,
+          response: ReturnType<typeof cannedResponse>
+        ) => ReturnType<typeof cannedResponse>)
+      | null,
     artIsDown: false,
     rateLimitNextSeconds: null as number | null,
     packSize: 12,
@@ -29,7 +44,10 @@ export const fakeOutsideWorld = () => {
     });
   };
 
-  const openai = (request: { tools?: unknown; messages: { content: string }[] }) => {
+  const openai = (request: {
+    tools?: unknown;
+    messages: { content: string }[];
+  }) => {
     if (world.openaiIsDown) return new Response("unavailable", { status: 500 });
     if (!request.tools) world.settingPrompts.push(request.messages[1].content);
     else world.packRequests++;
@@ -47,6 +65,23 @@ export const fakeOutsideWorld = () => {
   vi.stubGlobal("fetch", async (url: unknown, init?: { body?: string }) => {
     const target = String(url);
     const request = JSON.parse(init?.body ?? "{}");
+    if (target.endsWith("/v1/responses") || target.endsWith("/v1/decisions")) {
+      if (world.openaiIsDown)
+        return new Response("unavailable", { status: 500 });
+      const limited = rateLimited();
+      if (limited) return limited;
+      world.setPayloads.push(request);
+      const task = JSON.parse(request.input).task as Task;
+      world.setRequests.push(task);
+      const response = cannedResponse(task);
+      return json(
+        target.endsWith("/decisions")
+          ? cannedDecisions(request.questions)
+          : world.setReply
+          ? world.setReply(task, response)
+          : response
+      );
+    }
     if (target.endsWith("/v1/images/generations")) {
       if (world.openaiIsDown)
         return new Response("unavailable", { status: 500 });

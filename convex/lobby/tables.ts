@@ -12,6 +12,7 @@ export const lobbyStatus = v.union(
 export const lobbyTables = {
   lobbies: defineTable({
     name: v.string(),
+    setRunId: v.optional(v.id("setRuns")),
     hostId: v.id("users"),
     status: lobbyStatus,
     round: v.number(),

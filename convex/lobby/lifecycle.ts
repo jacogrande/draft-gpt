@@ -41,3 +41,5 @@ export const reportGenerationError = (
   lobbyId: Id<"lobbies">,
   generationError: string | undefined
 ) => ctx.db.patch(lobbyId, { generationError });
+
+export const attachSetRun = (ctx: MutationCtx, lobbyId: Id<"lobbies">, setRunId: Id<"setRuns">) => ctx.db.patch(lobbyId, { setRunId });

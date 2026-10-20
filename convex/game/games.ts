@@ -1,3 +1,4 @@
+import { withDesignArt } from "../draft/presentation";
 import { v } from "convex/values";
 import { Id } from "../_generated/dataModel";
 import { mutation, MutationCtx, query } from "../_generated/server";
@@ -117,17 +118,30 @@ export const get = query({
     const players = await Promise.all(
       seats
         .sort((a, b) => a.seat - b.seat)
-        .map(async (seat) => ({
-          userId: seat.userId,
-          username: displayName((await ctx.db.get(seat.userId)) ?? {}),
-          seat: seat.seat,
-          life: seat.life,
-          ready: seat.side !== null,
-          side: sideShownTo(seat.side, {
+        .map(async (seat) => {
+          const visible = sideShownTo(seat.side, {
             isPlayer,
             isOwner: seat.userId === viewerId,
-          }),
-        }))
+          });
+          const side = visible
+            ? {
+                ...visible,
+                hand: visible.hand
+                  ? await withDesignArt(ctx, visible.hand)
+                  : null,
+                battlefield: await withDesignArt(ctx, visible.battlefield),
+                graveyard: await withDesignArt(ctx, visible.graveyard),
+              }
+            : null;
+          return {
+            userId: seat.userId,
+            username: displayName((await ctx.db.get(seat.userId)) ?? {}),
+            seat: seat.seat,
+            life: seat.life,
+            ready: seat.side !== null,
+            side,
+          };
+        })
     );
     return {
       id: game._id,

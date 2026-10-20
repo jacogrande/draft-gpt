@@ -22,11 +22,13 @@ let world: ReturnType<typeof fakeOutsideWorld>;
 
 beforeEach(() => {
   vi.useFakeTimers();
+  vi.stubEnv("SET_GENERATION_ENABLED", "false");
   world = fakeOutsideWorld();
 });
 
 afterEach(() => {
   vi.unstubAllGlobals();
+  vi.unstubAllEnvs();
   vi.useRealTimers();
 });
 
@@ -44,7 +46,7 @@ test("a draft needs two players and everyone ready", async () => {
   await expect(start()).rejects.toThrow(rejection("PLAYERS_NOT_READY"));
 });
 
-test("starting generates a setting from the players' ideas and deals everyone a full pack", async () => {
+test("explicit rollback starts legacy packs that continue after the default is restored", async () => {
   const backend = startBackend();
   const { lobbyId, players } = await openLobby(backend, ["Ana", "Ben"]);
   const [ana, ben] = players;
@@ -55,6 +57,7 @@ test("starting generates a setting from the players' ideas and deals everyone a 
   await readyEveryone(lobbyId, players);
 
   await ana.as.mutation(api.draft.start.startDraft, { lobbyId });
+  vi.stubEnv("SET_GENERATION_ENABLED", undefined);
   expect((await lobbyOf(ana, lobbyId))?.status).toBe("generating");
   await settle(backend);
 
@@ -71,6 +74,14 @@ test("starting generates a setting from the players' ideas and deals everyone a 
     expect(pack?.cards).toHaveLength(15);
     expect(pack?.cards[0].image_url).toEqual(expect.any(String));
   }
+  for (let pick = 0; pick < 15; pick++) {
+    for (const player of players) await pickFirst(player, lobbyId);
+    await settle(backend);
+    await seen(lobbyId, players);
+  }
+  expect((await lobbyOf(ana, lobbyId))?.round).toBe(2);
+  expect(world.setRequests).toHaveLength(0);
+  expect(world.packRequests).toBe(4);
 });
 
 test("card art is painted from the card's art direction and the setting, in a named tradition, with no text", async () => {

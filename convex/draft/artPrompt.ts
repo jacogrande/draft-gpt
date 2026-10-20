@@ -9,7 +9,7 @@ const RESTRAINT =
   "Keep it simple. Suggest texture with a few marks. No intricate ornament or fine filigree, no swarms of particles, sparks, shards, or debris, no glowing magical effects unless the scene names one.";
 
 const MOOD =
-  "Understated and a little strange. The subject is caught in a quiet, ordinary, or odd moment, not striking a heroic pose. No epic scale, no sweeping vista.";
+  "Strange, wondrous or dangerous as the scene requires. Show a specific action or telling moment. Preserve the scene's supernatural beings, effects and immense scale when present; suggest scale with one small landmark rather than a crowded panorama.";
 
 const COMPOSITION =
   "Wide landscape crop. One subject, large in the frame, with a strong silhouette that reads at thumbnail size, against a plain or barely suggested background.";

@@ -1,6 +1,7 @@
+import { withDesignArt } from "../draft/presentation";
 import { v } from "convex/values";
 import { Doc, Id } from "../_generated/dataModel";
-import { mutation, MutationCtx, query } from "../_generated/server";
+import { mutation, MutationCtx, QueryCtx, query } from "../_generated/server";
 import { reject } from "../errors";
 import { findViewer, requireViewer } from "../identity/viewer";
 import { planBasics } from "./manaBase";
@@ -15,12 +16,12 @@ const landType = v.union(
   v.literal("island")
 );
 
-const present = (deck: Doc<"decks">) => ({
+const present = async (ctx: QueryCtx, deck: Doc<"decks">) => ({
   id: deck._id,
   lobbyId: deck.lobbyId,
   name: deck.name,
-  cards: deck.cards,
-  sideboard: deck.sideboard,
+  cards: await withDesignArt(ctx, deck.cards),
+  sideboard: await withDesignArt(ctx, deck.sideboard),
   createdAt: deck._creationTime,
 });
 
@@ -38,7 +39,7 @@ export const list = query({
       .query("decks")
       .withIndex("by_user", (q) => q.eq("userId", userId))
       .collect();
-    return decks.map(present);
+    return Promise.all(decks.map((deck) => present(ctx, deck)));
   },
 });
 
@@ -48,7 +49,7 @@ export const get = query({
     const deckId = ctx.db.normalizeId("decks", args.deckId);
     const userId = deckId && (await findViewer(ctx));
     const deck = userId && (await findOwnDeck(ctx, userId, deckId));
-    return deck ? present(deck) : null;
+    return deck ? present(ctx, deck) : null;
   },
 });
 
@@ -63,7 +64,7 @@ export const forLobby = query({
         q.eq("userId", userId).eq("lobbyId", lobbyId)
       )
       .first();
-    return deck ? present(deck) : null;
+    return deck ? present(ctx, deck) : null;
   },
 });
 

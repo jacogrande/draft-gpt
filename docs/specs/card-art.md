@@ -1,6 +1,6 @@
 # Card art on OpenAI's image API
 
-Status: deployed; retry and time budget revised 2026-10-11
+Status: image service deployed; retry and time budget revised 2026-10-11. Fantasy-scale prompt revision 2026-10-20 is local, not deployed.
 Date: 2026-10-08
 
 ## Decision
@@ -75,7 +75,7 @@ The prompt now has these lines after the scene and world:
 - **Medium** is fixed: a small, quickly made, hand-made illustration for a cheap paperback, pulp magazine, or storybook, with big simple shapes and unfinished corners. Explicitly not digital.
 - **Tradition, lighting, and palette** come from one of the 28 schools in `convex/draft/artSchools.ts`. Each names the illustrators it draws on, a kind of light, and three or four colours.
 - **Detail** tells the model what to leave out: ornament, particles, sparks, and unrequested glows. Image models add these by default, and naming them was what brought the detail level down.
-- **Mood** asks for a quiet, ordinary, or odd moment and rules out heroic poses and epic scale.
+- **Mood** follows the scene's wonder or danger and preserves supernatural beings, effects and immense scale. One small landmark can establish scale without a crowded panorama. This October 20 revision removes the previous requirement for ordinary moments and prohibition on epic scale; the economical pulp medium and thumbnail-readable composition remain.
 
 `pickSchool` maps a random number to a school; the generation action supplies the number, once per card. The world line still carries the setting into every image, so a set shares its subject matter while its cards differ in hand.
 
@@ -84,6 +84,12 @@ On artist names: the schools name illustrators such as Margaret Brundage, Frank 
 One sample of every school, all painting the same scene, is in `card-art-traditions.html`. The longer prompt raises the cost per image from about $0.0039 to about $0.0052.
 
 While generating those 28 samples, one request returned a 500 from OpenAI and succeeded when repeated. The gateway now retries server errors as well as rate limits, which is the likely cause of the one missing image in the earlier real draft.
+
+## Set generation path (default for new drafts, not deployed)
+
+The new pipeline paints selected canonical designs once after review and collation, rather than painting each pack copy. Copies retain `designId`, and draft, deck and visible table queries resolve the latest canonical image. Jobs are keyed and rejected uploads are deleted. The queue limits concurrency to four jobs per run and eight overall. A ninety-second art deadline releases packs with placeholders; in-flight results can still update their canonical design. Budget accounting reserves a conservative $0.04 per image including retries; this is not measured image usage. The preview CLI paints only its fifteen selected cards.
+
+The measurements and per-pack limits below describe the deployed legacy path.
 
 ## What it costs and how long it takes
 
@@ -107,7 +113,7 @@ A real two-player round on 2026-10-08 took 110 seconds from Start to packs on sc
 
 - No retry later for cards that ended up without art.
 - No use of the Batch API, which halves the image price but is not suitable for a live draft.
-- The card-design calls are still `gpt-4o` with the 2024 prompts; that is roadmap step 2.
+- The legacy card-design calls remain `gpt-4o`; the new set path uses Luna throughout. See [set-generation.md](set-generation.md).
 
 ## Sources
 

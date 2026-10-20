@@ -1,0 +1,85 @@
+{
+  "version": 1,
+  "status": "research proposal",
+  "purpose": "Questions for generating a set brief before assigning card slots. This is a questionnaire, not a provider request or a production JSON Schema.",
+  "application_owned": {
+    "unique_card_count": 135,
+    "generation_batch_size": 15,
+    "colors": ["W", "U", "B", "R", "G"],
+    "rounds": 3,
+    "cards_per_pack": 15,
+    "revision_round_limit": 1
+  },
+  "questions": [
+    {
+      "key": "world",
+      "question": "What world are players entering, what conflict drives it, and what should its cards make them feel?",
+      "answer_fields": ["name", "premise", "central_conflict", "emotional_tone", "player_fantasy"]
+    },
+    {
+      "key": "experience",
+      "question": "What pace, interaction, complexity, and power range should this Limited environment have?",
+      "answer_fields": ["pace", "power_reference_ids", "interaction_principles", "common_complexity_budget", "excluded_play_patterns"]
+    },
+    {
+      "key": "color_structure",
+      "question": "Which color combinations are supported and why? How much splashing is intended?",
+      "answer_fields": ["supported_combinations", "faction_structure", "splash_policy", "fixing_requirements"]
+    },
+    {
+      "key": "color_identities",
+      "question": "For each color, what does it want, how does it pursue that goal mechanically, and what can it not do well?",
+      "answer_fields": ["color", "world_role", "mechanical_strengths", "mechanical_weaknesses", "shared_resources", "visual_identity"]
+    },
+    {
+      "key": "archetypes",
+      "question": "For every supported combination, explain its early plays, resource engine, win condition, vulnerabilities, and the accessible cards that make it work.",
+      "answer_fields": ["id", "colors", "name", "early_game", "engine", "win_condition", "weaknesses", "enabler_roles", "payoff_roles", "minimum_support_targets", "signpost_role"]
+    },
+    {
+      "key": "overlap",
+      "question": "Which cards and resources let players pivot between neighboring archetypes? Where should strategies compete for picks?",
+      "answer_fields": ["archetype_ids", "shared_roles", "contested_resources", "pivot_paths", "parasitism_risks"]
+    },
+    {
+      "key": "mechanics",
+      "question": "Which familiar and new mechanics express the world, and what exact rules and support do they require?",
+      "answer_fields": ["id", "name", "rules_definition", "reminder_text", "colors", "rarities", "enablers", "payoffs", "counterplay", "tokens_required", "common_exposure_target"]
+    },
+    {
+      "key": "skeleton",
+      "question": "How should the fixed card budget be divided across colors, rarities, mana values, card types, and functional roles?",
+      "answer_fields": ["rarity_counts", "color_counts", "creature_curve_targets", "removal_targets", "combat_trick_targets", "fixing_targets", "role_minimums"]
+    },
+    {
+      "key": "collation",
+      "question": "How will the inventory produce packs and a full draft with adequate support, varied choices, and controlled repetition?",
+      "answer_fields": ["rarity_slot_policy", "duplicate_policy", "basic_land_policy", "mechanic_exposure_targets", "archetype_exposure_targets", "small_table_adjustments"]
+    },
+    {
+      "key": "creative_guide",
+      "question": "Which concrete visual and naming choices make this world recognizable while giving colors and factions distinct identities?",
+      "answer_fields": ["materials", "silhouettes", "locations", "palette", "recurring_motifs", "faction_variations", "naming_patterns", "art_exclusions"]
+    },
+    {
+      "key": "validation",
+      "question": "Which failures should block generation, trigger revision, or require playtesting?",
+      "answer_fields": ["hard_invariants", "review_rubrics", "reference_card_ids", "playtest_hypotheses", "known_risks"]
+    }
+  ],
+  "slot_contract_fields": [
+    "slot_id", "colors", "rarity", "mana_value_band", "card_type",
+    "primary_role", "archetype_ids", "mechanic_ids", "complexity_ceiling",
+    "power_reference_ids", "creative_motif", "cycle_id"
+  ],
+  "code_validation": [
+    "Application-owned fields cannot be changed by generated answers.",
+    "Rarity and exclusive color buckets each sum to the requested unique card count.",
+    "Overlapping role and archetype tags are not exclusive buckets and need not sum to the card count.",
+    "Every supported combination has exactly one archetype entry.",
+    "Every slot has one stable unique ID and references existing archetypes and mechanics.",
+    "Slot allocation satisfies the validated skeleton before card generation starts.",
+    "Collation produces exactly 15 cards per pack and declares how duplicates are handled.",
+    "Generated rules and dependency records agree on required tokens and linked cards."
+  ]
+}

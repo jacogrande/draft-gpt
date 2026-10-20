@@ -8,6 +8,8 @@ import { retryDelay } from "./retry";
 import { PACK_STAGGER_MS, roundPacks } from "./rounds";
 import { isRunning, scheduleGeneration } from "./scheduling";
 
+import { resumeSet } from "./setRuns";
+
 const step = {
   lobbyId: v.id("lobbies"),
   packId: v.optional(v.id("packs")),
@@ -71,6 +73,7 @@ export const retryGeneration = mutation({
     if (lobby.status !== "generating" || !lobby.generationError)
       reject("NOTHING_TO_RETRY");
     await reportGenerationError(ctx, lobbyId, undefined);
+    if (lobby.setRunId) { await resumeSet(ctx, lobby); return; }
     if (!lobby.settingId) {
       await scheduleGeneration(ctx, 0, lobbyId, undefined, 1);
       return;

@@ -23,7 +23,7 @@ This starts three things and waits until they answer:
 
 On first run it also configures auth (section 2). The first page load after a dependency change can come up blank while Vite re-optimises; open `/join` once and wait a few seconds before running the sign-in script. Stop everything, including open browsers, with `./scripts/test-stack.sh stop`. Always stop when you are done.
 
-Drafts on this stack cost nothing and take a few seconds: the setting is always "Glasswake" and every pack is twelve copies of "Glass Sentinel N", topped up to fifteen.
+Drafts on this stack cost nothing. The stack removes `SET_GENERATION_ENABLED` to exercise the default set pipeline and runs fake Responses and image endpoints (Decisions remains available for offline tests). It builds a deterministic 135- or 270-card Glasswake inventory, runs review and collation, and deals fifteen-card packs. Fake services restart when their contracts change. The legacy endpoints remain available for fallback testing.
 
 ## 2. How test sign-in is configured
 

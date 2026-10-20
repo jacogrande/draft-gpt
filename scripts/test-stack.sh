@@ -24,11 +24,13 @@ wait_for() {
 start() {
   mkdir -p "$state"
   launch convex ./node_modules/.bin/convex dev
-  launch fakes bun scripts/fake-services.ts
+  launch fakes bun --watch scripts/fake-services.ts
   wait_for http://127.0.0.1:3210/version
   if [ "$(./node_modules/.bin/convex env get AUTH_TEST_LOGIN 2>/dev/null)" != "true" ]; then
     node scripts/setup-local.mjs
   fi
+  ./node_modules/.bin/convex env set OPENAI_BASE_URL http://127.0.0.1:4010 >/dev/null
+  ./node_modules/.bin/convex env remove SET_GENERATION_ENABLED >/dev/null
   launch app bun run dev
   wait_for http://localhost:5173/join
   echo "App on http://localhost:5173 with test sign-in and fake AI services"

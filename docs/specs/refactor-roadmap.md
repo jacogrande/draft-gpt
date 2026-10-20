@@ -5,9 +5,9 @@ This is an old project I rolled out myself, by hand. Now, we have intelligent ag
 
 There are bugs, bad features, outdated api calls, old llm model invocations, etc that all need to be improved.
 
-## Current position (2026-10-12)
+## Current position (2026-10-20)
 
-Steps 1 and 3 are complete; step 4 is implemented and verified locally. Step 2 needs a full real production draft to close its acceptance check. Step 5 is also implemented and verified locally, with the final gaps fixed after an acceptance review. Step 6's card-design rebuild has not started, although card art has already been upgraded separately.
+Steps 1 and 3 are complete; step 4 is implemented and verified locally. Step 2 needs a full real production draft to close its acceptance check. Step 5 is also implemented and verified locally, with the final gaps fixed after an acceptance review. Step 6 now defaults new app drafts to the reviewed Luna set pipeline (2026-10-16); production deployment and playtest acceptance remain open. Its research and specification were added on 2026-10-14.
 
 Step 4 was committed and pushed as `5eab01e`. The step 5 completion work follows it. Pushed code does not by itself establish what is deployed to production.
 
@@ -74,6 +74,18 @@ Browser acceptance covered editing out and back, refresh persistence, basic remo
 
 ## Step 6: Card creation
 
-Status: card-design rebuild not started; card art upgraded separately. See [card-art.md](card-art.md).
+Status: default for new app drafts (2026-10-16); the user selected prompt 9 for world and card creation on 2026-10-20. Local engineering checks pass; broader model calibration and playtest acceptance remain open. Not deployed. Card art upgraded separately; see [card-art.md](card-art.md).
 
-Rebuild the card creation system. The model (`gpt-4o`) and the setting and pack prompts are the 2024 originals, moved to Convex without change. Until this step we keep using what we have.
+Rebuild the card creation system according to [Set generation and setting design](set-generation.md). The legacy `gpt-4o` pack path remains available for existing drafts and when `SET_GENERATION_ENABLED` is explicitly `false`. Unset configuration uses the Luna set pipeline.
+
+The user selected Luna for all generative stages on 2026-10-15 and removed required Decisions screening on 2026-10-16. Code validation, pair/global reviews, coordinated editing and final review remain required. The spec breaks delivery into provider contracts, richer setting prompts, a complete slot inventory, parallel generation, contextual review and editing, pack collation/shared art, and player-flow validation. It defines compatibility, recovery, and acceptance gates for the wave.
+
+The current [world and card policy](set-generation.md#current-world-diversity-and-literal-prose-policy-prompt-9) rotates broad world design directions across recent runs and requires literal descriptions of supernatural causes and effects. The same concrete-prose policy reaches card writing and review. The [five-world probe](../research/limited-set-design/15-world-directions.md) records both results and remaining repetition.
+
+App-default validation (2026-10-16): 119 tests, typecheck, lint and build pass. With no opt-in flag, two fake-stack browser players completed three rounds into 45-card decks. App and preview now share partial-repair context and accepted-name protection. See the [integration record](../plans/completed/app-set-generation.md). Production deployment and real multiplayer playtesting remain separate work.
+
+Research completed 2026-10-14: [Limited set design](../research/limited-set-design/README.md) covers Wizards' design process, color-pair archetypes, support and distribution, mechanics, worldbuilding, model costs, and generation workflows. It informs the implementation; model calibration, human format acceptance, and production validation remain separate gates.
+
+Local evidence (2026-10-15): 108 tests plus typecheck, lint and build pass; two browser players completed three rounds into 45-card decks. A real 135-card Luna candidate produced a fifteen-card illustrated review pack, but final review retained three issues and correctly prevented automatic draft readiness. See the [implementation record](set-generation.md#implementation-record).
+
+Prompt iteration (2026-10-15): concrete prose policy and a stronger custom-cube power floor now reach writers, screeners and editors; role-specific curve bands replace the arbitrary mana cycle. Two live development probes show stronger individual cards and more physical settings, but also record reviewer misses. See [the research and results](../research/limited-set-design/09-concrete-writing-and-power.md).
