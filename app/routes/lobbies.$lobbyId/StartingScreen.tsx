@@ -6,6 +6,7 @@ import { LobbyView, viewerMember } from "~/hooks/lobby/useLobby";
 import { useToast } from "~/hooks/useToast";
 import WorldbuildingChat from "~/routes/lobbies.$lobbyId/WorldbuildingChat";
 import { rejectionCode } from "~/util/rejection";
+import PowerLevelChoice from "./PowerLevelChoice";
 
 const START_REFUSALS: Record<string, string> = {
   NEED_TWO_PLAYERS: "A draft needs at least two players",
@@ -44,6 +45,7 @@ const StartingScreen = ({ lobby }: { lobby: LobbyView }) => {
       <Heading>
         {readyCount} / {lobby.members.length} players are ready
       </Heading>
+      <PowerLevelChoice lobby={lobby} />
       <div className="flex gap-2">
         <button
           className="btn btn-primary"

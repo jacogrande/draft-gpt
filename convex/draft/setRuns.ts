@@ -5,6 +5,7 @@ import { viewAsMember } from "../lobby/access";
 import { listIdeas } from "../lobby/ideas";
 import { attachSetRun, reportGenerationError } from "../lobby/lifecycle";
 import { generationKey } from "./retry";
+import { powerLevelOf } from "../powerLevel";
 import { worldDirection, WorldDirection } from "./set/worldDirection";
 import { stageLabel } from "./set/state";
 import { VERSIONS } from "./set/types";
@@ -26,6 +27,7 @@ export const beginSet = async (
     key: generationKey(),
     revision: 1,
     total,
+    powerLevel: powerLevelOf(lobby.powerLevel),
     phase: "brief",
     ideas,
     versions: JSON.stringify(VERSIONS),
@@ -41,6 +43,7 @@ export const beginSet = async (
     stage: "brief",
     ideas,
     total,
+    powerLevel: powerLevelOf(lobby.powerLevel),
     worldDirection: direction,
   });
   await pump(ctx, runId);

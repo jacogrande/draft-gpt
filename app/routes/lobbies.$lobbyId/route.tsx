@@ -1,4 +1,5 @@
 import { GlobeAmericasIcon } from "@heroicons/react/16/solid";
+import { POWER_LEVELS } from "@convex/powerLevel";
 import { useRouteError } from "@remix-run/react";
 import Page from "~/components/Page";
 import { requireAuth } from "~/components/RequireAuth";
@@ -56,6 +57,9 @@ const Lobby = () => {
           <h1 className="text-2xl font-bold text-primary mb-8 flex items-center gap-2">
             {lobby.name}
             <GlobeAmericasIcon className="h-5 w-5" />
+            <span className="badge badge-outline text-xs font-normal">
+              {POWER_LEVELS[lobby.powerLevel].label} power
+            </span>
           </h1>
           <SettingInfo />
         </div>

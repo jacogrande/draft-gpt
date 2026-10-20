@@ -1,4 +1,5 @@
 import { Blueprint, Design, Review } from "../convex/draft/set/types";
+import { POWER_LEVELS, PowerLevel, powerLevelOf } from "../convex/powerLevel";
 
 const escape = (value: string) =>
   value.replace(
@@ -9,6 +10,7 @@ const escape = (value: string) =>
       ]!)
   );
 export const renderPreview = (preview: {
+  powerLevel?: PowerLevel;
   blueprint: Blueprint;
   pack: Design[];
   ready: boolean;
@@ -20,7 +22,7 @@ export const renderPreview = (preview: {
     blueprint.world.name
   )} — DraftGPT pack review</title>
 <style>body{margin:0;background:#171b20;color:#eee;font:16px/1.5 system-ui}main{max-width:1300px;margin:auto;padding:32px}h1{font-family:Georgia;font-size:44px;margin-bottom:8px}.lede{max-width:850px;color:#d0d6dc}.meta{color:#afb9c4;font-size:14px}.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;margin:32px 0}.card{border:7px solid var(--frame);background:#eee6d6;color:#161a1f;border-radius:16px;overflow:hidden;box-shadow:0 5px 16px #0007}.card header{padding:10px;display:flex;justify-content:space-between;gap:12px;font-weight:bold}.card img,.placeholder{width:100%;aspect-ratio:1.536;object-fit:cover;background:#26343b}.type{padding:8px 12px;border-bottom:1px solid #a3947b;font-size:14px}.rules{white-space:pre-wrap;padding:12px;min-height:85px}.flavor{font:italic 14px Georgia;padding:0 12px 12px;color:#594e40}.stats{text-align:right;padding:5px 12px;font-weight:bold}.foot{font-size:12px;padding:8px 12px;color:#59544b}details{padding:15px;border:1px solid #45515e;border-radius:8px;margin:14px 0}summary{cursor:pointer}a{color:#add5ff}.pairs{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}.pairs p{margin:8px 0;color:#bbc6d0}</style>
-<main><div class="meta">DRAFTGPT · FIFTEEN-CARD VALIDATION PACK · LUNA</div><h1>${escape(
+<main><div class="meta">DRAFTGPT · FIFTEEN-CARD VALIDATION PACK · LUNA · ${POWER_LEVELS[powerLevelOf(preview.powerLevel)].label.toUpperCase()} POWER</div><h1>${escape(
     blueprint.world.name
   )}</h1><p class="lede">${escape(
     blueprint.world.premise

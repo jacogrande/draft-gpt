@@ -1,5 +1,5 @@
 import { CREATIVE_DIRECTION } from "./creative";
-import { POWER_POLICY, POWER_TARGET } from "./references";
+import { powerPolicy } from "./powerPolicy";
 import { referenceContext } from "./referenceSelection";
 import { STAGE_INSTRUCTIONS } from "./stageInstructions";
 import { supportReport } from "./support";
@@ -11,8 +11,8 @@ const CARD_CREATIVE = `Preserve the frozen world's supernatural premise and lite
 export const taskInstructions = (task: Task, stageInstructionsOverride?: string) =>
   [
     SET_DESIGN_SYSTEM,
-    POWER_TARGET,
-    POWER_POLICY,
+    powerPolicy(task.powerLevel).target,
+    powerPolicy(task.powerLevel).comparison,
     task.stage === "brief" ? CREATIVE_DIRECTION : CARD_CREATIVE,
     REPRESENTATION,
     stageInstructionsOverride ?? STAGE_INSTRUCTIONS[task.stage],
@@ -34,15 +34,15 @@ export const taskPrompt = (task: Task) => {
     ...(screen
       ? {
           policy: {
-            power: POWER_TARGET,
-            comparison: POWER_POLICY,
+            power: powerPolicy(task.powerLevel).target,
+            comparison: powerPolicy(task.powerLevel).comparison,
             creative: CARD_CREATIVE,
             representation: REPRESENTATION,
           },
         }
       : {}),
     tools: {
-      references: referenceContext(slots),
+      references: referenceContext(slots, task.powerLevel, task.referenceSeed),
       support: supportReport(task),
     },
     task: {

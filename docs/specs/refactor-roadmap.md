@@ -82,6 +82,8 @@ The user selected Luna for all generative stages on 2026-10-15 and removed requi
 
 The current [world and card policy](set-generation.md#current-world-diversity-and-literal-prose-policy-prompt-9) rotates broad world design directions across recent runs and requires literal descriptions of supernatural causes and effects. The same concrete-prose policy reaches card writing and review. The [five-world probe](../research/limited-set-design/15-world-directions.md) records both results and remaining repetition.
 
+Power selection (2026-10-20): the host can choose Default (the current Modern Horizons target) or Busted (powered Vintage Cube). Prompt 10 freezes the choice across the pipeline and uses a separate sourced 1,000-card pool for Busted. Local integration and browser checks pass; real-model calibration and playtesting remain open. See [the power-level contract](set-generation.md#selectable-power-level-prompt-10).
+
 App-default validation (2026-10-16): 119 tests, typecheck, lint and build pass. With no opt-in flag, two fake-stack browser players completed three rounds into 45-card decks. App and preview now share partial-repair context and accepted-name protection. See the [integration record](../plans/completed/app-set-generation.md). Production deployment and real multiplayer playtesting remain separate work.
 
 Research completed 2026-10-14: [Limited set design](../research/limited-set-design/README.md) covers Wizards' design process, color-pair archetypes, support and distribution, mechanics, worldbuilding, model costs, and generation workflows. It informs the implementation; model calibration, human format acceptance, and production validation remain separate gates.

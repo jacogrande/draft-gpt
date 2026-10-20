@@ -40,6 +40,8 @@ import type * as draft_returning from "../draft/returning.js";
 import type * as draft_rounds from "../draft/rounds.js";
 import type * as draft_scheduling from "../draft/scheduling.js";
 import type * as draft_seating from "../draft/seating.js";
+import type * as draft_set_bustedCatalog from "../draft/set/bustedCatalog.js";
+import type * as draft_set_bustedReferences from "../draft/set/bustedReferences.js";
 import type * as draft_set_catalog_common from "../draft/set/catalog/common.js";
 import type * as draft_set_catalog_mythic from "../draft/set/catalog/mythic.js";
 import type * as draft_set_catalog_rare from "../draft/set/catalog/rare.js";
@@ -53,6 +55,7 @@ import type * as draft_set_execute from "../draft/set/execute.js";
 import type * as draft_set_modelSettings from "../draft/set/modelSettings.js";
 import type * as draft_set_parsing from "../draft/set/parsing.js";
 import type * as draft_set_planning from "../draft/set/planning.js";
+import type * as draft_set_powerPolicy from "../draft/set/powerPolicy.js";
 import type * as draft_set_prompts from "../draft/set/prompts.js";
 import type * as draft_set_referenceSelection from "../draft/set/referenceSelection.js";
 import type * as draft_set_referenceTypes from "../draft/set/referenceTypes.js";
@@ -112,6 +115,7 @@ import type * as lobby_roster from "../lobby/roster.js";
 import type * as lobby_sightings from "../lobby/sightings.js";
 import type * as lobby_tables from "../lobby/tables.js";
 import type * as mana from "../mana.js";
+import type * as powerLevel from "../powerLevel.js";
 
 import type {
   ApiFromModules,
@@ -152,6 +156,8 @@ declare const fullApi: ApiFromModules<{
   "draft/rounds": typeof draft_rounds;
   "draft/scheduling": typeof draft_scheduling;
   "draft/seating": typeof draft_seating;
+  "draft/set/bustedCatalog": typeof draft_set_bustedCatalog;
+  "draft/set/bustedReferences": typeof draft_set_bustedReferences;
   "draft/set/catalog/common": typeof draft_set_catalog_common;
   "draft/set/catalog/mythic": typeof draft_set_catalog_mythic;
   "draft/set/catalog/rare": typeof draft_set_catalog_rare;
@@ -165,6 +171,7 @@ declare const fullApi: ApiFromModules<{
   "draft/set/modelSettings": typeof draft_set_modelSettings;
   "draft/set/parsing": typeof draft_set_parsing;
   "draft/set/planning": typeof draft_set_planning;
+  "draft/set/powerPolicy": typeof draft_set_powerPolicy;
   "draft/set/prompts": typeof draft_set_prompts;
   "draft/set/referenceSelection": typeof draft_set_referenceSelection;
   "draft/set/referenceTypes": typeof draft_set_referenceTypes;
@@ -224,6 +231,7 @@ declare const fullApi: ApiFromModules<{
   "lobby/sightings": typeof lobby_sightings;
   "lobby/tables": typeof lobby_tables;
   mana: typeof mana;
+  powerLevel: typeof powerLevel;
 }>;
 
 /**

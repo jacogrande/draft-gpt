@@ -56,6 +56,7 @@ Friends draft a Magic-style card set that an LLM invents for them on the spot, b
 - Do not use a small pool of complete fantasy scenes as a diversity mechanism; measure premise differences and keep prose examples from becoming repeated lore.
 - Concrete prose does not mean mundane worlds: center observable supernatural powers and consequences; human factions need extraordinary means and stakes.
 - Research scrapers must back off on HTTP 429; batch card lookups and verify the selected printing’s rarity before classifying examples.
+- Match reference provenance to a card's canonical name or front face; a shared back-face name must not inherit another card's evidence.
 - A parsed generation response may contain only a partial batch; evaluation tools must check accepted-card counts and slot errors before reporting success.
 - Partial-batch retries must reserve accepted card names and narrow both slots and design context; use the shared repair planner in app and preview.
 - Batch-size evals must allow the requested response count and sufficient output tokens, and exclude partially resumed wall times from latency comparisons.

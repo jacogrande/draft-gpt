@@ -99,6 +99,7 @@ export const advance = internalMutation({
       const base: Task = {
         stage: next,
         total: run.total,
+        powerLevel: run.powerLevel,
         ideas: run.ideas,
         blueprint,
       };

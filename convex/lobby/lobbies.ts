@@ -3,6 +3,7 @@ import { mutation, query } from "../_generated/server";
 import { reject } from "../errors";
 import { displayName } from "../identity/username";
 import { findViewer, requireViewer } from "../identity/viewer";
+import { powerLevel, powerLevelOf } from "../powerLevel";
 import {
   findMembership,
   loadLobby,
@@ -17,6 +18,7 @@ import {
   leaveBlocker,
   MAX_LOBBY_NAME_LENGTH,
   parseText,
+  planPowerChange,
   rosterBlocker,
 } from "./roster";
 
@@ -29,6 +31,7 @@ export const create = mutation({
       reject("INVALID_LOBBY_NAME");
     const lobbyId = await ctx.db.insert("lobbies", {
       name,
+      powerLevel: "default",
       hostId: userId,
       status: "open",
       round: 0,
@@ -107,6 +110,7 @@ export const get = query({
       hostId: lobby.hostId,
       status: lobby.status,
       round: lobby.round,
+      powerLevel: powerLevelOf(lobby.powerLevel),
       viewerId,
     };
     const membership = await findMembership(ctx, lobby._id, viewerId);
@@ -127,6 +131,19 @@ export const get = query({
       generationError: lobby.generationError ?? null,
       members,
     };
+  },
+});
+
+export const setPowerLevel = mutation({
+  args: { lobbyId: v.id("lobbies"), powerLevel },
+  handler: async (ctx, args) => {
+    const { lobby } = await requireHost(ctx, args.lobbyId);
+    const change = planPowerChange(lobby.status, lobby.powerLevel, args.powerLevel);
+    if (change === "LOBBY_NOT_OPEN") reject(change);
+    if (change === "unchanged") return;
+    await ctx.db.patch(lobby._id, { powerLevel: args.powerLevel });
+    for (const member of await loadMembers(ctx, lobby._id))
+      if (member.ready) await ctx.db.patch(member._id, { ready: false });
   },
 });
 

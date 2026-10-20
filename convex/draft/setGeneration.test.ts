@@ -55,6 +55,60 @@ test("a draft saves its world direction through brief repair", async () => {
   expect(JSON.stringify(setting)).toContain("sea serpent");
 });
 
+test("Busted stays frozen through brief repair, partial writing, review and targeted revision", async () => {
+  vi.stubEnv("SET_GENERATION_ENABLED", "false");
+  const world = fakeOutsideWorld();
+  world.openaiIsDown = true;
+  let briefs = 0, batches = 0;
+  world.setReply = (task, response) => {
+    if (task.stage === "brief" && briefs++ === 0)
+      response.output[0].content[0].text = "{}";
+    if (task.stage === "generate" && batches++ === 0) {
+      const body = JSON.parse(response.output[0].content[0].text);
+      body.cards.pop();
+      response.output[0].content[0].text = JSON.stringify(body);
+    }
+    if (task.stage === "review" && task.scope === "global")
+      response.output[0].content[0].text = JSON.stringify({
+        summary: "Improve one weak floor", blueprintBroken: false,
+        issues: [{ id: "weak-C001", slots: ["C001"], severity: "major",
+          evidence: "C001 lacks a useful effect for the selected powered environment.",
+          correction: "Give C001 a substantial effect inside its fixed slot." }],
+      });
+    return response;
+  };
+  const backend = startBackend();
+  const { lobbyId, players } = await openLobby(backend, ["BustedAna", "BustedBen"]);
+  await players[0].as.mutation(api.lobby.lobbies.setPowerLevel, { lobbyId, powerLevel: "busted" });
+  await readyEveryone(lobbyId, players);
+  await players[0].as.mutation(api.draft.start.startDraft, { lobbyId });
+  const run = await backend.run(async (ctx) => (await ctx.db.query("setRuns").collect())[0]);
+  expect(run.powerLevel).toBe("busted");
+  await settleSet(backend, lobbyId, players);
+  expect((await players[0].as.query(api.lobby.lobbies.get, { lobbyId }))?.generationError).toBeTruthy();
+  world.openaiIsDown = false;
+  await players[0].as.mutation(api.draft.failures.retryGeneration, { lobbyId });
+  await settleSet(backend, lobbyId, players);
+  expect(await backend.run(async (ctx) => (await ctx.db.get(lobbyId))?.setRunId)).toBe(run._id);
+  expect((await players[0].as.query(api.lobby.lobbies.get, { lobbyId }))?.generationError).toBeNull();
+  expect((await packOf(players[0], lobbyId))?.cards).toHaveLength(15);
+  for (const stage of ["brief", "slots", "generate", "review", "editPlan", "revise", "final"])
+    expect(world.setRequests.some((task) => task.stage === stage)).toBe(true);
+  expect(world.setRequests.filter((task) => task.stage === "brief")).toHaveLength(2);
+  expect(world.setRequests.some((task) => task.stage === "generate" && task.slots?.length === 1)).toBe(true);
+  for (const task of world.setRequests) {
+    expect(task.powerLevel).toBe("busted");
+    expect(task.referenceSeed).toBe(run.seed);
+  }
+  for (const payload of world.setPayloads) {
+    expect(payload.instructions).toContain("Busted powered Vintage Cube");
+    const refs = JSON.parse(payload.input).tools.references;
+    expect(refs.pool.size).toBe(1000);
+    expect(refs.cards.length).toBeGreaterThan(0);
+    expect(refs.cards.every((r: { id: string }) => r.id.startsWith("busted:"))).toBe(true);
+  }
+});
+
 test("new lobbies rotate structural directions without sharing other lobbies' lore", async () => {
   const world = fakeOutsideWorld();
   world.openaiIsDown = true;
@@ -311,7 +365,8 @@ test("a serious final issue blocks drafting and requires a fresh candidate", asy
   expect(await packOf(players[0], lobbyId)).not.toBeNull();
 }, 15000);
 
-test("eight players receive packs from a 270-card inventory", async () => {
+test("eight players finish three rounds from one 270-card inventory", async () => {
+  const world = fakeOutsideWorld();
   const backend = startBackend();
   const { lobbyId, players } = await openLobby(
     backend,
@@ -326,6 +381,24 @@ test("eight players receive packs from a 270-card inventory", async () => {
   ).toMatchObject({ total: 270, completed: 270, phase: "ready" });
   for (const player of players)
     expect((await packOf(player, lobbyId))?.cards).toHaveLength(15);
+  const calls = world.setRequests.length;
+  for (let pick = 0; pick < 45; pick++) {
+    for (const player of players)
+      expect(await pickFirst(player, lobbyId)).toBe(true);
+    await settleSet(backend, lobbyId, players);
+    await seen(lobbyId, players);
+  }
+  expect(world.setRequests.length).toBe(calls);
+  const instanceIds = new Set<string>();
+  for (const player of players) {
+    const deck = await player.as.query(api.deck.decks.forLobby, { lobbyId });
+    expect(deck?.cards).toHaveLength(45);
+    for (const card of deck!.cards) {
+      expect(instanceIds.has(card.id)).toBe(false);
+      instanceIds.add(card.id);
+    }
+  }
+  expect(instanceIds.size).toBe(360);
 }, 20000);
 
 test("provider failure resumes the saved run without changing its budget", async () => {

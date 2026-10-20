@@ -1,6 +1,7 @@
 import { defineTable } from "convex/server";
 import { v } from "convex/values";
 import { cardFace } from "../../card";
+import { powerLevel } from "../../powerLevel";
 
 export const setTables = {
   setRuns: defineTable({
@@ -8,6 +9,7 @@ export const setTables = {
     key: v.string(),
     revision: v.number(),
     total: v.number(),
+    powerLevel: v.optional(powerLevel),
     phase: v.string(),
     wakePending: v.optional(v.boolean()),
     ideas: v.array(v.string()),

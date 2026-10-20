@@ -1,10 +1,10 @@
 # Set generation and setting design
 
-Status: default for new app drafts; explicit `SET_GENERATION_ENABLED=false` is a legacy rollback option. The user selected prompt 9 for world and card creation on 2026-10-20. Local engineering checks pass; broader model calibration and playtest acceptance remain open. Not deployed to production.
+Status: default for new app drafts. Prompt 10 retains the selected prompt-9 world policy and adds Default/Busted power selection. `SET_GENERATION_ENABLED=false` selects the legacy path for Default; Busted requires the set pipeline. Broader model calibration and playtest acceptance remain open. Not deployed to production.
 Date: 2026-10-14. Updated 2026-10-20.
 
 The user selected GPT-6 Luna for all generative stages on 2026-10-15. On 2026-10-16 they approved removing required Decisions screening: code validation, contextual reviews, one edit pass and final review now form the normal pipeline. Decisions remains an offline evaluation tool.
-On 2026-10-16 the user set the design target to Modern Horizons strength. The [power reference library](../research/limited-set-design/10-modern-horizons-power.md) provides 72 rarity/type/band examples plus 15 role and combo references. Prompt version 9 consumes its role-ranked references and factual support summaries throughout generation and review. Human calibration and playtest acceptance remain open. See [October 2026 Luna prompting research](../research/limited-set-design/11-luna-prompting.md).
+On 2026-10-16 the user set the design target to Modern Horizons strength. The [power reference library](../research/limited-set-design/10-modern-horizons-power.md) provides 72 rarity/type/band examples plus 15 role and combo references. Default retains this catalog. Prompt 10 also supports the separate [Busted reference pool](../research/limited-set-design/16-busted-power.md), requested on 2026-10-20. Both modes consume role-ranked references and factual support summaries throughout generation and review. Human calibration and playtest acceptance remain open. See [October 2026 Luna prompting research](../research/limited-set-design/11-luna-prompting.md).
 
 Scope: [refactor step 6](refactor-roadmap.md#step-6-card-creation).
 
@@ -47,7 +47,7 @@ The existing recovery work remains valuable: saved designs survive art failures,
 
 ## Player experience
 
-1. Players contribute ideas and ready up through the existing lobby flow. Starting freezes the roster and the selected idea snapshot. Existing start authorization remains unchanged.
+1. Players contribute ideas and ready up through the existing lobby flow. The host can choose Default or Busted before starting; a change clears everyone’s readiness. Starting freezes the roster, power level and idea snapshot. Existing start authorization remains unchanged.
 2. The generating screen shows meaningful stages: **Creating the world**, **Designing cards**, **Reviewing the set**, **Refining cards**, and **Preparing packs**. Show completed-card counts only when they represent persisted, validated work. A stage need not expose provider names, prompts, costs, or review scores.
 3. Once the setting brief is frozen, players can read its premise, color-pair themes, and exact mechanic reminder text. This introduces the format without exposing card lists, pack contents, or reviewer-identified bombs.
 4. The first round opens only after the set passes final validation and all three rounds have saved pack manifests. Art is best effort within a bounded wait; cards remain readable with placeholders.
@@ -333,7 +333,7 @@ That revision targeted a strong interactive custom cube; the current target is e
 
 ## Luna prompting and reference tools (2026-10-16)
 
-Current versions are pipeline 2, prompt 9, rubric 4, references 2 and profile 2. The [Luna prompting research](../research/limited-set-design/11-luna-prompting.md) owns the official-source analysis, request/tool design, evaluation commands and measured limitations. Deterministic role retrieval supplies the same full-cost reference policy to writers and reviewers; factual support reports prevent partial samples from being mistaken for complete sets. The power-floor and ceiling criteria remain in contextual review. Normal runs skip both Decisions stages and do not send classification labels to editors. Required mechanic omissions are major review defects. Repair feedback identifies the slot and exact violated world, rarity or type constraint.
+Current versions are pipeline 2, prompt 10, rubric 4, references 3 and profile 3. The [Luna prompting research](../research/limited-set-design/11-luna-prompting.md) owns the official-source analysis, request/tool design, evaluation commands and measured limitations. Deterministic role retrieval supplies the same full-cost reference policy to writers and reviewers; factual support reports prevent partial samples from being mistaken for complete sets. The power-floor and ceiling criteria remain in contextual review. Normal runs skip both Decisions stages and do not send classification labels to editors. Required mechanic omissions are major review defects. Repair feedback identifies the slot and exact violated world, rarity or type constraint.
 
 The final development pilot produced 15 new cards and revised nine. Final review retained a major token-definition inconsistency, so this is an unapproved sample. Medium review performed better than low on the small development suite; a medium-writing replay accepted only 13 of 15 slots and did not justify changing the low-writing default. These results leave the existing human/held-out/playtest gates open.
 
@@ -390,8 +390,19 @@ The user rejected both prompt-8 modes as too similar and preferred the baseline'
 
 Writers and reviewers ask for distinct subject families, magical actions and name stems within a world; pair plans need distinct resource loops while sharing useful support. Broad slot jobs remain, because the world/prose comparison does not isolate their effect. Fixed contracts, Modern Horizons power references and review gates are unchanged.
 
-Preview defaults to empty player input and `.artifacts/pack-preview-v9`, using the same allocator and saving `world-direction.json`; a standalone preview has no cross-run history unless provided by its caller. Existing world briefs and historical eval artifacts are preserved. The old seed helper remains for historical protocols; normal app and preview runs no longer use it.
+Preview defaults to empty player input and `.artifacts/pack-preview-v10-default`, using the same allocator and saving `world-direction.json`; a standalone preview has no cross-run history unless provided by its caller. Existing world briefs and historical eval artifacts are preserved. The old seed helper remains for historical protocols; normal app and preview runs no longer use it.
 
 The user selected this policy for default world and card creation on 2026-10-20. World creation receives the allocated direction; slot planning, card writing, contextual review, edit planning, revision and final review all receive the shared card creative policy and frozen blueprint. Normal runs use Luna throughout and retain fifteen-card writing batches and the Modern Horizons power target.
 
 The [five-world probe](../research/limited-set-design/15-world-directions.md) records real-provider results, including remaining repetition and ambiguous wording. Selecting the policy does not establish semantic uniqueness or balanced card power; broader calibration and playtesting remain open. No card/art generation or production deployment is claimed by that probe.
+
+
+## Selectable power level (prompt 10)
+
+The lobby host chooses **Default** or **Busted** before starting. Default is the current Modern Horizons target. Busted targets powered Vintage Cube strength, with fast mana, free interaction and explosive supported combos. Everyone sees the choice; changing it clears all ready flags, while selecting the same value does nothing. Only an authenticated host in an open lobby can change it. The chosen label remains visible during generation and drafting.
+
+`lobbies.powerLevel` and `setRuns.powerLevel` are optional enum fields for backward compatibility. Missing values mean Default. Starting freezes the choice on the run; enqueueing stamps every task with that value and a stable reference seed. Repairs/resumes reuse it, and a fresh candidate inherits the locked lobby choice. World planning, slot planning, writing, contextual review, edit planning, revision, final review and optional offline screening all use the selected policy. Player ideas cannot override it. Existing Default runs and the legacy path remain supported; choosing Busted always uses the set pipeline even when the legacy rollback flag is set.
+
+Default keeps the existing references and curve. Busted uses a separately sourced pool of exactly 1,000 distinct cards, with 916 eligible for direct slot comparisons; retrieval is capped at 48 references. It has cheaper artifact/interaction slots and premium engine opportunities, while retaining colors, pairs, pack composition and fifteen-card batches. Real-world rarity is comparison metadata. Default's too-strong labels are never applied to Busted. The [Busted research record](../research/limited-set-design/16-busted-power.md) owns source methodology, pool limitations and reproduction commands.
+
+The preview supports `--power-level=default|busted`, freezes the choice and versions in `preview-config.json`, stamps it on every task and labels the report. It rejects incompatible resumed briefs or saved sets. Neither fake-service verification nor reference coverage establishes the quality of real generated cards; paid generation and playtesting remain separate validation.

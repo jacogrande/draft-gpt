@@ -1,4 +1,5 @@
 import { Rarity, Slot } from "./types";
+import { PowerLevel } from "../../powerLevel";
 
 type Band = {
   type: Slot["type"];
@@ -60,7 +61,26 @@ const RARE: Band[] = [
   band("Enchantment", 2, 4, "distinctive engine with immediate value"),
   band("Creature", 4, 6, "impactful finisher with interaction windows"),
 ];
-export const curveBand = (rarity: Rarity, row: number): Band => {
+const BUSTED_PREMIUM: Band[] = [
+  band("Artifact", 0, 2, "premium acceleration or cheap artifact combo engine"),
+  band("Sorcery", 0, 2, "efficient tutor, resource burst or combo enabler"),
+  band("Creature", 1, 3, "format-defining cheap threat or engine"),
+  band("Enchantment", 1, 3, "powerful build-around with immediate value"),
+  band("Creature", 5, 8, "decisive finisher or supported reanimation target"),
+];
+export const curveBand = (rarity: Rarity, row: number, powerLevel?: PowerLevel): Band => {
+  if (powerLevel === "busted") {
+    if (rarity === "rare" || rarity === "mythic")
+      return BUSTED_PREMIUM[row % BUSTED_PREMIUM.length];
+    const base = curveBand(rarity, row);
+    if (base.type === "Artifact")
+      return band("Artifact", 0, 2, "cheap acceleration, equipment or artifact engine");
+    if (base.type === "Instant")
+      return band("Instant", 0, 2, "premium cheap or alternate-cost interaction");
+    if (base.type === "Sorcery")
+      return band("Sorcery", 1, 3, "premium selection, tutor, reanimation or resource swing");
+    return base;
+  }
   if (rarity === "common") return COMMON[row % COMMON.length];
   if (rarity === "uncommon")
     return UNCOMMON[

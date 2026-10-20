@@ -27,6 +27,7 @@ This directory studies that process through Wizards' own design articles, publis
 | [13 — Creative seeding pilot](13-creative-seeding-eval.md) | How do concrete seeds, professional perspectives and broader slot jobs compare independently and together in fifteen-card samples? |
 | [14 — Fantasy baseline versus all three](14-fantasy-comparison.md) | How do five fresh worlds per mode and their fifteen-card previews compare under the shared high-fantasy policy? |
 | [15 — World directions and literal prose](15-world-directions.md) | Can broader structural questions and recent-use rotation reduce repeated premises while preserving literal descriptions? |
+| [16 — Busted power](16-busted-power.md) | How does the selectable powered-cube target use a separate, sourced 1,000-card pool? |
 | [Sources](sources.md) | Primary-source reading list, publication years, evidence types, and limitations. |
 
 Chapter 8 includes a [JSON design questionnaire](set-design-questionnaire.json) and a [reproducible cost calculator](estimate-costs.py). Its model pricing sources are cited in the chapter; the sources index covers Wizards design research.

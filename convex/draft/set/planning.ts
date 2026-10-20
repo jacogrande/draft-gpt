@@ -10,7 +10,7 @@ export const planTasks = (
 ): Task[] => {
   let tasks: Task[] = [];
   if (base.stage === "slots")
-    tasks = chunks(skeleton(base.total)).map((group) => ({
+    tasks = chunks(skeleton(base.total, base.powerLevel)).map((group) => ({
       ...base,
       slots: group,
     }));

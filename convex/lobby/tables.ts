@@ -1,5 +1,6 @@
 import { defineTable } from "convex/server";
 import { v } from "convex/values";
+import { powerLevel } from "../powerLevel";
 
 export const lobbyStatus = v.union(
   v.literal("open"),
@@ -12,6 +13,7 @@ export const lobbyStatus = v.union(
 export const lobbyTables = {
   lobbies: defineTable({
     name: v.string(),
+    powerLevel: v.optional(powerLevel),
     setRunId: v.optional(v.id("setRuns")),
     hostId: v.id("users"),
     status: lobbyStatus,

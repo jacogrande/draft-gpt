@@ -4,6 +4,8 @@ import { rare } from "./catalog/rare";
 import { mythic } from "./catalog/mythic";
 import { PowerReference } from "./referenceTypes";
 import { Slot } from "./types";
+import { PowerLevel } from "../../powerLevel";
+import { bustedReferenceContext } from "./bustedReferences";
 
 export const REFERENCE_CATALOG = [...common, ...uncommon, ...rare, ...mythic];
 export const REFERENCE_LIMIT = 48;
@@ -42,7 +44,8 @@ export const findPowerReferences = (slot: Slot, band: PowerReference["band"]) =>
       (a, b) => b.rank - a.rank || a.reference.id.localeCompare(b.reference.id)
     );
 
-export const referenceContext = (slots: Slot[]) => {
+export const referenceContext = (slots: Slot[], powerLevel?: PowerLevel, seed = 0) => {
+  if (powerLevel === "busted") return bustedReferenceContext(slots, seed);
   const selected = slots.map((slot) => ({
     slot,
     choices: (["target", "too_weak", "too_strong"] as const)

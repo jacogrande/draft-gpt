@@ -7,7 +7,7 @@ export const CRITERIA = {
   complexity:
     "Are the rules understandable, internally consistent and supported at this rarity? Flag material rules or representation defects.",
   power_floor:
-    "Assess only insufficient output, not excessive strength (that belongs to power_ceiling). Against the closest role/cost target, does this earn a deck slot at Modern Horizons strength? Count mana, cards, tempo and realistic setup. Flag expensive small payoffs, weak bodies or unsupported engines. Useful cheap card-disadvantage enablers can pass when their actual role justifies the cost. A card that is too strong still passes this floor criterion.",
+    "Assess only insufficient output, not excessive strength (that belongs to power_ceiling). Against the closest role/cost target, does this earn a deck slot at the selected power level? Count mana, cards, tempo and realistic setup. Flag expensive small payoffs, weak bodies or unsupported engines. Useful cheap card-disadvantage enablers can pass when their actual role justifies the cost. A card that is too strong still passes this floor criterion.",
   power_ceiling:
     "Assess only excessive strength, not insufficient output (that belongs to power_floor). Does the supplied environment establish an excessive rate, affordable loop or oppressive lock? Require concrete costs, enabling cards and payoff. Conditional reference warnings apply only when their support exists. Efficient common removal, finite-resource free activations, fair two-for-ones and one-shot enters effects are allowed. A weak card still passes this ceiling criterion.",
   creative:

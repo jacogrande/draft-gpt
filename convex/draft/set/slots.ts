@@ -1,5 +1,6 @@
 import { curveBand } from "./curve";
 import { COLORS, PAIRS, Rarity, Slot } from "./types";
+import { PowerLevel } from "../../powerLevel";
 
 export const profile = (total: number) => {
   if (total === 135) return { common: 70, uncommon: 40, rare: 20, mythic: 5 };
@@ -8,7 +9,7 @@ export const profile = (total: number) => {
   throw new Error("Unsupported set size");
 };
 
-export const skeleton = (total: number): Slot[] => {
+export const skeleton = (total: number, powerLevel?: PowerLevel): Slot[] => {
   const slots: Slot[] = [];
   for (const [rarity, count] of Object.entries(profile(total))) {
     for (let n = 0; n < count; n++) {
@@ -16,7 +17,8 @@ export const skeleton = (total: number): Slot[] => {
       const gold = rarity === "uncommon" && n < (total === 15 ? 0 : 10);
       const land = rarity === "uncommon" && n >= 10 && n < 20;
       const index = Math.floor(n / 5);
-      const band = curveBand(rarity as Rarity, index);
+      const band = curveBand(rarity as Rarity,
+        powerLevel === "busted" && rarity === "mythic" ? n : index, powerLevel);
       const artifact = !land && !gold && band.type === "Artifact";
       const colors = gold
         ? [...PAIRS[n]].map((c) => c as typeof color)

@@ -20,7 +20,7 @@ export const startDraft = mutation({
       lobbyId,
       bySeat(members).map((member) => member.userId)
     );
-    if (process.env.SET_GENERATION_ENABLED === "false")
+    if (process.env.SET_GENERATION_ENABLED === "false" && lobby.powerLevel !== "busted")
       await scheduleGeneration(ctx, 0, lobbyId, undefined, 1);
     else await beginSet(ctx, lobby, members.length);
   },

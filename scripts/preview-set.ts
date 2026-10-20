@@ -32,12 +32,24 @@ import { pickSchool } from "../convex/draft/artSchools";
 import { settingFromBlueprint } from "../convex/draft/set/setting";
 import { worldDirection, WorldDirection } from "../convex/draft/set/worldDirection";
 import { renderPreview } from "./render-set-preview";
+import { PowerLevel, powerLevelOf } from "../convex/powerLevel";
 
-const out = resolve(process.argv[2] ?? ".artifacts/pack-preview-v9");
+const selectedPower = process.argv.find((arg) => arg.startsWith("--power-level="))?.split("=")[1] ?? "default";
+if (selectedPower !== "default" && selectedPower !== "busted")
+  throw new Error("--power-level must be default or busted");
+const powerLevel: PowerLevel = selectedPower;
+const out = resolve(process.argv.slice(2).find((arg) => !arg.startsWith("--"))
+  ?? `.artifacts/pack-preview-v10-${powerLevel}`);
 const total = 135;
 const ideas: string[] = [];
 const ledgerPath = join(out, "ledger.json");
 await mkdir(out, { recursive: true });
+const configPath = join(out, "preview-config.json");
+const config = JSON.stringify({ powerLevel, total, versions: VERSIONS });
+const previousConfig = await readFile(configPath, "utf8").catch(() => null);
+if (previousConfig && previousConfig !== config)
+  throw new Error("Preview configuration differs; use a fresh output directory.");
+if (!previousConfig) await writeFile(configPath, config, { flag: "wx" });
 const seedPath = join(out, "world-direction.json");
 const savedSeed = await readFile(seedPath, "utf8").catch(() => null);
 const direction: WorldDirection = savedSeed
@@ -147,20 +159,24 @@ const parallel = async <T, U>(
 };
 const generatePreview = async () => {
   const resumeBrief = process.argv.find((arg) => arg.startsWith("--resume-brief="));
-  const blueprint = resumeBrief
-    ? parseBlueprint(
-        JSON.parse(await readFile(resolve(resumeBrief.slice(15)), "utf8")).data,
-        ideas.length
-      )
+  const savedBrief = resumeBrief
+    ? JSON.parse(await readFile(resolve(resumeBrief.slice(15)), "utf8"))
+    : null;
+  if (savedBrief && powerLevelOf(savedBrief.task?.powerLevel) !== powerLevel)
+    throw new Error("The resumed brief uses a different power level.");
+  const blueprint = savedBrief
+    ? parseBlueprint(savedBrief.data, ideas.length)
     : ((await repairedCall({
         stage: "brief",
         total,
+        powerLevel,
+        referenceSeed: direction.seed,
         ideas,
         worldDirection: direction,
       })) as Blueprint);
-  const base = { total, ideas, blueprint };
+  const base = { total, ideas, blueprint, powerLevel, referenceSeed: direction.seed };
   const slots = (
-    await parallel(chunks(skeleton(total)), (group) =>
+    await parallel(chunks(skeleton(total, powerLevel)), (group) =>
       repairedCall({ ...base, stage: "slots", slots: group })
     )
   ).flat() as Slot[];
@@ -250,6 +266,7 @@ const generatePreview = async () => {
   const pack = ids.map((id) => designs.find((d) => d.slotId === id)!);
   const artifact = {
     generatedAt: new Date().toISOString(),
+    powerLevel,
     ready,
     mode: "Luna generation and contextual review; no Decisions screening",
     versions: VERSIONS,
@@ -276,6 +293,8 @@ const artifact = process.argv.includes("--finish")
     >)
   : await generatePreview();
 const { blueprint, pack, ready } = artifact;
+if (powerLevelOf(artifact.powerLevel) !== powerLevel)
+  throw new Error("The saved set uses a different power level.");
 await writeFile(join(out, "index.html"), renderPreview({ ...artifact, pack }));
 await parallel([...pack.entries()], async ([index, card]) => {
   const path = join(out, `${card.slotId}.jpg`);

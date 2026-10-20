@@ -1,3 +1,5 @@
+import { PowerLevel, powerLevelOf } from "../powerLevel";
+
 export const MAX_SEATS = 8;
 export const MIN_DRAFTERS = 2;
 export const MAX_LOBBY_NAME_LENGTH = 48;
@@ -47,6 +49,12 @@ export const decideJoin = <U>(
 
 export const rosterBlocker = (status: LobbyStatus): "LOBBY_NOT_OPEN" | null =>
   status === "open" ? null : "LOBBY_NOT_OPEN";
+
+export const planPowerChange = (
+  status: LobbyStatus,
+  current: PowerLevel | undefined,
+  next: PowerLevel
+) => rosterBlocker(status) ?? (powerLevelOf(current) === next ? "unchanged" : "change");
 
 export const leaveBlocker = (status: LobbyStatus): "LOBBY_NOT_OPEN" | null =>
   status === "generating" || status === "drafting" ? "LOBBY_NOT_OPEN" : null;

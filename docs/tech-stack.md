@@ -46,7 +46,7 @@ Set on the Convex deployment (`npx convex env set NAME value`):
 | `JWT_PRIVATE_KEY`, `JWKS` | Convex Auth signing keys |
 | `AUTH_GOOGLE_ID`, `AUTH_GOOGLE_SECRET` | Google OAuth client |
 | `OPENAI_API_KEY` | Card design and card art |
-| `SET_GENERATION_ENABLED` | Optional rollback switch. New drafts use the reviewed Luna set pipeline by default; only explicit `false` selects legacy per-pack generation. Existing runs keep their path. |
+| `SET_GENERATION_ENABLED` | Optional rollback switch. New drafts use the reviewed Luna set pipeline by default; explicit `false` selects legacy per-pack generation for Default power. Busted always uses the set pipeline. Existing runs keep their path. |
 | `OPENAI_BASE_URL` | Optional. Point at `scripts/fake-services.ts` for local testing. |
 | `AUTH_TEST_LOGIN` | `true` enables test sign-in. Local deployments only. |
 

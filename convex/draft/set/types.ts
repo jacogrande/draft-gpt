@@ -1,4 +1,5 @@
 import { CardFace } from "../../card";
+import type { PowerLevel } from "../../powerLevel";
 import type { CreativeSeed } from "./creativeSeed";
 import type { WorldDirection } from "./worldDirection";
 
@@ -127,6 +128,8 @@ export type Stage =
   | "art";
 export type Task = {
   stage: Stage;
+  powerLevel?: PowerLevel;
+  referenceSeed?: number;
   total: number;
   ideas: string[];
   creativeSeed?: CreativeSeed;
@@ -142,11 +145,11 @@ export type Task = {
 };
 export const VERSIONS = {
   pipeline: 2,
-  prompt: 9,
-  profile: 2,
+  prompt: 10,
+  profile: 3,
   schema: 1,
   rubric: 4,
-  references: 2,
+  references: 3,
   collation: 1,
 };
 export const MODELS = { luna: "gpt-6-luna" };

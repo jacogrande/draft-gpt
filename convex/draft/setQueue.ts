@@ -6,6 +6,7 @@ import { generationKey } from "./retry";
 import { reserveAllowed } from "./set/state";
 import { Task } from "./set/types";
 import { taskReservation } from "./set/requestContext";
+import { powerLevelOf } from "../powerLevel";
 
 export const jobsFor = (ctx: MutationCtx, runId: Id<"setRuns">) =>
   ctx.db
@@ -26,7 +27,7 @@ export const enqueue = async (
     status: "queued",
     attempt: 1,
     repairs: 0,
-    task: JSON.stringify(task),
+    task: JSON.stringify({ ...task, powerLevel: powerLevelOf(run.powerLevel), referenceSeed: run.seed }),
     reservation: 0,
   });
 };

@@ -48,7 +48,10 @@ export const cannedBlueprint: Blueprint = {
   influences: [],
 };
 export const cannedTask = (task: Task): unknown => {
-  if (task.stage === "brief") return cannedBlueprint;
+  if (task.stage === "brief") return task.powerLevel === "busted"
+    ? { ...cannedBlueprint, experience: { ...cannedBlueprint.experience,
+        power: "Powered Vintage Cube strength", exclusions: ["unsupported card layouts"] } }
+    : cannedBlueprint;
   if (task.stage === "slots") return { slots: task.slots };
   if (task.stage === "generate" || task.stage === "revise")
     return {
