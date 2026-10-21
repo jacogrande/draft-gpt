@@ -6,7 +6,7 @@ This is a deployment checklist, not a claim that the pending changes are live. `
 
 ## Observed configuration
 
-- Remote `main` was `f0c115c` when this release audit began. The shared-set pipeline commit `5c5d325` was local only. Release commit/push status belongs in the final validation record.
+- Remote `main` was `f0c115c` when this audit began. On October 21, `5c5d325` (shared sets), `20dc304` (mana shortcuts), `13ea51f` (power levels) and tested implementation `1b297af` (review hardening/evaluations) were pushed normally to `origin/main`. The following documentation-only handoff commit records that push. Production remains unchanged.
 - Production Convex has `AUTH_GOOGLE_ID`, `AUTH_GOOGLE_SECRET`, `JWKS`, `JWT_PRIVATE_KEY`, `OPENAI_API_KEY`, and `SITE_URL`. No `AUTH_TEST_LOGIN`, `OPENAI_BASE_URL`, or rollback switch is configured. Only variable names were recorded; credentials were not exported.
 - On October 21, read-only model lookups using the existing production key returned HTTP 200 for `gpt-6-luna` and `gpt-image-2.5-flare`. No production generation request was made.
 - Firebase Hosting site `draft-gpt-81aaa` exists at `https://draft-gpt-81aaa.web.app`.
