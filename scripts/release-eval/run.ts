@@ -13,17 +13,22 @@ import { PowerLevel } from "../../convex/powerLevel";
 import { worldDirection } from "../../convex/draft/set/worldDirection";
 import { Caller, createCaller, backoff, pool } from "../batch-eval/calls";
 import { validated } from "../creativity-eval/run";
+import type { ReasoningEffort } from "../../convex/draft/set/modelSettings";
 
-export type Trial = { conversation?: ConversationMessage[]; id: string; total: number; powerLevel: PowerLevel; seed: number };
+export type Trial = { reasoning?: ReasoningEffort; conversation?: ConversationMessage[]; id: string; total: number; powerLevel: PowerLevel; seed: number };
 export const runTrial = async (out: string, trial: Trial) => {
   const directory = join(out, trial.id);
   const call = await createCaller(directory, trial.total === 135 ? 5 : 7);
   const saved = await readFile(join(directory, "result.json"), "utf8").catch(() => null);
-  if (saved) return JSON.parse(saved);
+  if (saved) {
+    const result = JSON.parse(saved);
+    if (result.trial.reasoning !== trial.reasoning) throw new Error("Saved trial reasoning changed; use a new directory");
+    return result;
+  }
   const startedAt = new Date().toISOString(), start = Date.now();
   let reused = false;
-  const audit: Caller = async (...args) => {
-    const record = await call(...args);
+  const audit: Caller = async (id, task, options) => {
+    const record = await call(id, task, trial.reasoning ? { ...options, reasoning: trial.reasoning } : options);
     reused ||= !!record.cacheHit;
     return record;
   };

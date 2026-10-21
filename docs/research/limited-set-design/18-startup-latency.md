@@ -57,3 +57,38 @@ These are proposed follow-ups, not speedups measured by this run. The live [star
 ## Reproducibility
 
 Artifacts: `.artifacts/startup-benchmark-p6-default-135/`. `config.json` freezes source hashes, versions, settings, seed and budget. `benchmark.ts` is the exact single-candidate harness importing the shared release-eval runner. `summary.json` contains target outcomes and stage timings. `default-135/initial.json` preserves original designs; `default-135/result.json` contains final designs, reviews, ledger, readiness and a diagnostic collated pack. `default-135/calls/` preserves every request, response parsing result, token usage and duration. Artifacts are ignored by Git; this report preserves the result in the repository.
+
+## Follow-up: every stage configured with no reasoning
+
+The user requested one run with `none` throughout, including revisions and final verification. An eval-only `Trial.reasoning` override was added; it reaches request execution, checkpoint metadata and repairs without changing application defaults. Tests cover both default and overridden efforts, a targeted revision, partial repairs, failed final gates, recorded settings and refusing completed-result reuse under a different effort. All three release-eval tests, typecheck, lint and changed-script lint pass.
+
+This fresh Default-135 candidate used the same direction/reference seed, batch size, concurrency and contracts as the first benchmark. No pre-card world/archetype review was added during the comparison. The runner and all generation source hashes were frozen before dispatch and verified after completion. All 36 dispatched calls used `none` and reported zero reasoning tokens.
+
+**Outcome: failed during critique after 321.7 seconds (5 minutes 22 seconds), costing $0.1072144.** All 135 initial card records were generated, but the complete inventory failed name uniqueness. Two pair critics exhausted their three allowed attempts. The runner drained in-flight work, preserved checkpoints and returned `ready=false`; it did not continue to editing or final verification. The global critic was not reached. No reroll or gate bypass was performed.
+
+| Stage | Previous mixed-effort run | All-none run |
+| --- | ---: | ---: |
+| World brief | 75.8 s | 96.4 s |
+| Slot planning | 187.0 s | 75.8 s |
+| Card writing | 55.7 s | 53.1 s |
+| Critiques | 188.5 s, completed | 96.4 s, failed before all critics ran |
+| Editorial plan | 49.0 s | Not reached |
+| Revisions | 158.9 s | Not reached |
+| Final verification | 161.1 s | Not reached |
+| Total | 876.0 s to automated acceptance | 321.7 s to failure |
+
+The shorter failed run is not a speedup to a usable set. Both runs already used `none` through edit planning; the only changed settings were for revisions and final verification, neither of which the new run reached. Consequently this experiment provides **no measurement of the effect of disabling reasoning in those two stages**. Different sampled worlds, cards, repair counts and provider latency also prevent a causal comparison of the earlier stages.
+
+The world, **The Unmoored March**, needed two repairs for invalid white-blue neighbor assignments before passing. Slot planning needed three repairs: two invalid JSON responses and one incomplete response. All nine writing batches filled fifteen slots on the first attempt. Six pair critics were dispatched; four eventually passed audit validation and two failed. Their twelve calls included five unassigned-issue audit failures, one repeated/unknown-evidence failure and two invalid JSON responses. There were eleven repair calls in total, and no unresolved in-flight reservations after completion. Successful partial critiques remain in call checkpoints even though the failed phase did not return an aggregate review array.
+
+### Output inspection
+
+The prose describes physical, observable magic: organs decay with use; a lung opens tunnels and a fin bends currents. It again centers on harvested animal parts, migration routes and a Crown controlling access. The earlier world shares those subjects. Because the direction seed was intentionally held constant, this is an observed similarity, not a general diversity evaluation.
+
+Four names are reused across eleven card records: Causeway Crane Guide (C001/C026/C046), Kilnroad Salamander (C009/C029/C044), Ravine Glasswing (C047/U037/R017) and Reedbridge Crane Guide (U036/M001). There are 128 distinct names for 135 records. Initial per-batch acceptance did not establish a valid full inventory.
+
+A qualitative spot check also finds a weak-looking mythic for the requested environment: M001 costs `{1}{W}` for a 2/2, gives another creature +0/+2 for one turn on entry, and gains one life when another creature survives combat damage. That is an editorial power-floor concern, not a measured win-rate conclusion. Partial model critiques contain other power and rules claims, but their semantic accuracy was not independently established. No completed final audit or human playtest exists for this candidate.
+
+The offline comparison at `.artifacts/startup-benchmark-p6-all-none-135/comparison/index.html` links the prior edited pack and a clearly labeled **unedited diagnostic sample** from the new inventory. It includes both worlds, archetypes, cards and raw JSON. The new sample is collated only for inspection; the benchmark's original result retains an empty approved-pack list and `ready=false`. The page explicitly distinguishes time to acceptance from time to failure, and edited from unedited cards. Both samples contain fifteen records. Local links, card count and the index were checked in a browser with no browser errors; screenshot: `comparison/none.png`. The browser session was closed.
+
+All new evidence is under `.artifacts/startup-benchmark-p6-all-none-135/`, including the exact benchmark harness, frozen config, calls, initial inventory, failed result and summary. No art, production changes or application-setting changes were made. The requested pre-card world/archetype review remains a separate next implementation, recorded in the startup plan. This failed attempt supports simplifying the review contract before another full benchmark; it does not support bypassing review or claiming that all-none output quality is acceptable.

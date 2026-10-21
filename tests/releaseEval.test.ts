@@ -23,15 +23,23 @@ test("review calibration fixtures have valid slots including zero-mana artifacts
   }
 });
 
-test("release evaluation preserves partial repairs and failed final gates when resumed", async () => {
+test.each([undefined, "none"] as const)("release evaluation preserves repairs, gates and reasoning override %s when resumed", async (reasoning) => {
   const out = await mkdtemp(join(tmpdir(), "release-eval-"));
   const tasks: Task[] = [];
+  const efforts: string[] = [];
   vi.stubGlobal("fetch", async (_url: unknown, init: { body: string }) => {
-    const task = JSON.parse(JSON.parse(init.body).input).task as Task;
+    const request = JSON.parse(init.body);
+    const task = JSON.parse(request.input).task as Task;
     tasks.push(task);
+    efforts.push(request.reasoning.effort);
     const response = cannedResponse(task), content = response.output[0].content[0];
     const data = JSON.parse(content.text);
     if (task.stage === "generate" && task.slots?.length === 15) data.cards.pop();
+    if (task.stage === "review" && task.scope === "global") {
+      data.issues = [{ id: "edit", slots: ["C001"], severity: "major",
+        evidence: "Fixture needs a stronger effect", correction: "Improve inside the fixed slot" }];
+      data.audit = cannedReview(task, data.issues).audit;
+    }
     if (task.stage === "final") data.issues = [{ id: "unfixed", slots: ["C001"], severity: "major",
       evidence: "Unresolved fixture defect", correction: "Repair before publication" }];
     if (task.stage === "final") data.audit = cannedReview(task, data.issues).audit;
@@ -39,7 +47,7 @@ test("release evaluation preserves partial repairs and failed final gates when r
     return new Response(JSON.stringify(response));
   });
   try {
-    const trial = { id: "busted-135", total: 135, powerLevel: "busted" as const, seed: 731 };
+    const trial = { id: "busted-135", total: 135, powerLevel: "busted" as const, seed: 731, reasoning };
     const result = await runTrial(out, trial);
     expect(result.designs).toHaveLength(135);
     expect(result.structurallyComplete).toBe(true);
@@ -49,9 +57,14 @@ test("release evaluation preserves partial repairs and failed final gates when r
     expect(repairs).toHaveLength(9);
     expect(repairs.every(t => t.reservedNames?.length === 14)).toBe(true);
     expect(tasks.every(t => t.powerLevel === "busted" && t.referenceSeed === 731)).toBe(true);
+    expect(tasks.some(t => t.stage === "revise")).toBe(true);
+    tasks.forEach((task, index) => expect(efforts[index]).toBe(reasoning ?? (["revise", "final"].includes(task.stage) ? "medium" : "none")));
+    const finalCall = JSON.parse(await readFile(join(out, trial.id, "calls/final-try0.json"), "utf8"));
+    expect(finalCall.request.reasoning).toBe(reasoning ?? "medium");
     const count = tasks.length;
     expect((await runTrial(out, trial)).ready).toBe(false);
     expect(tasks).toHaveLength(count);
+    await expect(runTrial(out, { ...trial, reasoning: reasoning === "none" ? undefined : "none" })).rejects.toThrow("reasoning");
     const ledger = JSON.parse(await readFile(join(out, trial.id, "ledger.json"), "utf8"));
     expect(ledger).toHaveLength(count);
     expect(ledger.every((r: { state: string }) => r.state === "settled")).toBe(true);
