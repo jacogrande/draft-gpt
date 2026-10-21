@@ -8,7 +8,7 @@ export const outputLimit = (stage: Stage) =>
     : ["generate", "revise"].includes(stage)
     ? 14000
     : ["review", "editPlan", "final"].includes(stage)
-    ? 24000
+    ? 48000
     : 8000;
 export const estimateReservation = (stage: Stage, input: string): number => {
   if (stage === "art") return 0.04;

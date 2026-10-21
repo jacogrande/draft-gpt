@@ -1,3 +1,4 @@
+import { cannedReview } from "./cannedReview";
 import { cannedIntent } from "./cannedIntent";
 import { Blueprint, COLORS, PAIRS, Task } from "../convex/draft/set/types";
 
@@ -100,11 +101,7 @@ export const cannedTask = (task: Task): unknown => {
         };
       }),
     };
-  return {
-    summary: "The fixture has no reported issues.",
-    blueprintBroken: false,
-    issues: task.stage === "editPlan" ? task.issues ?? [] : [],
-  };
+  return cannedReview(task);
 };
 export const cannedResponse = (task: Task) => ({
   id: "fake-response",

@@ -1,3 +1,4 @@
+import { cannedReview } from "./cannedReview";
 import { mkdtemp, readFile, rm } from "node:fs/promises";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
@@ -33,6 +34,7 @@ test("release evaluation preserves partial repairs and failed final gates when r
     if (task.stage === "generate" && task.slots?.length === 15) data.cards.pop();
     if (task.stage === "final") data.issues = [{ id: "unfixed", slots: ["C001"], severity: "major",
       evidence: "Unresolved fixture defect", correction: "Repair before publication" }];
+    if (task.stage === "final") data.audit = cannedReview(task, data.issues).audit;
     content.text = JSON.stringify(data);
     return new Response(JSON.stringify(response));
   });

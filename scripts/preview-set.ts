@@ -1,3 +1,4 @@
+import { validateRevisionNames } from "../convex/draft/set/uniqueness";
 import { conversationSnapshot } from "../convex/lobby/worldbuilding";
 import { CreativeIntent } from "../convex/draft/set/intent";
 import { preferenceCoverageProblems } from "../convex/draft/set/guidance";
@@ -85,7 +86,7 @@ const call = async (task: Task): Promise<unknown> => {
     if (result.error) throw new Error(result.error);
     if (!result.error) {
       if (["review", "editPlan", "final"].includes(task.stage))
-        parseReview(result.data, task.designs ?? []);
+        parseReview(result.data, task.designs ?? [], task);
       return result.data;
     }
   }
@@ -183,7 +184,7 @@ const generatePreview = async () => {
         intent,
         worldDirection: direction,
       })) as Blueprint);
-  const base = { total, ideas: promptIdeas, intent, blueprint, powerLevel, referenceSeed: direction.seed };
+  const base = { reviewContract: "five-axis" as const, total, ideas: promptIdeas, intent, blueprint, powerLevel, referenceSeed: direction.seed };
   const slots = (
     await parallel(chunks(skeleton(total, powerLevel)), (group) =>
       repairedCall({ ...base, stage: "slots", slots: group })
@@ -195,7 +196,11 @@ const generatePreview = async () => {
     const cards: Design[] = [];
     let current = task;
     for (let attempt = 0; attempt < 3 && current.slots!.length; attempt++) {
-      const result = (await call(current)) as { cards: Design[]; errors: string[] };
+      let result = (await call(current)) as { cards: Design[]; errors: string[] };
+      if (current.stage === "revise") {
+        result = validateRevisionNames(result, designs);
+        designs = designs.map(card => result.cards.find(edit => edit.slotId === card.slotId) ?? card);
+      }
       cards.push(...result.cards);
       current = repairCards(current, result);
     }

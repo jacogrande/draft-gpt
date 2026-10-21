@@ -7,7 +7,7 @@ There are bugs, bad features, outdated api calls, old llm model invocations, etc
 
 ## Current position (2026-10-21)
 
-Steps 1 and 3 are complete. Steps 4 and 5 are implemented and verified locally. Step 2 still needs a real production draft. Step 6's shared Luna pipeline, concrete world policy and Default/Busted selection are implemented, with 143 passing tests, typecheck, lint and build. Structured lobby creative guidance is also implemented and verified locally.
+Steps 1 and 3 are complete. Steps 4 and 5 are implemented and verified locally. Step 2 still needs a real production draft. Step 6's shared Luna pipeline, concrete world policy and Default/Busted selection are implemented, with 150 passing tests, typecheck, lint and build. Structured lobby creative guidance is also implemented and verified locally.
 
 The remaining non-playtesting evaluation work is now recorded in [release validation](../research/limited-set-design/17-release-validation.md): 1,215 saved designs, reviewer calibration, twelve world inputs, 126,000 simulated packs and two illustrated diagnostic packs. None of the four completed candidates passed final review; two further runs were interrupted. Mechanic contracts, reviewer reliability and repeated institutional world premises remain quality blockers. Pipeline 3 additionally fixes duplicate-name repair and prevents the model editor from dropping deterministic collisions. Paid results predate those two safeguards and remain failures.
 
@@ -97,3 +97,7 @@ Prompt iteration (2026-10-15): concrete prose policy and a stronger custom-cube 
 ### Lobby creative guidance (October 21, 2026)
 
 Delivered optional per-member idea support, full conversation snapshots, source-linked Luna interpretation, explicit blueprint dispositions, slot assignments and coverage gates, scoped card guidance and a visible player summary. Public integration tests and two-player browser acceptance pass; a small real-provider probe covered three conversation cases and one 135-slot world. See [the contract and limitations](lobby-creative-guidance.md). This does not close the existing model-quality, deployment or human playtest gates.
+
+### Whole-set review (October 21, 2026)
+
+The review pipeline now requires explicit audits of uniqueness, mechanics, archetype identity, flavor and power. Global and final critics receive every card; an edit pass can revise the whole inventory. Current-inventory name validation handles concurrent revision collisions. Integration coverage includes rewriting all 270 cards. A real re-review of the saved Busted set accepted 74 replacements (66 actual changes), but final review retained three major issues; quality acceptance remains open. See [the contract, timings and limitations](set-review.md). This implementation is verified locally; production is unchanged.

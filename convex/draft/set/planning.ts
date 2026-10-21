@@ -52,5 +52,6 @@ export const planTasks = (
       ),
     }));
   }
-  return tasks;
+  return tasks.map(task => ["review", "editPlan", "final"].includes(task.stage)
+    ? { ...task, reviewContract: "five-axis" } : task);
 };

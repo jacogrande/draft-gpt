@@ -1,3 +1,4 @@
+import { cannedReview } from "../../tests/cannedReview";
 import { afterEach, beforeEach, expect, test, vi } from "vitest";
 import { api, internal } from "../_generated/api";
 import { openLobby, readyEveryone, signIn, startBackend } from "../../tests/backend";
@@ -50,6 +51,7 @@ test("invalid source references retry interpretation; fresh candidates reuse the
     const body = JSON.parse(response.output[0].content[0].text);
     if (task.stage === "interpret" && interpretations++ === 0) body.preferences[0].sourceMessages = ["invented-message"];
     if (task.stage === "final") body.issues = [{ id: "reject", slots: ["C001"], severity: "major", evidence: "Fixture defect", correction: "Repair card" }];
+    if (task.stage === "final") body.audit = cannedReview(task, body.issues).audit;
     response.output[0].content[0].text = JSON.stringify(body);
     return response;
   };

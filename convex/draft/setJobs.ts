@@ -1,3 +1,4 @@
+import { validateRevisionNames } from "./set/uniqueness";
 import { v } from "convex/values";
 import { internal } from "../_generated/api";
 import { Id } from "../_generated/dataModel";
@@ -63,10 +64,15 @@ export const finish = internalMutation({
     let repair = error;
     let nextTask = task;
     if (!error && ["generate", "revise"].includes(job.stage)) {
-      const response = JSON.parse(result) as {
+      let response = JSON.parse(result) as {
         cards: Design[];
         errors: string[];
       };
+      if (job.stage === "revise") {
+        const current = await ctx.db.query("setDesigns").withIndex("by_run", q => q.eq("runId", run._id)).collect();
+        response = validateRevisionNames(response, current.flatMap(record => record.card
+          ? [{ slotId: record.slotId, face: record.card, tokens: record.tokens }] : []));
+      }
       for (const card of response.cards) {
         const design = await ctx.db
           .query("setDesigns")

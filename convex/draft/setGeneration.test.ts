@@ -1,3 +1,4 @@
+import { cannedReview } from "../../tests/cannedReview";
 import { afterEach, beforeEach, expect, test, vi } from "vitest";
 import {
   openLobby,
@@ -69,12 +70,9 @@ test("Busted stays frozen through brief repair, partial writing, review and targ
       response.output[0].content[0].text = JSON.stringify(body);
     }
     if (task.stage === "review" && task.scope === "global")
-      response.output[0].content[0].text = JSON.stringify({
-        summary: "Improve one weak floor", blueprintBroken: false,
-        issues: [{ id: "weak-C001", slots: ["C001"], severity: "major",
+      response.output[0].content[0].text = JSON.stringify(cannedReview(task, [{ id: "weak-C001", slots: ["C001"], severity: "major",
           evidence: "C001 lacks a useful effect for the selected powered environment.",
-          correction: "Give C001 a substantial effect inside its fixed slot." }],
-      });
+          correction: "Give C001 a substantial effect inside its fixed slot." }]));
     return response;
   };
   const backend = startBackend();
@@ -218,17 +216,13 @@ test("revision retries protect accepted names and include only unfinished design
   let repairAttempt = 0;
   world.setReply = (task, response) => {
     if (task.stage === "review" && task.scope === "global")
-      response.output[0].content[0].text = JSON.stringify({
-        summary: "Repair two cards",
-        blueprintBroken: false,
-        issues: [{
+      response.output[0].content[0].text = JSON.stringify(cannedReview(task, [{
           id: "two-cards",
           slots: ["C001", "C002"],
           severity: "major",
           evidence: "Two rates need improvement",
           correction: "Improve effects within the fixed slots",
-        }],
-      });
+        }]));
     if (task.stage === "revise") {
       const body = JSON.parse(response.output[0].content[0].text);
       if (repairAttempt === 0) {
@@ -321,7 +315,10 @@ test("an edit planner cannot discard deterministic cross-batch name collisions",
       for (const card of body.cards)
         if (["C001", "C016"].includes(card.slotId)) card.face.name = "Glasswing Guard";
     }
-    if (task.stage === "editPlan") body.issues = [];
+    if (task.stage === "editPlan") {
+      body.issues = [];
+      body.audit = cannedReview(task, []).audit;
+    }
     response.output[0].content[0].text = JSON.stringify(body);
     return response;
   };
@@ -332,6 +329,7 @@ test("an edit planner cannot discard deterministic cross-batch name collisions",
   await settleSet(backend, lobbyId, players);
   expect(world.setRequests.filter(t => t.stage === "revise").flatMap(t => t.slots!.map(s => s.id)))
     .toEqual(["C001", "C016"]);
+  expect((await players[0].as.query(api.lobby.lobbies.get, { lobbyId }))?.generationError).toBeNull();
   expect((await packOf(players[0], lobbyId))?.cards).toHaveLength(15);
 });
 
@@ -339,10 +337,7 @@ test("review issues cause one targeted edit and final review without Decisions",
   const world = fakeOutsideWorld();
   world.setReply = (task, response) => {
     if (task.stage === "review" && task.scope === "global")
-      response.output[0].content[0].text = JSON.stringify({
-        summary: "One card needs repair",
-        blueprintBroken: false,
-        issues: [
+      response.output[0].content[0].text = JSON.stringify(cannedReview(task, [
           {
             id: "power-C001",
             slots: ["C001"],
@@ -350,8 +345,7 @@ test("review issues cause one targeted edit and final review without Decisions",
             evidence: "The effect is too efficient",
             correction: "Reduce the effect within the slot contract",
           },
-        ],
-      });
+        ]));
     return response;
   };
   const backend = startBackend();
@@ -386,10 +380,7 @@ test("a serious final issue blocks drafting and requires a fresh candidate", asy
   const world = fakeOutsideWorld();
   world.setReply = (task, response) => {
     if (task.stage === "final")
-      response.output[0].content[0].text = JSON.stringify({
-        summary: "Broken",
-        blueprintBroken: false,
-        issues: [
+      response.output[0].content[0].text = JSON.stringify(cannedReview(task, [
           {
             id: "remaining",
             slots: ["C001"],
@@ -397,8 +388,7 @@ test("a serious final issue blocks drafting and requires a fresh candidate", asy
             evidence: "No counterplay",
             correction: "Needs redesign",
           },
-        ],
-      });
+        ]));
     return response;
   };
   const backend = startBackend();

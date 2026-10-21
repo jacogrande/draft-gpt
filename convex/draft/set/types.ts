@@ -101,7 +101,14 @@ export type Issue = {
   evidence: string;
   correction: string;
 };
+export const REVIEW_DIMENSIONS = ["uniqueness", "mechanics", "archetypes", "flavor", "power"] as const;
+export type ReviewAudit = {
+  reviewedSlots: string[];
+  dimensions: { dimension: typeof REVIEW_DIMENSIONS[number]; assessment: string; evidenceSlots: string[]; issues: string[] }[];
+  archetypes: { pair: Pair; assessment: string; enablers: string[]; payoffs: string[] }[];
+};
 export type Review = {
+  audit?: ReviewAudit;
   summary: string;
   blueprintBroken: boolean;
   issues: Issue[];
@@ -132,6 +139,7 @@ export type Stage =
   | "final"
   | "art";
 export type Task = {
+  reviewContract?: "five-axis";
   conversation?: ConversationMessage[];
   intent?: CreativeIntent;
   stage: Stage;
@@ -151,11 +159,11 @@ export type Task = {
   reservedNames?: string[];
 };
 export const VERSIONS = {
-  pipeline: 4,
-  prompt: 12,
+  pipeline: 5,
+  prompt: 13,
   profile: 3,
-  schema: 2,
-  rubric: 5,
+  schema: 3,
+  rubric: 6,
   references: 4,
   collation: 1,
 };

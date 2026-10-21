@@ -1,3 +1,5 @@
+import { REVIEW_AUDIT_INSTRUCTIONS } from "./reviewAudit";
+import { uniquenessReport } from "./uniqueness";
 import { INTERPRET_INSTRUCTIONS, PREFERENCE_POLICY } from "./intentPrompts";
 import { creativeGuidance } from "./guidance";
 import { CREATIVE_DIRECTION } from "./creative";
@@ -21,6 +23,7 @@ export const taskInstructions = (task: Task, stageInstructionsOverride?: string)
     REPRESENTATION,
     GAME_LANGUAGE,
     task.intent ? PREFERENCE_POLICY : "",
+    task.reviewContract && ["review", "editPlan", "final"].includes(task.stage) ? REVIEW_AUDIT_INSTRUCTIONS : "",
     stageInstructionsOverride ?? STAGE_INSTRUCTIONS[task.stage],
   ].join("\n\n");
 
@@ -60,6 +63,7 @@ export const taskPrompt = (task: Task) => {
       references: referenceContext(slots, task.powerLevel, task.referenceSeed),
       support: supportReport(task),
       creativeGuidance: creativeGuidance(task),
+      ...(task.reviewContract && ["review", "editPlan", "final"].includes(task.stage) ? { uniqueness: uniquenessReport(task.designs ?? []) } : {}),
     },
     task: {
       ...task,

@@ -1,3 +1,4 @@
+import { auditedReviewSchema } from "./reviewAudit";
 import { intentSchema } from "./intent";
 import { requestDecisions, requestLuna } from "../openai";
 import {
@@ -45,7 +46,7 @@ export const executeTask = async (
       ? options.designBatchLimit
         ? designBatchSchema(options.designBatchLimit)
         : designsSchema
-      : reviewSchema;
+      : task.reviewContract ? auditedReviewSchema : reviewSchema;
   const reply = screen
     ? await requestDecisions(taskPrompt(task), questionsFor(task.designs ?? []))
     : await requestLuna(
@@ -77,7 +78,7 @@ export const executeTask = async (
             reply.raw,
             questionsFor(task.designs ?? []).map((q) => q.name)
           )
-        : parseReview(reply.raw, task.designs ?? []);
+        : parseReview(reply.raw, task.designs ?? [], task);
     return { data, usage: reply.usage };
   } catch (error) {
     return {

@@ -1,6 +1,6 @@
 # Set generation and setting design
 
-Status: default for new app drafts. Prompt 12 adds [structured lobby creative guidance](lobby-creative-guidance.md) while retaining the selected world policy, Default/Busted selection, executable-rules boundaries and current-text review. `SET_GENERATION_ENABLED=false` selects the legacy path for Default; Busted requires the set pipeline. The October 21 calibration study is complete, but full-set quality acceptance failed; human playtest acceptance remains open. Not deployed to production.
+Status: default for new app drafts. Prompt 13 adds [five-axis whole-set critique and revision](set-review.md), building on [structured lobby creative guidance](lobby-creative-guidance.md) while retaining the selected world policy, Default/Busted selection, executable-rules boundaries and current-text review. `SET_GENERATION_ENABLED=false` selects the legacy path for Default; Busted requires the set pipeline. The October 21 calibration study is complete, but full-set quality acceptance failed; human playtest acceptance remains open. Not deployed to production.
 Date: 2026-10-14. Updated 2026-10-21.
 
 The user selected GPT-6 Luna for all generative stages on 2026-10-15. On 2026-10-16 they approved removing required Decisions screening: code validation, contextual reviews, one edit pass and final review now form the normal pipeline. Decisions remains an offline evaluation tool.
@@ -427,3 +427,7 @@ After those paid runs (pipeline 2), pipeline 3 hardened name validation: the par
 ## Structured lobby intent (prompt 12)
 
 Pipeline 4 and schema 2 add an optional interpretation stage, saved conversation and intent, a complete preference disposition plan, accepted-preference references on slots, and coverage checks before writing. Writers and reviewers receive the same derived guidance; raw chat stops at interpretation. Empty conversations and older blueprints remain supported. [Lobby creative guidance](lobby-creative-guidance.md) owns the contracts, recovery behavior, browser checks and small real-model probe.
+
+## Whole-set critique (prompt 13)
+
+Pipeline 5 / schema 3 / rubric 6 make all five review dimensions explicit, validate reported inspection coverage, allow up to 270 issue groups, and retain arbitrary-subset revision through fifteen-card workers. The full updated set is reviewed before publication. Current-inventory name checks repair concurrent revision collisions before final review. The [review contract](set-review.md) owns behavior, evidence and limitations.

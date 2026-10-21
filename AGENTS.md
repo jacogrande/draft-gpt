@@ -36,6 +36,7 @@ Friends draft a Magic-style card set that an LLM invents for them on the spot, b
 - The refactor in progress: `docs/specs/refactor-roadmap.md`
 - Research on Limited set design, archetypes, mechanics, and worldbuilding: `docs/research/limited-set-design/README.md`
 - Setting prompts, set generation, contextual review, and revision: `docs/specs/set-generation.md`
+- Whole-set critique, arbitrary-subset editing and final validation: `docs/specs/set-review.md`
 - Lobby chat, idea support, extraction and card guidance: `docs/specs/lobby-creative-guidance.md`
 - Card art model, prompt, cost, and limits: `docs/specs/card-art.md`
 - The Convex rewrite, its engineering rules, and what is left to deploy it: `docs/specs/convex-rewrite.md`
@@ -61,6 +62,7 @@ Friends draft a Magic-style card set that an LLM invents for them on the spot, b
 - A parsed generation response may contain only a partial batch; evaluation tools must check accepted-card counts and slot errors before reporting success.
 - Partial-batch retries must reserve accepted card names and narrow both slots and design context; use the shared repair planner in app and preview.
 - Batch-size evals must allow the requested response count and sufficient output tokens, and exclude partially resumed wall times from latency comparisons.
+- Recheck revision names against the current inventory at save time; parallel batches can independently invent the same new name.
 - Keep fictional world actions out of executable rules; final reviewers must inspect current costs rather than repeat stale defect evidence.
 - Test workers block unmocked fetch in `tests/setup.ts`; restoring a timed-out mock must never expose live provider calls.
 - Deterministic defects must survive model edit planning; validate evaluation fixtures against their own slot contracts before paying for reviews.

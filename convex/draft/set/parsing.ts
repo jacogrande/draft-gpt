@@ -1,3 +1,5 @@
+import { normalizedName } from "./uniqueness";
+import { auditedReviewSchema, validateReviewAudit } from "./reviewAudit";
 import { CreativeIntent, validatePreferencePlan } from "./intent";
 import {
   worldSchema,
@@ -14,6 +16,7 @@ import {
   Review,
   Screening,
   Slot,
+  Task,
 } from "./types";
 
 export const parseBlueprint = (raw: unknown, ideaCount: number, intent?: CreativeIntent): Blueprint => {
@@ -121,7 +124,7 @@ export const parseDesigns = (
       const face = card.face;
       if (
         [...reservedNames, ...cards.map((accepted) => accepted.face.name)].some(
-          (name) => name.toLowerCase() === face.name.toLowerCase()
+          (name) => normalizedName(name) === normalizedName(face.name)
         )
       )
         throw new Error(
@@ -196,9 +199,11 @@ export const parseDesigns = (
   return { cards, errors };
 };
 
-export const parseReview = (raw: unknown, designs: Design[]): Review => {
-  validate(raw, reviewSchema);
+export const parseReview = (raw: unknown, designs: Design[], task?: Task): Review => {
+  validate(raw, task?.reviewContract ? auditedReviewSchema : reviewSchema);
   const review = raw as Review;
+  if (new Set(review.issues.map(issue => issue.id)).size !== review.issues.length) throw new Error("Repeated review issue ID");
+  if (task?.reviewContract) validateReviewAudit(review, task);
   if (
     review.blueprintBroken &&
     !review.issues.some((i) => i.severity === "blocker")
@@ -280,7 +285,7 @@ export const inventoryProblems = (
   )
     problems.push("Incomplete inventory");
   if (
-    new Set(designs.map((c) => c.face.name.toLowerCase())).size !==
+    new Set(designs.map((c) => normalizedName(c.face.name))).size !==
     designs.length
   )
     problems.push("Duplicate card names");
@@ -297,7 +302,7 @@ export const inventoryProblems = (
 export const duplicateIssues = (designs: Design[]): Review["issues"] => {
   const groups = new Map<string, string[]>();
   for (const card of designs) {
-    const name = card.face.name.toLowerCase();
+    const name = normalizedName(card.face.name);
     groups.set(name, [...(groups.get(name) ?? []), card.slotId]);
   }
   return [...groups.entries()]

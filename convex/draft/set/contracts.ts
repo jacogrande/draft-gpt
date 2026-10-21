@@ -122,7 +122,7 @@ export const reviewSchema = obj({
       correction: s(1500),
     }),
     0,
-    100
+    270
   ),
 });
 

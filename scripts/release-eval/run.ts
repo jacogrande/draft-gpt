@@ -1,3 +1,4 @@
+import { validateRevisionNames } from "../../convex/draft/set/uniqueness";
 import { CreativeIntent } from "../../convex/draft/set/intent";
 import { ConversationMessage } from "../../convex/lobby/worldbuilding";
 import { preferenceCoverageProblems } from "../../convex/draft/set/guidance";
@@ -34,18 +35,22 @@ export const runTrial = async (out: string, trial: Trial) => {
   };
   const writeCards = async (id: string, original: Task) => {
     let task = original;
-    const designs: Design[] = [];
+    const accepted: Design[] = [];
     for (let attempt = 0; attempt < 3 && task.slots!.length; attempt++) {
       const record = await audit(`${id}-try${attempt}`, task);
       if (record.result?.data && !record.result.error) {
-        const result = record.result.data as { cards: Design[]; errors: string[] };
-        designs.push(...result.cards);
+        let result = record.result.data as { cards: Design[]; errors: string[] };
+        if (task.stage === "revise") {
+          result = validateRevisionNames(result, designs);
+          designs = designs.map(card => result.cards.find(edit => edit.slotId === card.slotId) ?? card);
+        }
+        accepted.push(...result.cards);
         task = repairCards(task, result);
       } else if (record.result?.error) task = { ...task, feedback: record.result.error };
       if (attempt < 2) await backoff(record, attempt);
     }
     if (task.slots!.length) throw new Error(`Unrepaired ${id}: ${task.feedback}`);
-    return designs;
+    return accepted;
   };
   let blueprint: Blueprint | undefined;
   let intent: CreativeIntent | undefined;
