@@ -101,3 +101,7 @@ Delivered optional per-member idea support, full conversation snapshots, source-
 ### Whole-set review (October 21, 2026)
 
 The review pipeline now requires explicit audits of uniqueness, mechanics, archetype identity, flavor and power. Global and final critics receive every card; an edit pass can revise the whole inventory. Current-inventory name validation handles concurrent revision collisions. Integration coverage includes rewriting all 270 cards. A real re-review of the saved Busted set accepted 74 replacements (66 actual changes), but final review retained three major issues; quality acceptance remains open. See [the contract, timings and limitations](set-review.md). This implementation is verified locally; production is unchanged.
+
+### Three-minute draft startup (October 21, 2026)
+
+Next product requirement: players receive actionable first packs within 180 seconds. The [latency plan](../plans/active/three-minute-drafts.md) records measured bottlenecks, a proposed combined whole-set critique/edit plan, independent final verification, higher bounded writing concurrency, local slot expansion and background art. The 12.17-minute measurement covers review/editing of an existing set only. Performance changes and the three-minute target are not yet implemented or validated.
