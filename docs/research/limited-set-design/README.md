@@ -29,6 +29,7 @@ This directory studies that process through Wizards' own design articles, publis
 | [15 — World directions and literal prose](15-world-directions.md) | Can broader structural questions and recent-use rotation reduce repeated premises while preserving literal descriptions? |
 | [16 — Busted power](16-busted-power.md) | How does the selectable powered-cube target use a separate, sourced 1,000-card pool? |
 | [17 — Release validation](17-release-validation.md) | What happened in complete-set evaluations, reviewer calibration, twelve world probes and 126,000 simulated packs? |
+| [18 — Startup latency](18-startup-latency.md) | Does no-reasoning world, writing and critique meet the three-minute target, and where does a fresh set spend its time? |
 | [Sources](sources.md) | Primary-source reading list, publication years, evidence types, and limitations. |
 
 Chapter 8 includes a [JSON design questionnaire](set-design-questionnaire.json) and a [reproducible cost calculator](estimate-costs.py). Its model pricing sources are cited in the chapter; the sources index covers Wizards design research.

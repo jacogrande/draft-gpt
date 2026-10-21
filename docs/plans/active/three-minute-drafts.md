@@ -1,6 +1,6 @@
 # Start drafts within three minutes
 
-Requested October 21, 2026. Status: measured baseline and proposed design; pipeline 6 implements the requested reasoning settings locally, while the architecture changes and latency targets remain unvalidated. The whole-set review implementation is committed as `70b1607`. Production is unchanged.
+Requested October 21, 2026. Status: pipeline 6 implements the requested reasoning settings locally; its first fresh benchmark passed the model gate but missed both latency targets. Proposed architecture changes remain unimplemented. The whole-set review implementation is committed as `70b1607`. Production is unchanged.
 
 ## Outcome and measurement
 
@@ -73,3 +73,9 @@ Optional later work: prepare a fresh candidate while a stable lobby gathers. Bin
 Keep the current contract available for comparison until the faster version passes quality fixtures and fresh-set readiness checks. Small exploratory samples cannot establish a hard maximum under provider failures. Production deployment remains a separate approval and validation step. No additional paid generations were made for this analysis or the reasoning-setting change. Provider settings are implemented locally; the combined critique, concurrency, local slots and background art proposals remain outstanding.
 
 Pipeline 6 engineering validation: all 150 tests pass, with typecheck, lint, build and local documentation links checked. Integration coverage inspects actual API efforts through brief/partial-writing repairs, critique, editing and final verification; eval coverage verifies the recorded effort matches the outgoing request. The first full run had one failure in the existing all-270-card revision test: no current pack was returned after final review. That test passed alone and in the subsequent full suite. A generation-error assertion was added for diagnosis; the intermittent failure's cause remains unconfirmed. No player-facing screens changed, and no live model speed or quality result is claimed.
+
+## First pipeline-6 benchmark
+
+The subsequent [fresh Default-135 benchmark](../../research/limited-set-design/18-startup-latency.md) completed in 876.0 seconds for $0.2268832 across 55 calls. World/slots/writing/critique/editor/revisions/final took 75.8/187.0/55.7/188.5/49.0/158.9/161.1 seconds. Fourteen repair calls were included. The final model gate passed with two minor issues; both latency targets failed, before art or Convex/client overhead. This one result does not establish a quality success rate or typical latency.
+
+Specific next fixes: simplify world and slot output; eliminate duplicated issue-to-dimension bookkeeping; distinguish informational review follow-ups from card edits. A general support-audit note selected all 135 cards for rewriting, adding 34 cards beyond the other issue groups. Preserve arbitrary-card editing for actual corrections. Compact final verification is also essential: its 161 seconds nearly consumed the full startup allowance by itself. Raw evidence and exact settings are in `.artifacts/startup-benchmark-p6-default-135/`.
