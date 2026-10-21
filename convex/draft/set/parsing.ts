@@ -114,7 +114,7 @@ export const parseDesigns = (
         throw new Error("Unknown or repeated slot");
       const face = card.face;
       if (
-        reservedNames.some(
+        [...reservedNames, ...cards.map((accepted) => accepted.face.name)].some(
           (name) => name.toLowerCase() === face.name.toLowerCase()
         )
       )

@@ -305,7 +305,7 @@ Still to do:
 
 1. Done: Google sign-in is configured and was confirmed by hand.
 2. Run one real draft on production. Credentials are set, and card art has since moved to OpenAI (`card-art.md`).
-3. Point `draftgpt.hasslebad.com` at Firebase Hosting, then change `SITE_URL` to match.
+3. Finish DNS verification for the registered `draftgpt.hasslebad.com` Firebase custom domain, then verify HTTPS/auth before changing `SITE_URL`. The [release handoff](../plans/active/production-release.md) records the pending records and missing DNS access.
 4. Decide whether to import old decks (open decision 1).
 
 ## Sources

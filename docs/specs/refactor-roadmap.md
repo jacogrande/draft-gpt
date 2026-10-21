@@ -5,11 +5,13 @@ This is an old project I rolled out myself, by hand. Now, we have intelligent ag
 
 There are bugs, bad features, outdated api calls, old llm model invocations, etc that all need to be improved.
 
-## Current position (2026-10-20)
+## Current position (2026-10-21)
 
-Steps 1 and 3 are complete; step 4 is implemented and verified locally. Step 2 needs a full real production draft to close its acceptance check. Step 5 is also implemented and verified locally, with the final gaps fixed after an acceptance review. Step 6 now defaults new app drafts to the reviewed Luna set pipeline (2026-10-16); production deployment and playtest acceptance remain open. Its research and specification were added on 2026-10-14.
+Steps 1 and 3 are complete. Steps 4 and 5 are implemented and verified locally. Step 2 still needs a real production draft. Step 6's shared Luna pipeline, concrete world policy and Default/Busted selection are implemented, with 136 passing tests, typecheck, lint and build.
 
-Step 4 was committed and pushed as `5eab01e`. The step 5 completion work follows it. Pushed code does not by itself establish what is deployed to production.
+The remaining non-playtesting evaluation work is now recorded in [release validation](../research/limited-set-design/17-release-validation.md): 1,215 saved designs, reviewer calibration, twelve world inputs, 126,000 simulated packs and two illustrated diagnostic packs. None of the four completed candidates passed final review; two further runs were interrupted. Mechanic contracts, reviewer reliability and repeated institutional world premises remain quality blockers. Pipeline 3 additionally fixes duplicate-name repair and prevents the model editor from dropping deterministic collisions. Paid results predate those two safeguards and remain failures.
+
+Commits `5c5d325` (shared generation), `20dc304` (mana shortcuts) and `13ea51f` (power levels) are part of this release branch. The current release record and ordinary push establish source availability only; they do not establish production deployment. No production deployment was performed during this audit. The [release handoff](../plans/active/production-release.md) records required deployment approval, missing DNS access, real-user production acceptance and the preserved legacy-deck export. Human playtesting remains excluded.
 
 ## Step 1: Draft Lobbies
 
@@ -31,7 +33,7 @@ Remaining:
 
 - Run one real draft on production.
 
-Card design keeps the 2024 model and prompts for now; rebuilding it is step 6.
+New drafts use the Luna set pipeline described in step 6. The legacy pack path remains for existing drafts and an explicit Default-mode rollback.
 
 ## Step 3: Game Lobbies
 
@@ -74,15 +76,15 @@ Browser acceptance covered editing out and back, refresh persistence, basic remo
 
 ## Step 6: Card creation
 
-Status: default for new app drafts (2026-10-16); the user selected prompt 9 for world and card creation on 2026-10-20. Local engineering checks pass; broader model calibration and playtest acceptance remain open. Not deployed. Card art upgraded separately; see [card-art.md](card-art.md).
+Status: default for new app drafts (2026-10-16); the user selected prompt 9 for world and card creation on 2026-10-20. Local engineering checks pass. The October 21 calibration and full-set study is complete, but model-quality acceptance failed and human playtest acceptance remains open. Not deployed. Card art upgraded separately; see [card-art.md](card-art.md).
 
-Rebuild the card creation system according to [Set generation and setting design](set-generation.md). The legacy `gpt-4o` pack path remains available for existing drafts and when `SET_GENERATION_ENABLED` is explicitly `false`. Unset configuration uses the Luna set pipeline.
+Rebuild the card creation system according to [Set generation and setting design](set-generation.md). The legacy `gpt-4o` pack path remains available for existing drafts and when `SET_GENERATION_ENABLED` is explicitly `false` for Default power. Busted always uses the set pipeline. Unset configuration uses the Luna set pipeline.
 
 The user selected Luna for all generative stages on 2026-10-15 and removed required Decisions screening on 2026-10-16. Code validation, pair/global reviews, coordinated editing and final review remain required. The spec breaks delivery into provider contracts, richer setting prompts, a complete slot inventory, parallel generation, contextual review and editing, pack collation/shared art, and player-flow validation. It defines compatibility, recovery, and acceptance gates for the wave.
 
 The current [world and card policy](set-generation.md#current-world-diversity-and-literal-prose-policy-prompt-9) rotates broad world design directions across recent runs and requires literal descriptions of supernatural causes and effects. The same concrete-prose policy reaches card writing and review. The [five-world probe](../research/limited-set-design/15-world-directions.md) records both results and remaining repetition.
 
-Power selection (2026-10-20): the host can choose Default (the current Modern Horizons target) or Busted (powered Vintage Cube). Prompt 10 freezes the choice across the pipeline and uses a separate sourced 1,000-card pool for Busted. Local integration and browser checks pass; real-model calibration and playtesting remain open. See [the power-level contract](set-generation.md#selectable-power-level-prompt-10).
+Power selection (2026-10-20): the host can choose Default (the current Modern Horizons target) or Busted (powered Vintage Cube). Prompt 10 freezes the choice across the pipeline and uses a separate sourced 1,000-card pool for Busted. Local integration and browser checks pass. The completed real-model evaluation records failures; quality acceptance and playtesting remain open. See [the power-level contract](set-generation.md#selectable-power-level-prompt-10).
 
 App-default validation (2026-10-16): 119 tests, typecheck, lint and build pass. With no opt-in flag, two fake-stack browser players completed three rounds into 45-card decks. App and preview now share partial-repair context and accepted-name protection. See the [integration record](../plans/completed/app-set-generation.md). Production deployment and real multiplayer playtesting remain separate work.
 

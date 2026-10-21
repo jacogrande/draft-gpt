@@ -1,6 +1,6 @@
 # Set generation and setting design
 
-Status: default for new app drafts. Prompt 10 retains the selected prompt-9 world policy and adds Default/Busted power selection. `SET_GENERATION_ENABLED=false` selects the legacy path for Default; Busted requires the set pipeline. Broader model calibration and playtest acceptance remain open. Not deployed to production.
+Status: default for new app drafts. Prompt 11 retains the selected world policy and Default/Busted selection, and separates world fiction from executable rules and current-text review. `SET_GENERATION_ENABLED=false` selects the legacy path for Default; Busted requires the set pipeline. The October 21 calibration study is complete, but full-set quality acceptance failed; human playtest acceptance remains open. Not deployed to production.
 Date: 2026-10-14. Updated 2026-10-20.
 
 The user selected GPT-6 Luna for all generative stages on 2026-10-15. On 2026-10-16 they approved removing required Decisions screening: code validation, contextual reviews, one edit pass and final review now form the normal pipeline. Decisions remains an offline evaluation tool.
@@ -315,7 +315,7 @@ The implementation uses `convex/draft/set/` for pure contracts, prompts, slots, 
 
 `bun --env-file=.env.local scripts/preview-set.ts [output-directory]` runs the same model adapters and pure validation stages outside Convex, checkpoints each request, generates a 135-design inventory and exports one collated fifteen-card pack with optional art and an HTML review page. The Convex scheduler is exercised separately through integration/browser tests. Preview artifacts and credentials are ignored by Git. Add `--finish` after the output directory to resume only art/rendering from an existing `set.json`. Preview exports may show a failed candidate for human inspection, clearly marked as not draft-ready; the app still blocks such a candidate.
 
-The calibrated decision fixture set, broader real-provider corpus, 270-card real generation, human draft/play evaluation, and production deployment remain outstanding acceptance work. A single preview cannot establish balanced win rates.
+The October 15 pilot left broader real-provider validation, reviewer calibration, human draft/play evaluation and production deployment open. Required Decisions screening has since been removed; contextual-review fixtures replace that obsolete calibration gate. See the October 20–21 release validation record for current non-playtesting evidence. A single preview cannot establish balanced win rates.
 
 Live pilot (2026-10-15): `.artifacts/pack-preview-v2/` contains a 135-card candidate, 675 initial screening decisions, 22 revised designs and one fifteen-card illustrated pack. Final review retained three issues, so the export is marked for human review and the app readiness gate would block it. Development text usage for this candidate was about $0.2186, including retries; image accounting uses conservative reservations. The pilot exposed reviewer false positives and fixing-cycle gaps. The current skeleton/validator now fixes all ten land pairs explicitly. This is evidence for continued calibration, not format acceptance.
 
@@ -333,7 +333,7 @@ That revision targeted a strong interactive custom cube; the current target is e
 
 ## Luna prompting and reference tools (2026-10-16)
 
-Current versions are pipeline 2, prompt 10, rubric 4, references 3 and profile 3. The [Luna prompting research](../research/limited-set-design/11-luna-prompting.md) owns the official-source analysis, request/tool design, evaluation commands and measured limitations. Deterministic role retrieval supplies the same full-cost reference policy to writers and reviewers; factual support reports prevent partial samples from being mistaken for complete sets. The power-floor and ceiling criteria remain in contextual review. Normal runs skip both Decisions stages and do not send classification labels to editors. Required mechanic omissions are major review defects. Repair feedback identifies the slot and exact violated world, rarity or type constraint.
+Current versions are pipeline 3, prompt 11, rubric 5, references 4 and profile 3. The [Luna prompting research](../research/limited-set-design/11-luna-prompting.md) owns the official-source analysis, request/tool design, evaluation commands and measured limitations. Deterministic role retrieval supplies the same full-cost reference policy to writers and reviewers; factual support reports prevent partial samples from being mistaken for complete sets. The power-floor and ceiling criteria remain in contextual review. Normal runs skip both Decisions stages and do not send classification labels to editors. Required mechanic omissions are major review defects. Repair feedback identifies the slot and exact violated world, rarity or type constraint.
 
 The final development pilot produced 15 new cards and revised nine. Final review retained a major token-definition inconsistency, so this is an unapproved sample. Medium review performed better than low on the small development suite; a medium-writing replay accepted only 13 of 15 slots and did not justify changing the low-writing default. These results leave the existing human/held-out/playtest gates open.
 
@@ -406,3 +406,20 @@ The lobby host chooses **Default** or **Busted** before starting. Default is the
 Default keeps the existing references and curve. Busted uses a separately sourced pool of exactly 1,000 distinct cards, with 916 eligible for direct slot comparisons; retrieval is capped at 48 references. It has cheaper artifact/interaction slots and premium engine opportunities, while retaining colors, pairs, pack composition and fifteen-card batches. Real-world rarity is comparison metadata. Default's too-strong labels are never applied to Busted. The [Busted research record](../research/limited-set-design/16-busted-power.md) owns source methodology, pool limitations and reproduction commands.
 
 The preview supports `--power-level=default|busted`, freezes the choice and versions in `preview-config.json`, stamps it on every task and labels the report. It rejects incompatible resumed briefs or saved sets. Neither fake-service verification nor reference coverage establishes the quality of real generated cards; paid generation and playtesting remain separate validation.
+
+### Executable rules and current-text review (prompt 11)
+
+The October 20 release evaluations exposed two separate failures: invented game procedures copied from world fiction (such as moving an undefined physical heart), and final reviews repeating a defect already repaired in the current text. Some critics also tried to replace game timing with fictional sunrise timing, treated an instant as necessarily cast before blockers, or called optional targeting of opposing creatures a rules error.
+
+Prompt 11 makes the world/game boundary explicit for all stages. Names, flavor and art describe physical events; rules and archetype engines express them through defined game actions, objects, counters, costs and timing. A turn is not necessarily a fictional day. Review must inspect the current full costs and actual legal timing. An undeclared procedure invented by a card writer is a card-level repair, not automatically a broken frozen world.
+
+The final provider payload retains the prior issue IDs, severities, slots and requested corrections, but replaces stale defect evidence with a historical-check label. Stored review records retain the original evidence for audit. Current designs remain the source of truth; the final publication gate still blocks major/blocker issues. This reduces anchoring without disabling independent review or silently approving failures.
+
+Busted reference retrieval reserves room for Mana Crypt, Sol Ring, Black Lotus and Mox Diamond when zero-cost artifact slots are present, within the same 48-reference cap. This supplies actual repeatable and one-shot acceleration comparisons rather than treating all free mana as a defect. Prompt/rubric/reference versions are 11/5/4. Real-provider follow-up results are recorded separately from the original prompt-10 candidates.
+
+
+### Release validation — October 21, 2026
+
+[The release evaluation](../research/limited-set-design/17-release-validation.md) preserves six candidates, including two interrupted runs, plus reviewer calibration, twelve world inputs and seeded distribution. None of the four completed candidates passed the final gate. This is measured failure evidence, not model-quality acceptance.
+
+After those paid runs (pipeline 2), pipeline 3 hardened name validation: the parser keeps the first valid same-batch name and repairs later collisions, and revision planning always adds current deterministic duplicate-name issues even when the model editor omits them. Two public integration regressions cover these paths. Independently invented names can still collide across concurrent revision batches; final inventory validation blocks publication. These post-evaluation safeguards do not retroactively change the saved outcomes.

@@ -28,6 +28,7 @@ This directory studies that process through Wizards' own design articles, publis
 | [14 — Fantasy baseline versus all three](14-fantasy-comparison.md) | How do five fresh worlds per mode and their fifteen-card previews compare under the shared high-fantasy policy? |
 | [15 — World directions and literal prose](15-world-directions.md) | Can broader structural questions and recent-use rotation reduce repeated premises while preserving literal descriptions? |
 | [16 — Busted power](16-busted-power.md) | How does the selectable powered-cube target use a separate, sourced 1,000-card pool? |
+| [17 — Release validation](17-release-validation.md) | What happened in complete-set evaluations, reviewer calibration, twelve world probes and 126,000 simulated packs? |
 | [Sources](sources.md) | Primary-source reading list, publication years, evidence types, and limitations. |
 
 Chapter 8 includes a [JSON design questionnaire](set-design-questionnaire.json) and a [reproducible cost calculator](estimate-costs.py). Its model pricing sources are cited in the chapter; the sources index covers Wizards design research.
@@ -54,4 +55,4 @@ Historical documents retain their context. The 2021 skeleton predates Play Boost
 
 Release guides establish intended strategies. Handoffs establish what designers proposed before later changes. Retrospectives establish the author's reported lessons. None alone establishes measured win rates, optimal draft picks, or the full contents of Wizards' internal playtest data.
 
-The research changes documentation only. It does not close step 6's implementation milestone or establish any new production validation.
+The original design research is advisory. Later evaluation chapters record implementation experiments, their failures and local engineering evidence; they do not establish production validation or human format acceptance.

@@ -60,3 +60,6 @@ Friends draft a Magic-style card set that an LLM invents for them on the spot, b
 - A parsed generation response may contain only a partial batch; evaluation tools must check accepted-card counts and slot errors before reporting success.
 - Partial-batch retries must reserve accepted card names and narrow both slots and design context; use the shared repair planner in app and preview.
 - Batch-size evals must allow the requested response count and sufficient output tokens, and exclude partially resumed wall times from latency comparisons.
+- Keep fictional world actions out of executable rules; final reviewers must inspect current costs rather than repeat stale defect evidence.
+- Test workers block unmocked fetch in `tests/setup.ts`; restoring a timed-out mock must never expose live provider calls.
+- Deterministic defects must survive model edit planning; validate evaluation fixtures against their own slot contracts before paying for reviews.

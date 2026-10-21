@@ -144,12 +144,12 @@ export type Task = {
   reservedNames?: string[];
 };
 export const VERSIONS = {
-  pipeline: 2,
-  prompt: 10,
+  pipeline: 3,
+  prompt: 11,
   profile: 3,
   schema: 1,
-  rubric: 4,
-  references: 3,
+  rubric: 5,
+  references: 4,
   collation: 1,
 };
 export const MODELS = { luna: "gpt-6-luna" };

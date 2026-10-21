@@ -1,5 +1,5 @@
 import { chunks, skeleton } from "./slots";
-import { inventoryProblems } from "./parsing";
+import { duplicateIssues, inventoryProblems } from "./parsing";
 import { Design, Issue, PAIRS, Slot, Task } from "./types";
 
 export const planTasks = (
@@ -35,6 +35,7 @@ export const planTasks = (
   if (base.stage === "editPlan" || base.stage === "final")
     tasks = [{ ...base, designs, slots, issues }];
   if (base.stage === "revise") {
+    issues = [...issues, ...duplicateIssues(designs)];
     const selected = slots.filter((s) =>
       issues.some((i) => i.slots.includes(s.id))
     );

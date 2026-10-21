@@ -30,6 +30,10 @@ test("Busted retrieval covers every slot within its bound and never imports Defa
     const slots = skeleton(total, "busted");
     const context = referenceContext(slots, "busted", 123);
     expect(context.cards.length).toBeLessThanOrEqual(48);
+    if (slots.some((slot) => slot.type === "Artifact" && slot.minMana === 0))
+      expect(context.cards.map((card) => card.name)).toEqual(
+        expect.arrayContaining(["Mana Crypt", "Sol Ring", "Black Lotus", "Mox Diamond"])
+      );
     for (const slot of context.slots) {
       expect(slot.comparisons.length).toBeGreaterThan(0);
       for (const comparison of slot.comparisons) {

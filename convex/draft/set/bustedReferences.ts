@@ -37,6 +37,10 @@ export const bustedReferenceContext = (slots: Slot[], seed = 0) => {
     const card = choices.find(({ slot }) => slot.type === type)!.cards[0];
     add(card);
   }
+  if (slots.some((slot) => slot.type === "Artifact" && slot.minMana === 0)) {
+    for (const name of ["Mana Crypt", "Sol Ring", "Black Lotus", "Mox Diamond"])
+      for (const card of BUSTED_CATALOG.filter((ref) => ref.name === name)) add(card);
+  }
   for (let index = 0; index < 3; index++)
     for (const row of choices) if (row.cards[index]) add(row.cards[index]);
   if (!slots.length) {

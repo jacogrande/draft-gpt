@@ -15,6 +15,8 @@ What the project is built on and why each piece is here. Versions are the ranges
 | ESLint 8 | `bun run lint` |
 | `agent-browser` | Browser checks; see `.claude/skills/browser-testing/SKILL.md` |
 
+Vitest loads `tests/setup.ts`, which blocks unmocked fetch requests. Test suites must stub external services explicitly; restoring a mock restores the blocked baseline. Paid evaluations run through separate CLI scripts, never through the test suite.
+
 ## Backend
 
 | Piece | Used for |
@@ -78,3 +80,5 @@ In `.env.local` for the client build:
 `./scripts/deploy.sh` runs the tests, deploys Convex production, builds against it with test sign-in off, and deploys the site. It names the Convex project itself, so it does not depend on `.env.local`. For any other production command, prefix it the same way: `CONVEX_DEPLOYMENT=dev:zany-beagle-193 npx convex <command> --prod`.
 
 Production has its Google and OpenAI credentials set. The Google OAuth client's redirect URI is `https://fleet-albatross-186.convex.site/api/auth/callback/google`.
+
+Custom-domain update (2026-10-21): `draftgpt.hasslebad.com` is registered with Firebase Hosting but still awaits Cloudflare DNS verification and a certificate. The working Firebase origin and `SITE_URL` have not changed. See the [production release handoff](plans/active/production-release.md).

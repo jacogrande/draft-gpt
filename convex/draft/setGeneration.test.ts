@@ -288,6 +288,53 @@ test("a missing design repairs only that slot and does not repeat accepted cards
   ).toEqual([missing]);
 });
 
+test("same-batch name collisions repair only the later card", async () => {
+  const world = fakeOutsideWorld();
+  let damaged = false;
+  world.setReply = (task, response) => {
+    if (task.stage === "generate" && !damaged) {
+      damaged = true;
+      const body = JSON.parse(response.output[0].content[0].text);
+      body.cards[0].face.name = "Glasswing Guard";
+      body.cards[1].face.name = "glasswing guard";
+      response.output[0].content[0].text = JSON.stringify(body);
+    }
+    return response;
+  };
+  const backend = startBackend();
+  const { lobbyId, players } = await openLobby(backend, ["NameAna", "NameBen"]);
+  await readyEveryone(lobbyId, players);
+  await players[0].as.mutation(api.draft.start.startDraft, { lobbyId });
+  await settleSet(backend, lobbyId, players);
+  const repair = world.setRequests.find(t => t.stage === "generate" && t.slots?.length === 1)!;
+  expect(repair.slots?.map(s => s.id)).toEqual(["C002"]);
+  expect(repair.reservedNames).toContain("Glasswing Guard");
+  expect(repair.feedback).toContain('C002: name "glasswing guard"');
+  expect((await packOf(players[0], lobbyId))?.cards).toHaveLength(15);
+});
+
+test("an edit planner cannot discard deterministic cross-batch name collisions", async () => {
+  const world = fakeOutsideWorld();
+  world.setReply = (task, response) => {
+    const body = JSON.parse(response.output[0].content[0].text);
+    if (task.stage === "generate") {
+      for (const card of body.cards)
+        if (["C001", "C016"].includes(card.slotId)) card.face.name = "Glasswing Guard";
+    }
+    if (task.stage === "editPlan") body.issues = [];
+    response.output[0].content[0].text = JSON.stringify(body);
+    return response;
+  };
+  const backend = startBackend();
+  const { lobbyId, players } = await openLobby(backend, ["PlanAna", "PlanBen"]);
+  await readyEveryone(lobbyId, players);
+  await players[0].as.mutation(api.draft.start.startDraft, { lobbyId });
+  await settleSet(backend, lobbyId, players);
+  expect(world.setRequests.filter(t => t.stage === "revise").flatMap(t => t.slots!.map(s => s.id)))
+    .toEqual(["C001", "C016"]);
+  expect((await packOf(players[0], lobbyId))?.cards).toHaveLength(15);
+});
+
 test("review issues cause one targeted edit and final review without Decisions", async () => {
   const world = fakeOutsideWorld();
   world.setReply = (task, response) => {
@@ -327,6 +374,10 @@ test("review issues cause one targeted edit and final review without Decisions",
   expect(final.designs).toHaveLength(135);
   expect(final.issues?.some((issue) => issue.slots.includes("C001"))).toBe(
     true
+  );
+  expect(final.issues?.[0].evidence).not.toBe("The effect is too efficient");
+  expect(final.issues?.[0].correction).toBe(
+    "Reduce the effect within the slot contract"
   );
   expect(final.screens).toBeUndefined();
 });
