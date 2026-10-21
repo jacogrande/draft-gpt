@@ -35,6 +35,7 @@ test("a whole-set critique can revise all 270 cards and final review sees the re
   const final = world.setRequests.find(t => t.stage === "final")!;
   expect(final.designs).toHaveLength(270);
   expect(final.designs!.every(d => d.face.flavor_text === `A wing struck the stone at ${d.slotId}.`)).toBe(true);
+  expect((await players[0].as.query(api.lobby.lobbies.get, { lobbyId }))?.generationError).toBeNull();
   expect((await packOf(players[0], lobbyId))?.cards).toHaveLength(15);
   const job = await backend.run(async ctx => (await ctx.db.query("setJobs").collect()).find(j => j.stage === "final")!);
   expect(JSON.parse(job.result!).audit.dimensions.map((d: { dimension: string }) => d.dimension)).toEqual([

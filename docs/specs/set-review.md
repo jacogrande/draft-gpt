@@ -2,6 +2,8 @@
 
 Implemented October 21, 2026: pipeline 5, prompt 13, schema 3, rubric 6. Luna remains the reviewer and editor. This extends the existing post-generation pipeline; it does not add another independent review layer.
 
+Pipeline 6 subsequently changes review and edit-plan reasoning to `none` at the user's request; revision and final verification remain `medium`. Audit contracts are unchanged. The measurements below predate that setting change; see the [startup plan](../plans/active/three-minute-drafts.md) for the 15-second world target and remaining latency work.
+
 ## Flow
 
 After all 135 or 270 initial designs are saved, ten color-pair reviews and one global review run. The global request receives the entire set: all card records, fixed slots, frozen world, color identities, archetypes, accepted player guidance, power policy, factual support counts and reference-card evidence. It can compare cards across writing batches.

@@ -11,6 +11,7 @@ import { fakeOutsideWorld } from "../../tests/outsideWorld";
 import { api, internal } from "../_generated/api";
 import { worldDirection } from "./set/worldDirection";
 import { Task } from "./set/types";
+import { inspectTask } from "./set/requestContext";
 
 vi.setConfig({ testTimeout: 30000 });
 
@@ -99,6 +100,10 @@ test("Busted stays frozen through brief repair, partial writing, review and targ
     expect(task.referenceSeed).toBe(run.seed);
   }
   for (const payload of world.setPayloads) {
+    const task = JSON.parse(payload.input).task as Task;
+    const effort = ["brief", "slots", "generate", "review", "editPlan"].includes(task.stage) ? "none" : "medium";
+    expect(payload.reasoning?.effort).toBe(effort);
+    expect(inspectTask(task).reasoning).toBe(effort);
     expect(payload.instructions).toContain("Busted powered Vintage Cube");
     const refs = JSON.parse(payload.input).tools.references;
     expect(refs.pool.size).toBe(1000);

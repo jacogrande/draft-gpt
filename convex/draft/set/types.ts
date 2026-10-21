@@ -159,7 +159,7 @@ export type Task = {
   reservedNames?: string[];
 };
 export const VERSIONS = {
-  pipeline: 5,
+  pipeline: 6,
   prompt: 13,
   profile: 3,
   schema: 3,

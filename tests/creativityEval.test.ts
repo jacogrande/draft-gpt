@@ -42,11 +42,13 @@ test("creativity trials preserve accepted cards, audit prompts, and resume witho
     expect(requests[0].instructions).toContain(suffix(arm, blocks[0], "brief"));
     expect(requests[1].instructions).toContain(suffix(arm, blocks[0], "slots"));
     expect(requests[2].instructions).toBe(taskInstructions(JSON.parse(requests[2].input).task));
+    expect(requests.slice(0, 4).map(request => request.reasoning.effort)).toEqual(["none", "none", "none", "none"]);
     await reviewSample(sample, caller);
     expect(requests[4].instructions).not.toContain("Creative starting ingredients:");
-    expect(requests[4].reasoning.effort).toBe("medium");
+    expect(requests[4].reasoning.effort).toBe("none");
     const record = JSON.parse(await readFile(join(out, "calls/SPJ-repeat1-brief-try0.json"), "utf8"));
     expect(record.request.instructions).toBe(requests[0].instructions);
+    expect(record.request.reasoning).toBe(requests[0].reasoning.effort);
     await generateSample(out, arm, blocks[0], caller);
     await reviewSample(sample, caller);
     expect(requests).toHaveLength(5);

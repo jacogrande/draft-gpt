@@ -44,7 +44,7 @@ test("fantasy comparison isolates all three, audits the baseline override and re
       expect(taskAt(3).reservedNames).toHaveLength(14);
       await reviewWorld(sample, caller);
       expect(taskAt(4).creativeSeed).toBeUndefined();
-      expect(requests[start + 4].reasoning.effort).toBe("medium");
+      expect(requests[start + 4].reasoning.effort).toBe("none");
       const record = JSON.parse(await readFile(join(out, `calls/${sample.id}-slots-try0.json`), "utf8"));
       expect(record.request.instructions).toBe(requests[start + 1].instructions);
       expect(record.options.stageInstructionsOverride).toBe(arm.jobs ? undefined : BASELINE_SLOTS);
