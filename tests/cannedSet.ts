@@ -1,3 +1,4 @@
+import { cannedIntent } from "./cannedIntent";
 import { Blueprint, COLORS, PAIRS, Task } from "../convex/draft/set/types";
 
 export const cannedBlueprint: Blueprint = {
@@ -48,11 +49,21 @@ export const cannedBlueprint: Blueprint = {
   influences: [],
 };
 export const cannedTask = (task: Task): unknown => {
-  if (task.stage === "brief") return task.powerLevel === "busted"
-    ? { ...cannedBlueprint, experience: { ...cannedBlueprint.experience,
-        power: "Powered Vintage Cube strength", exclusions: ["unsupported card layouts"] } }
-    : cannedBlueprint;
-  if (task.stage === "slots") return { slots: task.slots };
+  if (task.stage === "interpret") return cannedIntent(task.conversation ?? []);
+  if (task.stage === "brief") return {
+    ...cannedBlueprint,
+    ...(task.powerLevel === "busted" ? { experience: { ...cannedBlueprint.experience,
+      power: "Powered Vintage Cube strength", exclusions: ["unsupported card layouts"] } } : {}),
+    ...(task.intent ? { preferencePlan: task.intent.preferences.map(p => ({
+      preferenceId: p.id, disposition: p.status === "active" ? "incorporated" : "omitted",
+      expression: p.status === "active" ? `The world reflects: ${p.text}` : "",
+      reason: p.status === "active" ? "A supported player preference." : p.reason,
+      cardGuidance: p.status === "active" ? `Use in suitable motifs: ${p.text}` : "",
+    })) } : {}),
+  };
+  if (task.stage === "slots") return { slots: task.slots?.map(slot => ({ ...slot,
+    ...(task.blueprint?.preferencePlan ? { preferenceIds: task.blueprint.preferencePlan.filter(p => p.disposition !== "omitted").filter((_, i, list) => i === Number(slot.id.slice(1)) % list.length).map(p => p.preferenceId) } : {}),
+  })) };
   if (task.stage === "generate" || task.stage === "revise")
     return {
       cards: task.slots!.map((slot) => {

@@ -13,6 +13,8 @@ export const setTables = {
     phase: v.string(),
     wakePending: v.optional(v.boolean()),
     ideas: v.array(v.string()),
+    conversation: v.optional(v.string()),
+    intent: v.optional(v.string()),
     versions: v.string(),
     seed: v.number(),
     worldDirection: v.optional(v.string()),

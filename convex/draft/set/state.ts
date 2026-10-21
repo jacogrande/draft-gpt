@@ -1,6 +1,7 @@
 import { Stage } from "./types";
 
 export const NEXT: Partial<Record<Stage, Stage>> = {
+  interpret: "brief",
   brief: "slots",
   slots: "generate",
   generate: "review",
@@ -13,6 +14,7 @@ export const NEXT: Partial<Record<Stage, Stage>> = {
 };
 export const stageLabel = (phase: string) =>
   ({
+    interpret: "Gathering your ideas",
     brief: "Creating the world",
     slots: "Planning the set",
     generate: "Designing cards",

@@ -40,6 +40,7 @@ export const lobbyTables = {
     lobbyId: v.id("lobbies"),
     userId: v.id("users"),
     text: v.string(),
+    supportedBy: v.optional(v.array(v.id("users"))),
   }).index("by_lobby", ["lobbyId"]),
 
   lobbyPresence: defineTable({

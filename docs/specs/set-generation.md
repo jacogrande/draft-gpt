@@ -1,7 +1,7 @@
 # Set generation and setting design
 
-Status: default for new app drafts. Prompt 11 retains the selected world policy and Default/Busted selection, and separates world fiction from executable rules and current-text review. `SET_GENERATION_ENABLED=false` selects the legacy path for Default; Busted requires the set pipeline. The October 21 calibration study is complete, but full-set quality acceptance failed; human playtest acceptance remains open. Not deployed to production.
-Date: 2026-10-14. Updated 2026-10-20.
+Status: default for new app drafts. Prompt 12 adds [structured lobby creative guidance](lobby-creative-guidance.md) while retaining the selected world policy, Default/Busted selection, executable-rules boundaries and current-text review. `SET_GENERATION_ENABLED=false` selects the legacy path for Default; Busted requires the set pipeline. The October 21 calibration study is complete, but full-set quality acceptance failed; human playtest acceptance remains open. Not deployed to production.
+Date: 2026-10-14. Updated 2026-10-21.
 
 The user selected GPT-6 Luna for all generative stages on 2026-10-15. On 2026-10-16 they approved removing required Decisions screening: code validation, contextual reviews, one edit pass and final review now form the normal pipeline. Decisions remains an offline evaluation tool.
 On 2026-10-16 the user set the design target to Modern Horizons strength. The [power reference library](../research/limited-set-design/10-modern-horizons-power.md) provides 72 rarity/type/band examples plus 15 role and combo references. Default retains this catalog. Prompt 10 also supports the separate [Busted reference pool](../research/limited-set-design/16-busted-power.md), requested on 2026-10-20. Both modes consume role-ranked references and factual support summaries throughout generation and review. Human calibration and playtest acceptance remain open. See [October 2026 Luna prompting research](../research/limited-set-design/11-luna-prompting.md).
@@ -47,14 +47,14 @@ The existing recovery work remains valuable: saved designs survive art failures,
 
 ## Player experience
 
-1. Players contribute ideas and ready up through the existing lobby flow. The host can choose Default or Busted before starting; a change clears everyone’s readiness. Starting freezes the roster, power level and idea snapshot. Existing start authorization remains unchanged.
-2. The generating screen shows meaningful stages: **Creating the world**, **Designing cards**, **Reviewing the set**, **Refining cards**, and **Preparing packs**. Show completed-card counts only when they represent persisted, validated work. A stage need not expose provider names, prompts, costs, or review scores.
+1. Players contribute ideas and ready up through the existing lobby flow. The host can choose Default or Busted before starting; a change clears everyone’s readiness. Players can optionally support messages with “Use this idea.” Starting freezes the roster, power level and complete bounded conversation, including support. Existing start authorization remains unchanged.
+2. The generating screen shows meaningful stages: **Gathering your ideas** (when chat is nonempty), **Creating the world**, **Designing cards**, **Reviewing the set**, **Refining cards**, and **Preparing packs**. Show completed-card counts only when they represent persisted, validated work. A stage need not expose provider names, prompts, costs, or review scores.
 3. Once the setting brief is frozen, players can read its premise, color-pair themes, and exact mechanic reminder text. This introduces the format without exposing card lists, pack contents, or reviewer-identified bombs.
 4. The first round opens only after the set passes final validation and all three rounds have saved pack manifests. Art is best effort within a bounded wait; cards remain readable with placeholders.
 5. Subsequent rounds open from saved manifests without asking a text model to invent more cards. Existing passing directions, picks, absence handling, and deck transfer continue to work.
 6. Refreshing or reconnecting shows persisted progress. A terminal generation failure shows a concise explanation and the existing host recovery control. Recovery resumes a failed stage without discarding successful work. Quality failures requiring a fresh candidate are distinguished from transient retries.
 
-The public setting response contains only the player-facing guide. Design inventory, reviewer notes, future packs, and internal metrics remain server-side. Outsider queries return `null` or `[]` as appropriate.
+A separate member-only guidance query shows preferences, source quotes and the world’s inclusion/adaptation/omission plan. The public setting response contains only the player-facing guide. Design inventory, reviewer notes, future packs, and internal metrics remain server-side. Outsider queries return `null` or `[]` as appropriate.
 
 ## Setting prompt redesign
 
@@ -68,7 +68,7 @@ Use these sections in order:
 |---|---|
 | Product contract | Original, powerful but interactive Magic-style Limited for friends; supported card representation; five colors; manual tabletop constraints |
 | Fixed configuration | Unique-card count, supported color pairs, rarity profile, mechanic limit, complexity limits, prompt/schema versions |
-| Player ideas | Delimited, bounded suggestions with stable input IDs; treated as creative material, never as system instructions |
+| Player intent | Validated extracted preferences, source references and distinct support signals from the frozen conversation; raw chat goes only to interpretation |
 | Design questions | World, color identities, archetypes, overlap, mechanics, creative guide, power and interaction goals |
 | Output contract | Required JSON fields, enums, IDs, references, and length limits |
 | Self-check | Every pair covered, shared support present, mechanic fully defined, effects within supported representation, world expressed through ordinary cards |
@@ -77,7 +77,7 @@ Prompt intent, to be converted into the actual tested prompt:
 
 > Design a setting that can sustain a complete draft environment. Connect the players' ideas through a wondrous physical premise and a conflict between immense supernatural powers or processes. Give the magic observable effects, limits and consequences. If human factions drive the conflict, give them extraordinary capabilities, bargains or resources with powerful defined effects. Give each color a distinct approach to that conflict. For every color pair, explain its early plays, resources, way to win, weaknesses, and shared support with neighboring strategies. Define any new mechanic precisely and provide accessible enablers, payoffs, and counterplay. Favor specific, playable expressions of the world over additional lore or keywords. Return only the requested structured brief.
 
-Preserve the current instruction boundary around player ideas. A suggestion to ignore the schema, change model behavior, or reveal hidden data must not affect the contract. Empty ideas should produce a complete world. Conflicting ideas should be synthesized into a coherent premise; do not force every noun into a faction. Record internally which suggestions influenced the result and which were omitted, without presenting a relevance score to players.
+Preserve the current instruction boundary around player ideas. A suggestion to ignore the schema, change model behavior, or reveal hidden data must not affect the contract. Empty ideas should produce a complete world. Conflicting ideas require explicit, honest adaptation or omission; do not force every noun into a faction or infer agreement. Record every preference’s disposition and expose its explanation to players without a relevance score. See the [lobby guidance contract](lobby-creative-guidance.md).
 
 ### Required brief answers
 
@@ -423,3 +423,7 @@ Busted reference retrieval reserves room for Mana Crypt, Sol Ring, Black Lotus a
 [The release evaluation](../research/limited-set-design/17-release-validation.md) preserves six candidates, including two interrupted runs, plus reviewer calibration, twelve world inputs and seeded distribution. None of the four completed candidates passed the final gate. This is measured failure evidence, not model-quality acceptance.
 
 After those paid runs (pipeline 2), pipeline 3 hardened name validation: the parser keeps the first valid same-batch name and repairs later collisions, and revision planning always adds current deterministic duplicate-name issues even when the model editor omits them. Two public integration regressions cover these paths. Independently invented names can still collide across concurrent revision batches; final inventory validation blocks publication. These post-evaluation safeguards do not retroactively change the saved outcomes.
+
+## Structured lobby intent (prompt 12)
+
+Pipeline 4 and schema 2 add an optional interpretation stage, saved conversation and intent, a complete preference disposition plan, accepted-preference references on slots, and coverage checks before writing. Writers and reviewers receive the same derived guidance; raw chat stops at interpretation. Empty conversations and older blueprints remain supported. [Lobby creative guidance](lobby-creative-guidance.md) owns the contracts, recovery behavior, browser checks and small real-model probe.

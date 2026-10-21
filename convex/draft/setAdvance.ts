@@ -1,3 +1,5 @@
+import { preferenceCoverageProblems } from "./set/guidance";
+import { CreativeIntent } from "./set/intent";
 import { v } from "convex/values";
 import { internal } from "../_generated/api";
 import { internalMutation } from "../_generated/server";
@@ -43,6 +45,11 @@ export const advance = internalMutation({
       let blueprint: Blueprint | undefined = run.blueprint
         ? JSON.parse(run.blueprint)
         : undefined;
+      let intent: CreativeIntent | undefined = run.intent ? JSON.parse(run.intent) : undefined;
+      if (phase === "interpret") {
+        intent = JSON.parse(completed[0].result!) as CreativeIntent;
+        await ctx.db.patch(runId, { intent: JSON.stringify(intent) });
+      }
       if (phase === "brief") {
         blueprint = JSON.parse(completed[0].result!) as Blueprint;
         await ctx.db.patch(runId, { blueprint: JSON.stringify(blueprint) });
@@ -53,6 +60,9 @@ export const advance = internalMutation({
         await attachSetting(ctx, run.lobbyId, settingId);
       }
       if (phase === "slots") {
+        const allSlots = completed.flatMap(job => JSON.parse(job.result!) as Slot[]);
+        const missing = preferenceCoverageProblems(allSlots, blueprint, intent);
+        if (missing.length) throw new Error(missing.join("; "));
         for (const job of completed)
           for (const slot of JSON.parse(job.result!) as Slot[]) {
             await ctx.db.insert("setDesigns", {
@@ -102,6 +112,8 @@ export const advance = internalMutation({
         powerLevel: run.powerLevel,
         ideas: run.ideas,
         blueprint,
+        intent,
+        worldDirection: next === "brief" && run.worldDirection ? JSON.parse(run.worldDirection) : undefined,
       };
       const planned =
         phase === "slots"

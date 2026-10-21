@@ -1,3 +1,4 @@
+import { conversationSnapshot } from "./worldbuilding";
 import { Id } from "../_generated/dataModel";
 import { MutationCtx, QueryCtx } from "../_generated/server";
 import { selectIdeas } from "./roster";
@@ -16,3 +17,6 @@ export const listIdeas = async (
   lobbyId: Id<"lobbies">
 ): Promise<string[]> =>
   selectIdeas((await loadMessages(ctx, lobbyId)).map((message) => message.text));
+
+export const snapshotConversation = async (ctx: QueryCtx | MutationCtx, lobbyId: Id<"lobbies">) =>
+  conversationSnapshot(await loadMessages(ctx, lobbyId));

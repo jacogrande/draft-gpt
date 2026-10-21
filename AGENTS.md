@@ -36,6 +36,7 @@ Friends draft a Magic-style card set that an LLM invents for them on the spot, b
 - The refactor in progress: `docs/specs/refactor-roadmap.md`
 - Research on Limited set design, archetypes, mechanics, and worldbuilding: `docs/research/limited-set-design/README.md`
 - Setting prompts, set generation, contextual review, and revision: `docs/specs/set-generation.md`
+- Lobby chat, idea support, extraction and card guidance: `docs/specs/lobby-creative-guidance.md`
 - Card art model, prompt, cost, and limits: `docs/specs/card-art.md`
 - The Convex rewrite, its engineering rules, and what is left to deploy it: `docs/specs/convex-rewrite.md`
 - Why lobbies were rebuilt: `docs/specs/draft-lobby-refactor.md`

@@ -1,3 +1,6 @@
+import { CreativeIntent } from "../../convex/draft/set/intent";
+import { ConversationMessage } from "../../convex/lobby/worldbuilding";
+import { preferenceCoverageProblems } from "../../convex/draft/set/guidance";
 import { readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { planTasks } from "../../convex/draft/set/planning";
@@ -10,7 +13,7 @@ import { worldDirection } from "../../convex/draft/set/worldDirection";
 import { Caller, createCaller, backoff, pool } from "../batch-eval/calls";
 import { validated } from "../creativity-eval/run";
 
-export type Trial = { id: string; total: number; powerLevel: PowerLevel; seed: number };
+export type Trial = { conversation?: ConversationMessage[]; id: string; total: number; powerLevel: PowerLevel; seed: number };
 export const runTrial = async (out: string, trial: Trial) => {
   const directory = join(out, trial.id);
   const call = await createCaller(directory, trial.total === 135 ? 5 : 7);
@@ -45,17 +48,22 @@ export const runTrial = async (out: string, trial: Trial) => {
     return designs;
   };
   let blueprint: Blueprint | undefined;
+  let intent: CreativeIntent | undefined;
   let slots: Slot[] = [], designs: Design[] = [];
   let reviews: Review[] = [], editPlan: Review | undefined, finalReview: Review | undefined;
   let error: string | undefined;
   let revised: string[] = [];
   try {
     const base = { total: trial.total, powerLevel: trial.powerLevel, referenceSeed: trial.seed, ideas: [] };
+    if (trial.conversation?.length) intent = await phase("interpret", () => validated<CreativeIntent>("interpret",
+      { ...base, stage: "interpret", conversation: trial.conversation }, audit));
     blueprint = await phase("brief", () => validated<Blueprint>("brief",
-      { ...base, stage: "brief", worldDirection: worldDirection(trial.seed) }, audit));
-    const context = { ...base, blueprint };
+      { ...base, intent, stage: "brief", worldDirection: worldDirection(trial.seed) }, audit));
+    const context = { ...base, intent, blueprint };
     slots = (await phase("slots", () => pool(planTasks({ ...context, stage: "slots" }, [], [], []),
       (task, i) => validated<Slot[]>(`slots-${i}`, task, audit)))).flat();
+    const missingPreferences = preferenceCoverageProblems(slots, blueprint, intent);
+    if (missingPreferences.length) throw new Error(missingPreferences.join("; "));
     designs = (await phase("generate", () => pool(planTasks({ ...context, stage: "generate" }, slots, [], []),
       (task, i) => writeCards(`generate-${i}`, task)))).flat();
     if (designs.length !== trial.total) throw new Error(`Incomplete inventory: ${designs.length}/${trial.total}`);
@@ -83,7 +91,7 @@ export const runTrial = async (out: string, trial: Trial) => {
     : [];
   const ledger = JSON.parse(await readFile(join(directory, "ledger.json"), "utf8"));
   const result = { trial, startedAt, finishedAt: new Date().toISOString(),
-    durationMs: Date.now() - start, latencyComparable: !reused, phases, blueprint, slots, designs,
+    durationMs: Date.now() - start, latencyComparable: !reused, phases, intent, blueprint, slots, designs,
     reviews, editPlan, finalReview, revised, error, problems, structurallyComplete, ready, pack,
     estimatedTextCost: ledger.reduce((sum: number, row: { cost: number }) => sum + row.cost, 0),
     requests: ledger.length, ledger,

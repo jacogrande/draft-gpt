@@ -9,6 +9,7 @@ export const planTasks = (
   issues: Issue[]
 ): Task[] => {
   let tasks: Task[] = [];
+  if (base.stage === "brief") tasks = [{ ...base }];
   if (base.stage === "slots")
     tasks = chunks(skeleton(base.total, base.powerLevel)).map((group) => ({
       ...base,

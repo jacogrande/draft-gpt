@@ -2,7 +2,9 @@ import { v } from "convex/values";
 import { Doc, Id } from "../_generated/dataModel";
 import { MutationCtx, query } from "../_generated/server";
 import { viewAsMember } from "../lobby/access";
-import { listIdeas } from "../lobby/ideas";
+import { snapshotConversation } from "../lobby/ideas";
+import { ConversationMessage } from "../lobby/worldbuilding";
+import { CreativeIntent } from "./set/intent";
 import { attachSetRun, reportGenerationError } from "../lobby/lifecycle";
 import { generationKey } from "./retry";
 import { powerLevelOf } from "../powerLevel";
@@ -14,9 +16,13 @@ import { enqueue, jobsFor, pump } from "./setQueue";
 export const beginSet = async (
   ctx: MutationCtx,
   lobby: Doc<"lobbies">,
-  count: number
+  count: number,
+  saved?: { conversation: ConversationMessage[]; intent?: CreativeIntent }
 ): Promise<Id<"setRuns">> => {
-  const ideas = await listIdeas(ctx, lobby._id);
+  const conversation = saved?.conversation ?? await snapshotConversation(ctx, lobby._id);
+  const intent = saved?.intent;
+  const phase = conversation.length && !intent ? "interpret" : "brief";
+  const ideas: string[] = [];
   const total = count <= 4 ? 135 : 270;
   const seed = Math.floor(Math.random() * 2 ** 32);
   const recent = await ctx.db.query("setRuns").order("desc").take(12);
@@ -28,7 +34,9 @@ export const beginSet = async (
     revision: 1,
     total,
     powerLevel: powerLevelOf(lobby.powerLevel),
-    phase: "brief",
+    phase,
+    conversation: JSON.stringify(conversation),
+    intent: intent ? JSON.stringify(intent) : undefined,
     ideas,
     versions: JSON.stringify(VERSIONS),
     seed,
@@ -40,7 +48,9 @@ export const beginSet = async (
   await attachSetRun(ctx, lobby._id, runId);
   const run = (await ctx.db.get(runId))!;
   await enqueue(ctx, run, {
-    stage: "brief",
+    stage: phase,
+    conversation: phase === "interpret" ? conversation : undefined,
+    intent,
     ideas,
     total,
     powerLevel: powerLevelOf(lobby.powerLevel),
@@ -56,7 +66,9 @@ export const resumeSet = async (
   const run = lobby.setRunId && (await ctx.db.get(lobby.setRunId));
   if (!run) return;
   if (run.restartRequired) {
-    await beginSet(ctx, lobby, lobby.participantIds?.length ?? 2);
+    await beginSet(ctx, lobby, lobby.participantIds?.length ?? 2, run.conversation ? {
+      conversation: JSON.parse(run.conversation), intent: run.intent ? JSON.parse(run.intent) : undefined,
+    } : undefined);
     return;
   }
   await ctx.db.patch(run._id, { error: undefined });

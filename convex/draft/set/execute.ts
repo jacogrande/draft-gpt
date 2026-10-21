@@ -1,5 +1,7 @@
+import { intentSchema } from "./intent";
 import { requestDecisions, requestLuna } from "../openai";
 import {
+  parseIntent,
   parseBlueprint,
   parseDesigns,
   parseReview,
@@ -7,11 +9,11 @@ import {
   parseSlots,
 } from "../parsing";
 import {
-  blueprintSchema,
+  worldSchema,
+  planningSchema,
   designsSchema,
   designBatchSchema,
   reviewSchema,
-  slotPlanSchema,
 } from "./contracts";
 import { taskInstructions, taskPrompt } from "./prompts";
 import { reasoningEffort, ReasoningEffort } from "./modelSettings";
@@ -33,10 +35,12 @@ export const executeTask = async (
   const screen = task.stage === "screen" || task.stage === "rescreen";
   const writing = task.stage === "generate" || task.stage === "revise";
   const schema =
-    task.stage === "brief"
-      ? blueprintSchema
+    task.stage === "interpret"
+      ? intentSchema
+      : task.stage === "brief"
+      ? worldSchema(!!task.intent)
       : task.stage === "slots"
-      ? slotPlanSchema
+      ? planningSchema(!!task.blueprint?.preferencePlan)
       : writing
       ? options.designBatchLimit
         ? designBatchSchema(options.designBatchLimit)
@@ -55,8 +59,10 @@ export const executeTask = async (
     if ("error" in reply && typeof reply.error === "string")
       throw new Error(reply.error);
     const data =
-      task.stage === "brief"
-        ? parseBlueprint(reply.raw, task.ideas.length)
+      task.stage === "interpret"
+        ? parseIntent(reply.raw, task.conversation ?? [])
+        : task.stage === "brief"
+        ? parseBlueprint(reply.raw, task.ideas.length, task.intent)
         : task.stage === "slots"
         ? parseSlots(reply.raw, task.slots!, task.blueprint!)
         : writing

@@ -1,3 +1,5 @@
+import { INTERPRET_INSTRUCTIONS, PREFERENCE_POLICY } from "./intentPrompts";
+import { creativeGuidance } from "./guidance";
 import { CREATIVE_DIRECTION } from "./creative";
 import { powerPolicy } from "./powerPolicy";
 import { referenceContext } from "./referenceSelection";
@@ -11,17 +13,27 @@ const CARD_CREATIVE = `Preserve the frozen world's supernatural premise and lite
 const GAME_LANGUAGE = `Separate world fiction from executable game rules. Express the setting through names, flavor and art, and represent its actions with defined Magic game actions, objects, counters, costs and timing. A physical heart, borrowed trait, meal, bargain or sunrise is not automatically a new game object, action, keyword or phase. Do not introduce undefined procedures into rules text or archetype engines. Use ordinary game timing such as "until your next turn"; never replace it with an in-world time such as "until sunrise". A game turn need not equal a fictional day. Repair undeclared lore mechanics through card-level game text, rather than declaring the frozen world broken merely because a writer invented them.
 During review, quote and evaluate the current card text. Prior issues are historical checks, not evidence that a defect remains. Count every current cost, including sacrifice. Instants may be cast after blockers are declared. A spell allowing a beneficial effect on any creature is not defective merely because its controller could choose an opponent's creature. Identify an actual dysfunctional interaction, not an optional bad choice. Do not change playable rules to enforce literal fictional time or anatomy.`;
 export const taskInstructions = (task: Task, stageInstructionsOverride?: string) =>
-  [
+  task.stage === "interpret" ? INTERPRET_INSTRUCTIONS : [
     SET_DESIGN_SYSTEM,
     powerPolicy(task.powerLevel).target,
     powerPolicy(task.powerLevel).comparison,
     task.stage === "brief" ? CREATIVE_DIRECTION : CARD_CREATIVE,
     REPRESENTATION,
     GAME_LANGUAGE,
+    task.intent ? PREFERENCE_POLICY : "",
     stageInstructionsOverride ?? STAGE_INSTRUCTIONS[task.stage],
   ].join("\n\n");
 
 export const taskPrompt = (task: Task) => {
+  if (task.stage === "interpret") return JSON.stringify({ versions: VERSIONS, task: {
+    stage: task.stage, ideas: [], total: task.total, powerLevel: task.powerLevel,
+    conversation: task.conversation ?? [], feedback: task.feedback,
+  }, fixedFormat: {
+    power: powerPolicy(task.powerLevel).target,
+    inventory: "Fixed five-color, ten-pair draft skeleton includes artifacts and fixing lands; no card-type exclusions or changes to the selected power mode.",
+    representation: REPRESENTATION,
+    gameplay: "Manual table; no automated game rules. Familiar supported mechanics may be suggested.",
+  } });
   const ids = new Set(task.designs?.map((c) => c.slotId) ?? []);
   const slots = task.designs
     ? (task.slots ?? []).filter((s) => ids.has(s.id))
@@ -47,6 +59,7 @@ export const taskPrompt = (task: Task) => {
     tools: {
       references: referenceContext(slots, task.powerLevel, task.referenceSeed),
       support: supportReport(task),
+      creativeGuidance: creativeGuidance(task),
     },
     task: {
       ...task,
@@ -61,6 +74,8 @@ export const taskPrompt = (task: Task) => {
             })),
           }
         : {}),
+      conversation: undefined,
+      intent: task.stage === "brief" ? task.intent : undefined,
       ideas: task.stage === "brief" ? task.ideas : [],
       creativeSeed: task.stage === "brief" ? task.creativeSeed : undefined,
       worldDirection: task.stage === "brief" ? task.worldDirection : undefined,

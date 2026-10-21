@@ -1,3 +1,6 @@
+import { conversationSnapshot } from "../convex/lobby/worldbuilding";
+import { CreativeIntent } from "../convex/draft/set/intent";
+import { preferenceCoverageProblems } from "../convex/draft/set/guidance";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { resolve, join } from "node:path";
 import { createHash } from "node:crypto";
@@ -164,22 +167,30 @@ const generatePreview = async () => {
     : null;
   if (savedBrief && powerLevelOf(savedBrief.task?.powerLevel) !== powerLevel)
     throw new Error("The resumed brief uses a different power level.");
+  const intent: CreativeIntent | undefined = savedBrief ? savedBrief.task?.intent
+    : ideas.length ? await repairedCall({ stage: "interpret", total, powerLevel, ideas: [],
+      conversation: conversationSnapshot(ideas.map(text => ({ userId: "preview-player", text }))),
+    }) as CreativeIntent : undefined;
+  const promptIdeas = intent ? [] : ideas;
   const blueprint = savedBrief
-    ? parseBlueprint(savedBrief.data, ideas.length)
+    ? parseBlueprint(savedBrief.data, promptIdeas.length, intent)
     : ((await repairedCall({
         stage: "brief",
         total,
         powerLevel,
         referenceSeed: direction.seed,
-        ideas,
+        ideas: promptIdeas,
+        intent,
         worldDirection: direction,
       })) as Blueprint);
-  const base = { total, ideas, blueprint, powerLevel, referenceSeed: direction.seed };
+  const base = { total, ideas: promptIdeas, intent, blueprint, powerLevel, referenceSeed: direction.seed };
   const slots = (
     await parallel(chunks(skeleton(total, powerLevel)), (group) =>
       repairedCall({ ...base, stage: "slots", slots: group })
     )
   ).flat() as Slot[];
+  const missingPreferences = preferenceCoverageProblems(slots, blueprint, intent);
+  if (missingPreferences.length) throw new Error(missingPreferences.join("; "));
   const writeCards = async (task: Task) => {
     const cards: Design[] = [];
     let current = task;

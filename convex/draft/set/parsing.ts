@@ -1,8 +1,9 @@
+import { CreativeIntent, validatePreferencePlan } from "./intent";
 import {
-  blueprintSchema,
+  worldSchema,
+  planningSchema,
   designSchema,
   reviewSchema,
-  slotPlanSchema,
 } from "./contracts";
 import { validate } from "./schema";
 import {
@@ -15,9 +16,10 @@ import {
   Slot,
 } from "./types";
 
-export const parseBlueprint = (raw: unknown, ideaCount: number): Blueprint => {
-  validate(raw, blueprintSchema);
+export const parseBlueprint = (raw: unknown, ideaCount: number, intent?: CreativeIntent): Blueprint => {
+  validate(raw, worldSchema(!!intent));
   const result = raw as Blueprint;
+  if (intent) validatePreferencePlan(result.preferencePlan!, intent);
   if (
     new Set(result.colors.map((c) => c.color)).size !== 5 ||
     new Set(result.archetypes.map((a) => a.id)).size !== 10
@@ -51,11 +53,12 @@ export const parseSlots = (
   expected: Slot[],
   blueprint: Blueprint
 ): Slot[] => {
+  const schema = planningSchema(!!blueprint.preferencePlan);
   validate(raw, {
-    ...slotPlanSchema,
+    ...schema,
     properties: {
       slots: {
-        ...slotPlanSchema.properties!.slots,
+        ...schema.properties!.slots,
         minItems: expected.length,
         maxItems: expected.length,
       },
@@ -65,6 +68,9 @@ export const parseSlots = (
   if (new Set(slots.map((s) => s.id)).size !== expected.length)
     throw new Error("Duplicate slot IDs");
   for (const slot of slots) {
+    if (slot.preferenceIds && (new Set(slot.preferenceIds).size !== slot.preferenceIds.length || slot.preferenceIds.some(id =>
+      !blueprint.preferencePlan?.some(p => p.preferenceId === id && p.disposition !== "omitted"))))
+      throw new Error(`Unknown or omitted preference assignment in ${slot.id}`);
     const original = expected.find((s) => s.id === slot.id);
     if (
       !original ||

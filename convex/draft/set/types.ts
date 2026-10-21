@@ -1,3 +1,5 @@
+import type { ConversationMessage } from "../../lobby/worldbuilding";
+import type { CreativeIntent, PreferencePlan } from "./intent";
 import { CardFace } from "../../card";
 import type { PowerLevel } from "../../powerLevel";
 import type { CreativeSeed } from "./creativeSeed";
@@ -20,6 +22,7 @@ export type Color = (typeof COLORS)[number];
 export type Pair = (typeof PAIRS)[number];
 export type Rarity = "common" | "uncommon" | "rare" | "mythic";
 export type Blueprint = {
+  preferencePlan?: PreferencePlan[];
   world: {
     name: string;
     premise: string;
@@ -72,6 +75,7 @@ export type Blueprint = {
   influences: { idea: number; interpretation: string }[];
 };
 export type Slot = {
+  preferenceIds?: string[];
   id: string;
   colors: Color[];
   rarity: Rarity;
@@ -116,6 +120,7 @@ export type Usage = {
   requestId: string;
 };
 export type Stage =
+  | "interpret"
   | "brief"
   | "slots"
   | "generate"
@@ -127,6 +132,8 @@ export type Stage =
   | "final"
   | "art";
 export type Task = {
+  conversation?: ConversationMessage[];
+  intent?: CreativeIntent;
   stage: Stage;
   powerLevel?: PowerLevel;
   referenceSeed?: number;
@@ -144,10 +151,10 @@ export type Task = {
   reservedNames?: string[];
 };
 export const VERSIONS = {
-  pipeline: 3,
-  prompt: 11,
+  pipeline: 4,
+  prompt: 12,
   profile: 3,
-  schema: 1,
+  schema: 2,
   rubric: 5,
   references: 4,
   collation: 1,

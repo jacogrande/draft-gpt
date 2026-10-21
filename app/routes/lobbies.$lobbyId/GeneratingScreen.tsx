@@ -1,3 +1,4 @@
+import CreativeGuidance from "./CreativeGuidance";
 import { api } from "@convex/_generated/api";
 import { useMutation, useQuery } from "convex/react";
 import Heading from "~/components/Heading";
@@ -49,6 +50,7 @@ const GeneratingScreen = ({ lobby }: { lobby: LobbyView }) => {
           )}
         </>
       )}
+      <CreativeGuidance lobbyId={lobby.id} />
       {progress && (
         <p role="status" className="text-sm opacity-70">
           {progress.completed} of {progress.total} cards designed

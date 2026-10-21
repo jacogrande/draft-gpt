@@ -67,3 +67,5 @@ export const parseCards = (raw: unknown): CardFace[] => {
 };
 
 export { parseBlueprint, parseSlots, parseDesigns, parseReview, parseScreens } from "./set/parsing";
+
+export { parseIntent } from "./set/intent";

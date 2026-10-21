@@ -1,3 +1,4 @@
+import { preferencePlanSchema } from "./intent";
 import { arr, bool, choice, nonempty as s, num, obj, str } from "./schema";
 import { COLORS, PAIRS } from "./types";
 
@@ -124,3 +125,9 @@ export const reviewSchema = obj({
     100
   ),
 });
+
+export const worldSchema = (withPreferences: boolean) => withPreferences
+  ? obj({ ...blueprintSchema.properties!, preferencePlan: preferencePlanSchema }) : blueprintSchema;
+export const plannedSlotSchema = (withPreferences: boolean) => withPreferences
+  ? obj({ ...slotSchema.properties!, preferenceIds: arr(s(40), 0, 5) }) : slotSchema;
+export const planningSchema = (withPreferences: boolean) => obj({ slots: arr(plannedSlotSchema(withPreferences), 15, 270) });

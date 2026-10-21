@@ -1,9 +1,11 @@
+import CreativeGuidance from "./CreativeGuidance";
 import { InformationCircleIcon } from "@heroicons/react/24/outline";
 import { useSetting } from "~/hooks/draft/usePacks";
 import { useLobbyId } from "~/hooks/lobby/useLobby";
 
 const SettingInfo = () => {
-  const setting = useSetting(useLobbyId());
+  const lobbyId = useLobbyId();
+  const setting = useSetting(lobbyId);
   if (!setting) return null;
   return (
     <div className="flex items-center">
@@ -17,6 +19,7 @@ const SettingInfo = () => {
         </summary>
         <div className="dropdown-content p-4 shadow bg-base-100 rounded-box w-96 max-w-[90vw] max-h-[70vh] overflow-y-auto z-30 prose">
           <h3>{setting.name}</h3>
+          <CreativeGuidance lobbyId={lobbyId} />
           <p className="text-sm">{setting.description}</p>
           {(
             setting.mechanics ??
